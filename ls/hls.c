@@ -44,7 +44,6 @@ fprintf(stderr, "%s: cannot access %s: No such file or directory\n",
 argv[0], argv[i]);
 return (1);
 }
-printf("%s:\n", argv[i]);
 while ((ent = readdir(dir)) != NULL)
 {
 if (ent->d_name[0] != '.')
