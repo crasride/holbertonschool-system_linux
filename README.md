@@ -1,2 +1,1 @@
-# holbertonschool-system_linux
-C - ls
+holbertonschool-system_linux
