@@ -45,7 +45,7 @@ void list_files(const char *path, const char *program_name)
 		exit(EXIT_FAILURE);
 	}
 
-	for (i = 0; i < num_files; i++) // Move 'i' outside the for loop declaration
+	for (i = 0; i < num_files; i++)
 	{
 		printf("%s  ", files[i]);
 	}
