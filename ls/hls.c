@@ -34,9 +34,10 @@ void list_files(const char *path, const char *program_name)
 	{
 		fprintf(stderr, "%s: cannot access %s: ", program_name, path);
 		perror("");
-		exit(EXIT_FAILURE);
+		return;
 	}
 
+	printf("%s:\n", path);
 	while ((ent = readdir(dir)) != NULL)
 	{
 		if (ent->d_name[0] != '.')
@@ -49,13 +50,23 @@ void list_files(const char *path, const char *program_name)
 
 	if (num_files == 0)
 	{
-		fprintf(stderr, "%s: %s: No such file or directory\n", program_name, path);
-		exit(EXIT_FAILURE);
+		fprintf(stderr, "%s: %s: No files in directory\n", program_name, path);
+		return;
 	}
 
 	for (i = 0; i < num_files; i++)
 	{
-		printf("%s  ", files[i]);
+		printf("%s\n", files[i]);
 	}
 	printf("\n");
+
+	for (i = 0; i < num_files; i++)
+	{
+		char full_path[512];
+		snprintf(full_path, sizeof(full_path), "%s/%s", path, files[i]);
+		if (lstat(full_path, &file_stat) == 0 && S_ISDIR(file_stat.st_mode))
+		{
+			list_files(full_path, program_name);
+		}
+	}
 }
