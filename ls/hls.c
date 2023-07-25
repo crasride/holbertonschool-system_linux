@@ -1,59 +1,34 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <dirent.h>
+#include "hls.h"
 
 /**
- * main - Entry point
- * @argc: Number of command-line arguments
- * @argv: Array of command-line arguments
- * Return: 0 on success, 1 on error.
+ * list_files - Function that lists the files in a directory excluding hidden
+ * ones (those starting with '.').
+ * @path: The path of the directory to list.
  */
-int main(int argc, char *argv[])
-{
-DIR *dir;
-struct dirent *ent;
-int i;
-if (argc == 1)
-{
-/** No arguments supplied, list the contents of the current directory */
-dir = opendir(".");
-if (dir == NULL)
-{
-perror("opendir");
-return (1);
-}
-while ((ent = readdir(dir)) != NULL)
-{
-if (ent->d_name[0] != '.')
-{
-printf("%s  ", ent->d_name);
-}
-}
-printf("\n");
-closedir(dir);
-}
-else
-{
-/** List contents of directories or files given as arguments */
-for (i = 1; i < argc; i++)
-{
-dir = opendir(argv[i]);
-if (dir == NULL)
-{
-fprintf(stderr, "%s: cannot access %s: No such file or directory\n",
-argv[0], argv[i]);
-return (1);
-}
-while ((ent = readdir(dir)) != NULL)
-{
-if (ent->d_name[0] != '.')
-{
-printf("%s  ", ent->d_name);
-}
-}
-printf("\n");
-closedir(dir);
-}
-}
-return (0);
+
+void list_files(const char *path)
+	{
+	DIR *dir;
+	struct dirent *ent;
+
+	dir = opendir(path);
+	if (dir == NULL)
+	{
+		fprintf(stderr, "%s: cannot access %s: No such file or directory\n",
+		"hls", path);
+		exit(1);
+	}
+
+	while ((ent = readdir(dir)) != NULL)
+	{
+		if (ent->d_name[0] != '.')
+		{
+			printf("%s  ", ent->d_name);
+		}
+	}
+	printf("\n");
+	closedir(dir);
 }
