@@ -11,6 +11,7 @@
 int main(int argc, char *argv[])
 {
 	int i;
+	int multiple_folders = 0;
 
 	if (argc == 1)
 	{
@@ -20,8 +21,14 @@ int main(int argc, char *argv[])
 	{
 		for (i = 1; i < argc; i++)
 		{
+			if (multiple_folders)
+			{
+				printf("\n");
+			}
 			list_files(argv[i], argv[0]);
+			multiple_folders = 1;
 		}
 	}
-	return (0);
+	return 0;
 }
+

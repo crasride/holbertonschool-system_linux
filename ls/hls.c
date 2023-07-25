@@ -23,7 +23,22 @@ void list_files(const char *path, const char *program_name)
 	int i;
 
 	struct stat file_stat;
-	if (lstat(path, &file_stat) == 0 && S_ISREG(file_stat.st_mode))
+	if (lstat(path, &file_stat) == -1)
+	{
+		if (errno == ENOENT)
+		{
+			fprintf(stderr, "%s: %s: No such file or directory\n", program_name, path);
+			return;
+		}
+		else
+		{
+			fprintf(stderr, "%s: cannot access %s: ", program_name, path);
+			perror("");
+			exit(EXIT_FAILURE);
+		}
+	}
+
+	if (S_ISREG(file_stat.st_mode))
 	{
 		printf("%s\n", path);
 		return;
@@ -49,8 +64,8 @@ void list_files(const char *path, const char *program_name)
 
 	if (num_files == 0)
 	{
-		fprintf(stderr, "%s: %s: No such file or directory\n", program_name, path);
-		exit(EXIT_FAILURE);
+		fprintf(stderr, "%s: %s: No files found\n", program_name, path);
+		return;
 	}
 
 	for (i = 0; i < num_files; i++)
