@@ -15,28 +15,25 @@
 
 
 void list_files(const char *path)
-	{
+{
 	DIR *dir;
 	struct dirent *ent;
 
-
 	dir = opendir(path);
-	if (dir != NULL)
+	if (dir == NULL)
 	{
 
-		while ((ent = readdir(dir)) != NULL)
+		printf("%s\n", path);
+		return;
+	}
+
+	while ((ent = readdir(dir)) != NULL)
+	{
+		if (ent->d_name[0] != '.')
 		{
-			if (ent->d_name[0] != '.')
-			{
-				printf("%s  ", ent->d_name);
-			}
+			printf("%s  ", ent->d_name);
 		}
-		printf("\n");
-		closedir(dir);
 	}
-	else
-	{
-
-		fprintf(stderr, "./hls_01: cannot access %s: %s\n", path, strerror(errno));
-	}
-	}
+	printf("\n");
+	closedir(dir);
+}
