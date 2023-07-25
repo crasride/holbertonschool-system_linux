@@ -25,7 +25,7 @@ void list_files(const char *path, const char *program_name)
 	struct stat file_stat;
 	if (lstat(path, &file_stat) == 0 && S_ISREG(file_stat.st_mode))
 	{
-		// If 'path' is an existing file, not a directory
+	
 		fprintf(stderr, "%s: %s: Not a directory\n", program_name, path);
 		exit(EXIT_FAILURE);
 	}
