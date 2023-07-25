@@ -14,14 +14,14 @@ int main(int argc, char *argv[])
 
 	if (argc == 1)
 	{
-		list_files(".");
+		list_files(".", argv[0]);
 	}
 	else
 	{
 		for (i = 1; i < argc; i++)
 		{
-		list_files(argv[i]);
-	}
+			list_files(argv[i], argv[0]);
+		}
 	}
 	return (0);
 }
