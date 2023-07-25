@@ -20,14 +20,14 @@ void list_files(const char *path)
 
 	if (stat(path, &path_stat) != 0)
 	{
-		// File/directory doesn't exist or inaccessible
+		/* File/directory doesn't exist or inaccessible */
 		fprintf(stderr, "./hls_01: cannot access %s: No such file or directory\n", path);
 		return;
 	}
 
 	if (S_ISDIR(path_stat.st_mode))
 	{
-		// It's a directory, proceed with listing files
+		/* It's a directory, proceed with listing files */
 		dir = opendir(path);
 		if (dir == NULL)
 		{
@@ -47,7 +47,7 @@ void list_files(const char *path)
 	}
 	else
 	{
-		// It's a file, just print the file name
+		/* It's a file, just print the file name */
 		printf("%s\n", path);
 	}
 }
