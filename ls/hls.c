@@ -17,13 +17,6 @@ void list_files(const char *path)
 {
 	DIR *dir;
 	struct dirent *ent;
-	struct stat path_stat;
-
-	if (stat(path, &path_stat) != 0)
-	{
-		fprintf(stderr, "./hls_01: cannot access %s: No such file or directory\n", path);
-		return;
-	}
 
 	dir = opendir(path);
 	if (dir == NULL)
