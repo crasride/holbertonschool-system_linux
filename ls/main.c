@@ -9,15 +9,19 @@
  */
 
 int main(int argc, char *argv[])
-	{
+{
+	int i;
+
 	if (argc == 1)
 	{
 		list_files(".");
 	}
 	else
 	{
-		for (int i = 1; i < argc; i++)
-			list_files(argv[i]);
+		for (i = 1; i < argc; i++)
+		{
+		list_files(argv[i]);
+	}
 	}
 	return (0);
 }
