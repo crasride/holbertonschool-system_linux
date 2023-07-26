@@ -13,25 +13,18 @@
 int main(int argc, char *argv[])
 {
 	int one_option = 0;
-	int opt;
 	int i;
 
-	while ((opt = getopt(argc, argv, "1")) != -1)
+	for (i = 1; i < argc; i++)
 	{
-		switch (opt)
+		if (argv[i][0] == '-' && argv[i][1] == '1' && argv[i][2] == '\0')
 		{
-		case '1':
 			one_option = 1;
 			break;
-		default:
-			fprintf(stderr, "Uso: %s [-1] [ARCHIVO]...\n", argv[0]);
-			exit(EXIT_FAILURE);
 		}
 	}
 
-
-
-	if (argc == 1)
+	if (argc == 1 || (argc == 2 && one_option))
 	{
 		list_files(".", argv[0], argc, one_option);
 	}
@@ -39,12 +32,17 @@ int main(int argc, char *argv[])
 	{
 		for (i = 1; i < argc; i++)
 		{
+			if (argv[i][0] == '-' && argv[i][1] == '1' && argv[i][2] == '\0')
+			{
+				continue;
+			}
+
 			list_files(argv[i], argv[0], argc, one_option);
+
 			if (i < argc - 1)
 			{
 				printf("\n");
 			}
-
 		}
 	}
 	return (0);
