@@ -27,7 +27,7 @@ int main(int argc, char *argv[])
 				argv[j] = argv[j + 1];
 			}
 			argc--; /* Decrement the argument count to exclude the "-1" option*/
-			break; /* No need to check other arguments for "-1" */
+			i--; /* Adjust the index to review the current position again */
 		}
 	}
 
