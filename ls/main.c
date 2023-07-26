@@ -14,6 +14,7 @@ int main(int argc, char *argv[])
 {
 	int one_option = 0;
 	int opt;
+	int i;
 
 	while ((opt = getopt(argc, argv, "1")) != -1)
 	{
@@ -28,7 +29,7 @@ int main(int argc, char *argv[])
 		}
 	}
 
-	int i;
+
 
 	if (argc == 1)
 	{
