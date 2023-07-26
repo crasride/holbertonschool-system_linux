@@ -37,7 +37,11 @@ void list_files(const char *path, const char *program_name)
 		exit(EXIT_FAILURE);
 	}
 
-	printf("%s:\n", path);
+	if (strcmp(path, ".") != 0)
+	{
+		printf("%s:\n", path);
+	}
+
 
 	while ((ent = readdir(dir)) != NULL)
 	{
