@@ -54,7 +54,8 @@ void list_files(const char *path, const char *program_name, int num_args, int on
 
 	while ((ent = readdir(dir)) != NULL)
 	{
-		if (ent->d_name[0] != '.')
+		if ((ent->d_name[0] != '.' || (one_option && ent->d_name[1] != '\0')) &&
+			strcmp(ent->d_name, ".") != 0 && strcmp(ent->d_name, "..") != 0)
 		{
 			strcpy(files[num_files], ent->d_name);
 			num_files++;
