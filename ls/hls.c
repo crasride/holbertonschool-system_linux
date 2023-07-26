@@ -14,7 +14,7 @@
  * @program_name: The name of the program (argv[0]).
  */
 
-void list_files(const char *path, const char *program_name, int num_args)
+void list_files(const char *path, const char *program_name, int num_args, int one_option)
 {
 	DIR *dir;
 	struct dirent *ent;
@@ -68,9 +68,19 @@ void list_files(const char *path, const char *program_name, int num_args)
 		exit(EXIT_FAILURE);
 	}
 
-	for (i = 0; i < num_files; i++)
+	if (one_option)
 	{
-		printf("%s  ", files[i]);
+		for (i = 0; i < num_files; i++)
+		{
+			printf("%s\n", files[i]);
+		}
 	}
-	printf("\n");
+	else
+	{
+		for (i = 0; i < num_files; i++)
+		{
+			printf("%s  ", files[i]);
+		}
+		printf("\n");
 	}
+}
