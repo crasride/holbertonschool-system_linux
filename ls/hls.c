@@ -14,7 +14,7 @@
  * @program_name: The name of the program (argv[0]).
  */
 
-void list_files(const char *path, const char *program_name)
+void list_files(const char *path, const char *program_name, int num_args)
 {
 	DIR *dir;
 	struct dirent *ent;
@@ -37,11 +37,10 @@ void list_files(const char *path, const char *program_name)
 		exit(EXIT_FAILURE);
 	}
 
-	if (strcmp(path, ".") != 0)
+	if (num_args > 2)
 	{
 		printf("%s:\n", path);
 	}
-
 
 	while ((ent = readdir(dir)) != NULL)
 	{
@@ -64,4 +63,4 @@ void list_files(const char *path, const char *program_name)
 		printf("%s  ", files[i]);
 	}
 	printf("\n");
-}
+	}

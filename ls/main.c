@@ -14,17 +14,18 @@ int main(int argc, char *argv[])
 
 	if (argc == 1)
 	{
-		list_files(".", argv[0]);
+		list_files(".", argv[0], argc);
 	}
 	else
 	{
 		for (i = 1; i < argc; i++)
 		{
-			list_files(argv[i], argv[0]);
+			list_files(argv[i], argv[0], argc);
 			if (i < argc - 1)
 			{
 				printf("\n");
 			}
+
 		}
 	}
 	return (0);
