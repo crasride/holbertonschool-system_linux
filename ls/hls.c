@@ -35,7 +35,7 @@ void list_files(const char *path, const char *program_name, int num_args)
 	{
 		if (errno == EACCES)
 		{
-			fprintf(stderr, "%s: cannot open directory %s: Permission denied", program_name, path);
+			fprintf(stderr, "%s: cannot open directory %s: ", program_name, path);
 			perror("");
 			exit(EXIT_FAILURE);
 		}
