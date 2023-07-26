@@ -19,7 +19,7 @@ int main(int argc, char *argv[])
 
 	for (i = 1; i < argc; i++)
 	{
-		if (strcmp(argv[i], "-1") == 0)
+		if (strncmp(argv[i], "-1", 2) == 0)
 		{
 			one_option = 1;
 			break;
