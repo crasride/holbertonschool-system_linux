@@ -35,8 +35,7 @@ int main(int argc, char *argv[])
         {
             if (strcmp(argv[i], "-1") == 0)
             {
-                continue; // Saltamos la opción -1
-            }
+                continue;
 
             list_files(argv[i], argv[0], argc, one_option);
 
