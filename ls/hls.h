@@ -10,6 +10,6 @@
 * @num_args: The number argument to the program.
 */
 
-void list_files(const char *path, const char *program_name, int num_args);
+void list_files(const char *path, const char *program_name, int num_args, int display_one_per_line);
 
 #endif /* HLS_H */

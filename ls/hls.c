@@ -12,9 +12,12 @@
  * ones (those starting with '.').
  * @path: The path of the directory to list.
  * @program_name: The name of the program (argv[0]).
+ * @num_args: The number of arguments
+ * @display_one_per_line: Whether
  */
 
-void list_files(const char *path, const char *program_name, int num_args)
+
+void list_files(const char *path, const char *program_name, int num_args, int display_one_per_line)
 {
 	DIR *dir;
 	struct dirent *ent;
@@ -68,9 +71,19 @@ void list_files(const char *path, const char *program_name, int num_args)
 		exit(EXIT_FAILURE);
 	}
 
-	for (i = 0; i < num_files; i++)
+	if (display_one_per_line)
 	{
-		printf("%s  ", files[i]);
+		for (i = 0; i < num_files; i++)
+		{
+			printf("%s\n", files[i]);
+		}
 	}
-	printf("\n");
+	else
+	{
+		for (i = 0; i < num_files; i++)
+		{
+			printf("%s  ", files[i]);
+		}
+		printf("\n");
 	}
+}
