@@ -37,6 +37,8 @@ void list_files(const char *path, const char *program_name)
 		exit(EXIT_FAILURE);
 	}
 
+	printf("%s:\n", path);
+
 	while ((ent = readdir(dir)) != NULL)
 	{
 		if (ent->d_name[0] != '.')

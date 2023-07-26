@@ -21,6 +21,10 @@ int main(int argc, char *argv[])
 		for (i = 1; i < argc; i++)
 		{
 			list_files(argv[i], argv[0]);
+			if (i < argc - 1)
+			{
+				printf("\n");
+			}
 		}
 	}
 	return (0);
