@@ -16,7 +16,6 @@ int main(int argc, char *argv[])
     int one_option = 0;
     int i;
 
-    // Buscamos la opción -1 en los argumentos
     for (i = 1; i < argc; i++)
     {
         if (strcmp(argv[i], "-1") == 0)
