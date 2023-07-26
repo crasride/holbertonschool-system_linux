@@ -15,17 +15,12 @@
 int main(int argc, char *argv[])
 {
 	int one_option = 0;
-	int i, j;
+	int i;
 
-	/* Buscamos la opción -1 en los argumentos */
 	for (i = 1; i < argc; i++)
 	{
-		for (j = 0; argv[i][j] != '\0'; j++)
+		if (strcmp(argv[i], "-1") == 0)
 		{
-			if (argv[i][j] != '-' || argv[i][j + 1] != '1' || argv[i][j + 2] != '\0')
-			{
-				break;
-			}
 			one_option = 1;
 			break;
 		}
@@ -39,13 +34,8 @@ int main(int argc, char *argv[])
 	{
 		for (i = 1; i < argc; i++)
 		{
-			/* Saltamos la opción -1 */
-			for (j = 0; argv[i][j] != '\0'; j++)
+			if (strcmp(argv[i], "-1") == 0)
 			{
-				if (argv[i][j] != '-' || argv[i][j + 1] != '1' || argv[i][j + 2] != '\0')
-				{
-					break;
-				}
 				continue;
 			}
 
@@ -57,6 +47,5 @@ int main(int argc, char *argv[])
 			}
 		}
 	}
-	return 0;
+	return (0);
 }
-
