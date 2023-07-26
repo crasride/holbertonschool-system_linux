@@ -1,8 +1,5 @@
 #include <stdio.h>
 #include "hls.h"
-#include <unistd.h>
-#include <stdlib.h>
-#include <string.h>
 
 /**
  * main - Entry point of the program.
@@ -11,40 +8,24 @@
  * Return: 0 on success, non-zero on error.
  */
 
-
 int main(int argc, char *argv[])
 {
-	int one_option = 0;
 	int i;
 
-	for (i = 1; i < argc; i++)
+	if (argc == 1)
 	{
-		if (strncmp(argv[i], "-1", 2) == 0)
-		{
-			one_option = 1;
-			break;
-		}
-	}
-
-	if (argc == 1 || (argc == 2 && one_option))
-	{
-		list_files(".", argv[0], argc, one_option);
+		list_files(".", argv[0], argc);
 	}
 	else
 	{
 		for (i = 1; i < argc; i++)
 		{
-			if (strcmp(argv[i], "-1") == 0)
-			{
-				continue;
-			}
-
-			list_files(argv[i], argv[0], argc, one_option);
-
+			list_files(argv[i], argv[0], argc);
 			if (i < argc - 1)
 			{
 				printf("\n");
 			}
+
 		}
 	}
 	return (0);
