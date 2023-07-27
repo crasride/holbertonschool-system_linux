@@ -12,6 +12,7 @@ int main(int argc, char *argv[])
 {
 	int i;
 	int display_one_per_line = 0;
+	int k;
 
 
 	/* Check for the "-1" option in the command-line arguments */
@@ -33,7 +34,7 @@ int main(int argc, char *argv[])
 		{
 			display_one_per_line = 1;
 
-			for (int k = i; k < argc - 1; k++)
+			for (k = i; k < argc - 1; k++)
 			{
 				argv[k] = argv[k + 1];
 			}
