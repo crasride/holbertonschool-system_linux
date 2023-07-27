@@ -1,5 +1,6 @@
 #include <stdio.h>
 #include "hls.h"
+#include <string.h>
 
 /**
  * main - Entry point of the program.
@@ -10,41 +11,53 @@
 
 int main(int argc, char *argv[])
 {
-	int i;
-	int display_one_per_line = 0;
-	int j;
+    int i;
+    int display_one_per_line = 0;
 
+    // Variable para marcar si se encontró la opción "-1"
+    int found_option_one = 0;
 
-	/* Check for the "-1" option in the command-line arguments */
-	for (i = 1; i < argc; i++)
-	{
-		if (argv[i][0] == '-' && argv[i][1] == '1' && argv[i][2] == '\0')
-		{
-			display_one_per_line = 1;
-			/* Remove the "-1" option from the arguments */
-			for (j = i; j < argc - 1; j++)
-			{
-				argv[j] = argv[j + 1];
-			}
-			argc--; /* Decrement the argument count to exclude the "-1" option*/
-			i--; /* Adjust the index to review the current position again */
-		}
-	}
+    /* Check for the "-1" option in the command-line arguments */
+    for (i = 1; i < argc; i++)
+    {
+        if (strcmp(argv[i], "-1") == 0)
+        {
+            display_one_per_line = 1;
+            found_option_one = 1;
+            // Marcar la opción "-1" para ignorarla posteriormente
+            argv[i] = NULL;
+        }
+    }
 
-	if (argc == 1)
-	{
-		list_files(".", argv[0], argc, display_one_per_line);
-	}
-	else
-	{
-		for (i = 1; i < argc; i++)
-		{
-			list_files(argv[i], argv[0], argc, display_one_per_line);
-			if (i < argc - 1)
-			{
-				printf("\n");
-			}
-		}
-	}
-	return (0);
+    // Si se encontró la opción "-1", ajustar el valor de argc para excluirlo
+    if (found_option_one)
+    {
+        int new_argc = 0;
+        for (i = 1; i < argc; i++)
+        {
+            if (argv[i] != NULL)
+            {
+                argv[new_argc++] = argv[i];
+            }
+        }
+        argc = new_argc;
+    }
+
+    /* Process the files and directories passed as arguments */
+    if (argc == 1)
+    {
+        list_files(".", argv[0], argc, display_one_per_line);
+    }
+    else
+    {
+        for (i = 1; i < argc; i++)
+        {
+            list_files(argv[i], argv[0], argc, display_one_per_line);
+            if (i < argc - 1)
+            {
+                printf("\n");
+            }
+        }
+    }
+    return 0;
 }
