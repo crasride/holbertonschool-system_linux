@@ -7,6 +7,24 @@
 #include <sys/stat.h>
 #include <errno.h>
 
+#include <stddef.h>
+
+/**
+ * my_strcpy - Function to copy a string.
+ * @dest: Destination buffer where the string will be copied.
+ * @src: Source string to be copied.
+ * Return: Pointer to the destination buffer.
+ */
+char *my_strcpy(char *dest, const char *src)
+{
+	char *dest_start = dest;
+
+	while ((*dest++ = *src++))
+		;
+
+	return (dest_start);
+}
+
 /**
  * list_files - Function that lists the files in a directory excluding hidden
  * ones (those starting with '.').
@@ -59,7 +77,7 @@ void list_files(const char *path, const char *program_name, int num_args, int di
 	{
 		if (ent->d_name[0] != '.')
 		{
-			strcpy(files[num_files], ent->d_name);
+			my_strcpy(files[num_files], ent->d_name);
 			num_files++;
 		}
 	}
