@@ -30,6 +30,19 @@ char *my_strcpy(char *dest, const char *src)
 }
 
 /**
+ * my_strlen - Function to compute the length of a string.
+ * @str: The input string.
+ * Return: The length of the string.
+ */
+size_t my_strlen(const char *str)
+{
+	const char *ptr = str;
+	while (*ptr)
+		ptr++;
+	return (size_t)(ptr - str);
+}
+
+/**
  * list_files - Function that lists the files in a directory excluding hidden
  * ones (those starting with '.').
  * @path: The path of the directory to list.
@@ -76,12 +89,13 @@ void list_files(const char *path, const char *program_name, int num_args, int di
 	{
 		if (ent->d_name[0] != '.')
 		{
-			size_t name_length = strlen(ent->d_name);
+			size_t name_length = my_strlen(ent->d_name);
 			if (name_length < sizeof(files[num_files]) - 1)
 			{
 				my_strcpy(files[num_files], ent->d_name);
 				num_files++;
 			}
+
 		}
 	}
 	closedir(dir);
