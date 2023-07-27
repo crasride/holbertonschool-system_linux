@@ -1,6 +1,5 @@
 #include <stdio.h>
 #include "hls.h"
-#include <string.h>
 
 /**
  * main - Entry point of the program.
@@ -13,32 +12,25 @@ int main(int argc, char *argv[])
 {
 	int i;
 	int display_one_per_line = 0;
-	int found_option_one = 0;
+	int j;
+
 
 	/* Check for the "-1" option in the command-line arguments */
 	for (i = 1; i < argc; i++)
 	{
-		if (strcmp(argv[i], "-1") == 0)
+		if (argv[i][0] == '-' && argv[i][1] == '1' && argv[i][2] == '\0')
 		{
 			display_one_per_line = 1;
-			found_option_one = 1;
-
-			argv[i] = NULL;
-		}
-	}
-
-	if (found_option_one)
-	{
-		int new_argc = 0;
-		for (i = 1; i < argc; i++)
-		{
-			if (argv[i] != NULL)
+			/* Remove the "-1" option from the arguments */
+			for (j = i; j < argc - 1; j++)
 			{
-				argv[new_argc++] = argv[i];
+				argv[j] = argv[j + 1];
 			}
+			argc--; /* Decrement the argument count to exclude the "-1" option*/
+			i--; /* Adjust the index to review the current position again */
 		}
-		argc = new_argc;
 	}
+
 	/* Process the files and directories passed as arguments */
 	if (argc == 1)
 	{
@@ -57,3 +49,4 @@ int main(int argc, char *argv[])
 	}
 	return (0);
 }
+
