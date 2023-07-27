@@ -59,7 +59,7 @@ void list_files(const char *path, const char *program_name, int num_args, int di
 	{
 		if (ent->d_name[0] != '.')
 		{
-			strcpy(files[num_files], ent->d_name);
+			snprintf(files[num_files], sizeof(files[num_files]), "%s", ent->d_name);
 			num_files++;
 		}
 	}
