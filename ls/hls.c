@@ -56,20 +56,13 @@ void list_files(const char *path, const char *program_name, int num_args, int di
 	}
 
 	while ((ent = readdir(dir)) != NULL)
-{
-	if (ent->d_name[0] != '.')
 	{
-
-		int j = 0;
-		while (ent->d_name[j] != '\0' && j < 255)
+		if (ent->d_name[0] != '.')
 		{
-			files[num_files][j] = ent->d_name[j];
-			j++;
+			strcpy(files[num_files], ent->d_name);
+			num_files++;
 		}
-		files[num_files][j] = '\0';
-		num_files++;
 	}
-}
 	closedir(dir);
 
 	if (num_files == 0)
@@ -94,3 +87,4 @@ void list_files(const char *path, const char *program_name, int num_args, int di
 		printf("\n");
 	}
 }
+
