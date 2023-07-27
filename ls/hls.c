@@ -57,18 +57,18 @@ void list_files(const char *path, const char *program_name, int num_args, int di
 
 	while ((ent = readdir(dir)) != NULL)
 {
-    if (ent->d_name[0] != '.')
-    {
-        // Copiar manualmente el nombre del archivo en la matriz
-        int j = 0;
-        while (ent->d_name[j] != '\0' && j < 255)
-        {
-            files[num_files][j] = ent->d_name[j];
-            j++;
-        }
-        files[num_files][j] = '\0'; // Asegurar terminación nula
-        num_files++;
-    }
+	if (ent->d_name[0] != '.')
+	{
+
+		int j = 0;
+		while (ent->d_name[j] != '\0' && j < 255)
+		{
+			files[num_files][j] = ent->d_name[j];
+			j++;
+		}
+		files[num_files][j] = '\0';
+		num_files++;
+	}
 }
 	closedir(dir);
 
