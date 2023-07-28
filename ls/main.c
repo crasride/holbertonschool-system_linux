@@ -45,7 +45,7 @@ int main(int argc, char *argv[])
 
 	/* Process the files and directories passed as arguments */
 	if (argc == 1)
-		{
+	{
 		struct EntryList list;
 		list.head = NULL;
 		list.count = 0;
