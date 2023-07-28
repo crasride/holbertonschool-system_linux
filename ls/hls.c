@@ -76,13 +76,13 @@ void list_files(const char *path, const char *program_name, int num_args, int di
 	}
 	closedir(dir);
 
+	struct Entry *current = list->head;
+
 	if (list->count == 0)
 	{
 		fprintf(stderr, "%s: %s: No such file or directory\n", program_name, path);
 		exit(EXIT_FAILURE);
 	}
-
-	struct Entry *current = list->head;
 
 	if (display_one_per_line)
 	{
