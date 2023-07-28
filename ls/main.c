@@ -64,7 +64,7 @@ int main(int argc, char *argv[])
 			list_files(argv[i], argv[0], argc, display_one_per_line, &list);
 			free_entry_list(&list);
 
-			if (i < argc - 1 )
+			if (i < argc - 1 && list.count > 0)
 			{
 				if (files_listed)
 				{
