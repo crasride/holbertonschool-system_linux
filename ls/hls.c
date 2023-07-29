@@ -7,6 +7,22 @@
 #include <sys/stat.h>
 #include <errno.h>
 
+
+/**
+ * my_strlen - Function to calculate the length of a string.
+ * @str: The input string.
+ * Return: The length of the string.
+ */
+size_t my_strlen(const char *str)
+{
+	size_t len = 0;
+	while (str[len] != '\0')
+	{
+		len++;
+	}
+	return (len);
+}
+
 /**
  * my_strcpy - Function to copy a string.
  * @dest: Destination buffer where the string will be copied.
@@ -32,8 +48,9 @@ char *my_strcpy(char *dest, const char *src)
  * @num_args: The number of arguments.
  * @display_one_per_line: Whether to display one entry per line.
  * @list: Pointer to the EntryList to store the entries.
+ * @show_hidden: Whether to show hidden
  */
-void list_files(const char *path, const char *program_name, int num_args, int display_one_per_line, struct EntryList *list)
+void list_files(const char *path, const char *program_name, int num_args, int display_one_per_line, int show_hidden, struct EntryList *list)
 {
 	DIR *dir;
 	struct dirent *ent;
@@ -44,6 +61,11 @@ void list_files(const char *path, const char *program_name, int num_args, int di
 	{
 		printf("%s\n", path);
 		return;
+	}
+
+	if (num_args > 2)
+	{
+		printf("%s:\n", path);
 	}
 
 	dir = opendir(path);
@@ -63,18 +85,30 @@ void list_files(const char *path, const char *program_name, int num_args, int di
 		}
 	}
 
-	if (num_args > 2)
-	{
-		printf("%s:\n", path);
-	}
-
 	while ((ent = readdir(dir)) != NULL)
 	{
-		if (ent->d_name[0] != '.')
+		if (show_hidden || ent->d_name[0] != '.')
 		{
-			add_entry_to_list(list, ent->d_name, file_stat.st_mode);
+			char full_path[1024];
+			struct stat file_stat;
+
+			my_strcpy(full_path, path);
+			my_strcpy(full_path + my_strlen(full_path), "/");
+			my_strcpy(full_path + my_strlen(full_path), ent->d_name);
+
+			if (lstat(full_path, &file_stat) == 0)
+			{
+				add_entry_to_list(list, ent->d_name, file_stat.st_mode, (ent->d_name[0] == '.'));
+			}
+			else
+			{
+				fprintf(stderr, "%s: cannot access %s/%s: ", program_name, path, ent->d_name);
+				perror("");
+				exit(EXIT_FAILURE);
+			}
 		}
 	}
+
 	closedir(dir);
 
 	current = list->head;
@@ -104,17 +138,16 @@ void list_files(const char *path, const char *program_name, int num_args, int di
 		printf("\n");
 	}
 }
-
 /**
  * add_entry_to_list - Function to add a new entry to the linked list.
  * @list: Pointer to the EntryList where the entry will be added.
  * @name: Name of the entry to be added.
  * @st_mode: Mode of the entry (permissions, type, etc.).
- *
+ * @is_hidden:
  * This function adds a new entry to the linked list, allocating memory
  * for the new entry and copying the provided name and st_mode.
  */
-void add_entry_to_list(struct EntryList *list, const char *name, mode_t st_mode)
+void add_entry_to_list(struct EntryList *list, const char *name, mode_t st_mode, int is_hidden)
 
 {
 	struct Entry *new_entry = (struct Entry *)malloc(sizeof(struct Entry));
@@ -127,6 +160,7 @@ void add_entry_to_list(struct EntryList *list, const char *name, mode_t st_mode)
 
 	my_strcpy(new_entry->name, name);
 	new_entry->st_mode = st_mode;
+	new_entry->is_hidden = is_hidden;
 	new_entry->next = list->head;
 	list->head = new_entry;
 	list->count++;
@@ -141,6 +175,7 @@ void add_entry_to_list(struct EntryList *list, const char *name, mode_t st_mode)
  */
 
 void free_entry_list(struct EntryList *list)
+
 {
 	struct Entry *current = list->head;
 	while (current != NULL)
