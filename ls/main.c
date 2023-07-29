@@ -78,7 +78,7 @@ else
 		list_files(argv[i], argv[0], argc, display_one_per_line, show_hidden, &list);
 		free_entry_list(&list);
 
-		if (i < argc - 1 && list.count > 0)
+		if (i < argc - 1)
 		{
 			if (files_listed)
 			{

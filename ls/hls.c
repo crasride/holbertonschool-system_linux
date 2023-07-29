@@ -59,7 +59,7 @@ void list_files(const char *path, const char *program_name, int num_args, int di
 	struct stat file_stat;
 	if (lstat(path, &file_stat) == 0 && S_ISREG(file_stat.st_mode))
 	{
-		printf("%s\n", path);
+		printf("%sline 1\n", path);
 		return;
 	}
 
@@ -123,10 +123,9 @@ void list_files(const char *path, const char *program_name, int num_args, int di
 	{
 		while (current != NULL)
 		{
-			printf("%s\n", current->name);
+			printf("%sline 2\n", current->name);
 			current = current->next;
 		}
-		printf("\n");
 	}
 	else
 	{
@@ -135,7 +134,7 @@ void list_files(const char *path, const char *program_name, int num_args, int di
 			printf("%s  ", current->name);
 			current = current->next;
 		}
-		printf("\n");
+		printf("line 4\n");
 	}
 }
 /**
