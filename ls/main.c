@@ -12,7 +12,7 @@
 
 int main(int argc, char *argv[])
 {
-int i, k;
+int i, k, j;
 int display_one_per_line = 0;
 int show_hidden = 0; /* Flag to indicate if hidden files should be shown */
 
@@ -22,7 +22,7 @@ for (i = 1; i < argc; i++)
 int is_option_1 = 1;
 int is_option_a = 1;
 
-for (int j = 0; argv[i][j] != '\0'; j++)
+for (j = 0; argv[i][j] != '\0'; j++)
 {
 	if (argv[i][j] != '-' && argv[i][j] != '1')
 	{
