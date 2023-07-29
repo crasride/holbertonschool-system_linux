@@ -126,6 +126,7 @@ void list_files(const char *path, const char *program_name, int num_args, int di
 			printf("%s\n", current->name);
 			current = current->next;
 		}
+		printf("\n");
 	}
 	else
 	{
