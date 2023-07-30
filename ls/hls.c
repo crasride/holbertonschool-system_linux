@@ -172,7 +172,7 @@ void list_files(const char *path, const char *program_name, int num_args, int di
 
 
 				mod_time_str = ctime(&file_stat.st_mtime);
-				mod_time_str[strlen(mod_time_str) - 1] = '\0';
+				mod_time_str[my_strlen(mod_time_str) - 1] = '\0';
 
 
 				printf((S_ISDIR(file_stat.st_mode)) ? "d" : "-");
