@@ -147,25 +147,32 @@ void list_files(const char *path, const char *program_name, int num_args, int di
 	{
 		/* Print detailed information when using -l */
 		while (current != NULL)
-		{
-			char full_path[1024];
+        {
+            char full_path[1024];
             struct stat file_stat;
-
             time_t mod_time;
-            char *mod_time_str;
+            struct tm *time_info;
+            char mod_time_str[20];
 
+            my_strcpy(full_path, path);
+            my_strcpy(full_path + my_strlen(full_path), "/");
+            my_strcpy(full_path + my_strlen(full_path), current->name);
 
-			my_strcpy(full_path, path);
-			my_strcpy(full_path + my_strlen(full_path), "/");
-			my_strcpy(full_path + my_strlen(full_path), current->name);
-
-			 if (lstat(full_path, &file_stat) == 0)
+            if (lstat(full_path, &file_stat) == 0)
             {
-
                 mod_time = file_stat.st_mtime;
+                time_info = gmtime(&mod_time);
 
-                mod_time_str = ctime(&mod_time);
-                mod_time_str[my_strlen(mod_time_str) - 1] = '\0';
+                /* Convert month number to abbreviated month name */
+                const char *months[] = {"Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"};
+                my_strcpy(mod_time_str, months[time_info->tm_mon]);
+                my_strcpy(mod_time_str + 3, " ");
+                /* Convert day number to two digits */
+                sprintf(mod_time_str + 4, "%02d ", time_info->tm_mday);
+                /* Convert hour number to two digits */
+                sprintf(mod_time_str + 7, "%02d:", time_info->tm_hour);
+                /* Convert minute number to two digits */
+                sprintf(mod_time_str + 10, "%02d", time_info->tm_min);
 
                 printf((S_ISDIR(file_stat.st_mode)) ? "d" : "-");
                 printf((file_stat.st_mode & S_IRUSR) ? "r" : "-");
