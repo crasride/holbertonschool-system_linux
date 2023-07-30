@@ -46,6 +46,11 @@ void list_files(const char *path, const char *program_name, int num_args, int di
 		return;
 	}
 
+	if (num_args > 2)
+	{
+		printf("%s:\n", path);
+	}
+
 	dir = opendir(path);
 	if (dir == NULL)
 	{
@@ -63,10 +68,7 @@ void list_files(const char *path, const char *program_name, int num_args, int di
 		}
 	}
 
-	if (num_args > 2)
-	{
-		printf("%s:\n", path);
-	}
+
 
 	while ((ent = readdir(dir)) != NULL)
 	{
