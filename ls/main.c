@@ -17,6 +17,7 @@ int display_one_per_line = 0;
 int show_hidden = 0; /* Flag to indicate if hidden files should be shown */
 int show_almost_all = 0;
 int detailed_listing = 0;
+struct EntryList list;
 
 /* Check for the "-1" and "-a" options in the command-line arguments */
 for (i = 1; i < argc; i++)
@@ -109,7 +110,7 @@ else if (is_option_l)
 			printf("\n"); /* Add a space between directories */
 		}
 
-		struct EntryList list;
+
 		list.head = NULL;
 		list.count = 0;
 		list_files(argv[i], argv[0], argc, display_one_per_line, show_hidden, show_almost_all, detailed_listing, &list);
