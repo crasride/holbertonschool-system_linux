@@ -10,6 +10,7 @@
 #include <pwd.h>
 #include <grp.h>
 #include <time.h>
+#include <pwd.h> 
 
 /**
  * my_strlen - Function to calculate the length of a string.
@@ -177,7 +178,6 @@ void list_files(const char *path, const char *program_name, int num_args, int di
 				printf(" %ld", (long)file_stat.st_nlink);
 				printf(" %s", (user) ? user->pw_name : "");
 				printf(" %s", (group) ? group->gr_name : "");
-				printf(" %lld", (long long)file_stat.st_size);
 				printf(" %s", time_buf);
 				printf(" %s\n", current->name);
 			}
