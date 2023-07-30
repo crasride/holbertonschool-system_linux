@@ -153,6 +153,7 @@ void list_files(const char *path, const char *program_name, int num_args, int di
 			struct stat file_stat;
 			struct passwd *user;
 			struct group *group;
+			struct tm *time_info;
 
 		time_t mod_time = file_stat.st_mtime;
 
@@ -165,7 +166,7 @@ void list_files(const char *path, const char *program_name, int num_args, int di
 				user = getpwuid(file_stat.st_uid);
 				group = getgrgid(file_stat.st_gid);
 
-				struct tm *time_info;
+
 				char time_str[80];
 
 				time_info = localtime(&mod_time);
