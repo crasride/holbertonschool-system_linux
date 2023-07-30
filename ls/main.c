@@ -120,7 +120,7 @@ else if (is_option_l)
 		{
 			if (files_listed)
 			{
-				printf("\n"); /* Print line break only when files have been listed */
+				printf(" "); /* Print line break only when files have been listed */
 			}
 			files_listed = 1; /* Set the flag to 1 to indicate that files in this directory have been listed */
 		}
