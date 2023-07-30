@@ -7,7 +7,6 @@ struct Entry
 {
 	char name[256]; /* Name of the entry */
 	mode_t st_mode; /* Mode of the entry (permissions, type, etc.) */
-	int is_hidden; /* Flag to indicate if the entry is hidden (1) or not (0) */
 	struct Entry *next; /* Pointer to the next node in the list */
 };
 
@@ -28,19 +27,15 @@ struct EntryList
  * @num_args: The number of arguments to the program.
  * @display_one_per_line: Whether to display one entry per line.
  * @list: Pointer to the EntryList to store the entries.
- * @show_hidden: Whether to display hidden
  */
-void list_files(const char *path, const char *program_name, int num_args, int display_one_per_line, int show_hidden, int show_almost_all, int detailed_listing, struct EntryList *list);
-
+void list_files(const char *path, const char *program_name, int num_args, int display_one_per_line, struct EntryList *list);
 /**
  * add_entry_to_list - Function to add a new entry to the linked list.
  * @list: Pointer to the EntryList where the entry will be added.
  * @name: Name of the entry to be added.
  * @st_mode: Mode of the entry (permissions, type, etc.).
- * @is_hidden: Whether to display
  */
-void add_entry_to_list(struct EntryList *list, const char *name, mode_t st_mode, int is_hidden);
-
+void add_entry_to_list(struct EntryList *list, const char *name, mode_t st_mode);
 /**
  * free_entry_list - Function to free the memory used by the linked list.
  * @list: Pointer to the EntryList to be freed.
