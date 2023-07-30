@@ -16,24 +16,27 @@
 void print_formatted_time(time_t mod_time)
 {
     char *mod_time_str = ctime(&mod_time);
-
     char formatted_month[4];
+	char formatted_day[3];
+	char formatted_hour[3];
+	char formatted_minute[3];
+
     formatted_month[3] = '\0';
     formatted_month[0] = mod_time_str[4];
     formatted_month[1] = mod_time_str[5];
     formatted_month[2] = mod_time_str[6];
 
-    char formatted_day[3];
+
     formatted_day[2] = '\0';
     formatted_day[0] = mod_time_str[8];
     formatted_day[1] = mod_time_str[9];
 
-    char formatted_hour[3];
+
     formatted_hour[2] = '\0';
     formatted_hour[0] = mod_time_str[11];
     formatted_hour[1] = mod_time_str[12];
 
-    char formatted_minute[3];
+
     formatted_minute[2] = '\0';
     formatted_minute[0] = mod_time_str[14];
     formatted_minute[1] = mod_time_str[15];
