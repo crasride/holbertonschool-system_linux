@@ -153,6 +153,8 @@ void list_files(const char *path, const char *program_name, int num_args, int di
             time_t mod_time;
             struct tm *time_info;
             char mod_time_str[20];
+			/* Convert month number to abbreviated month name */
+                const char *months[] = {"Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"};
 
             my_strcpy(full_path, path);
             my_strcpy(full_path + my_strlen(full_path), "/");
@@ -163,8 +165,7 @@ void list_files(const char *path, const char *program_name, int num_args, int di
                 mod_time = file_stat.st_mtime;
                 time_info = gmtime(&mod_time);
 
-                /* Convert month number to abbreviated month name */
-                const char *months[] = {"Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"};
+
                 my_strcpy(mod_time_str, months[time_info->tm_mon]);
                 my_strcpy(mod_time_str + 3, " ");
                 /* Convert day number to two digits */
