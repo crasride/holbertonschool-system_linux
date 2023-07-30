@@ -206,7 +206,7 @@ void list_files(const char *path, const char *program_name, int num_args, int di
                 printf(" %u", file_stat.st_gid);
                 printf(" %ld", (long)file_stat.st_size);
                 printf(" ");
-                print_formatted_time(mod_time); // Use the new function to print formatted time
+                print_formatted_time(mod_time);
                 printf(" %s\n", current->name);
             }
             else
