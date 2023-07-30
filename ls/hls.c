@@ -14,6 +14,13 @@
 #include <time.h>
 
 
+void print_formatted_time(time_t mod_time) {
+    struct tm *timeinfo = localtime(&mod_time);
+    char months[][4] = {"Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"};
+
+    printf("%s %02d %02d:%02d", months[timeinfo->tm_mon], timeinfo->tm_mday, timeinfo->tm_hour, timeinfo->tm_min);
+}
+
 /**
  * my_strlen - Function to calculate the length of a string.
  * @str: The input string.
@@ -147,51 +154,36 @@ void list_files(const char *path, const char *program_name, int num_args, int di
 	{
 		/* Print detailed information when using -l */
 		while (current != NULL)
-        {
-            char full_path[1024];
-            struct stat file_stat;
-            time_t mod_time;
-            struct tm *time_info;
-            char mod_time_str[20];
-			/* Convert month number to abbreviated month name */
-                const char *months[] = {"Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"};
+{
+    char full_path[1024];
+    struct stat file_stat;
+    time_t mod_time;
 
-            my_strcpy(full_path, path);
-            my_strcpy(full_path + my_strlen(full_path), "/");
-            my_strcpy(full_path + my_strlen(full_path), current->name);
+    my_strcpy(full_path, path);
+    my_strcpy(full_path + my_strlen(full_path), "/");
+    my_strcpy(full_path + my_strlen(full_path), current->name);
 
-            if (lstat(full_path, &file_stat) == 0)
-            {
-                mod_time = file_stat.st_mtime;
-                time_info = gmtime(&mod_time);
+    if (lstat(full_path, &file_stat) == 0)
+    {
+        mod_time = file_stat.st_mtime;
 
-
-                my_strcpy(mod_time_str, months[time_info->tm_mon]);
-                my_strcpy(mod_time_str + 3, " ");
-                /* Convert day number to two digits */
-                sprintf(mod_time_str + 4, "%02d ", time_info->tm_mday);
-                /* Convert hour number to two digits */
-                sprintf(mod_time_str + 7, "%02d:", time_info->tm_hour);
-                /* Convert minute number to two digits */
-                sprintf(mod_time_str + 10, "%02d", time_info->tm_min);
-
-                printf((S_ISDIR(file_stat.st_mode)) ? "d" : "-");
-                printf((file_stat.st_mode & S_IRUSR) ? "r" : "-");
-                printf((file_stat.st_mode & S_IWUSR) ? "w" : "-");
-                printf((file_stat.st_mode & S_IXUSR) ? "x" : "-");
-                printf((file_stat.st_mode & S_IRGRP) ? "r" : "-");
-                printf((file_stat.st_mode & S_IWGRP) ? "w" : "-");
-                printf((file_stat.st_mode & S_IXGRP) ? "x" : "-");
-                printf((file_stat.st_mode & S_IROTH) ? "r" : "-");
-                printf((file_stat.st_mode & S_IWOTH) ? "w" : "-");
-                printf((file_stat.st_mode & S_IXOTH) ? "x" : "-");
-                printf(" %lu", (unsigned long)file_stat.st_nlink);
-                printf(" %u", file_stat.st_uid);
-                printf(" %u", file_stat.st_gid);
-                printf(" %ld", (long)file_stat.st_size);
-                printf(" %s", mod_time_str);
-                printf(" %s\n", current->name);
-            }
+        printf((S_ISDIR(file_stat.st_mode)) ? "d" : "-");
+        printf((file_stat.st_mode & S_IRUSR) ? "r" : "-");
+        printf((file_stat.st_mode & S_IWUSR) ? "w" : "-");
+        printf((file_stat.st_mode & S_IXUSR) ? "x" : "-");
+        printf((file_stat.st_mode & S_IRGRP) ? "r" : "-");
+        printf((file_stat.st_mode & S_IWGRP) ? "w" : "-");
+        printf((file_stat.st_mode & S_IXGRP) ? "x" : "-");
+        printf((file_stat.st_mode & S_IROTH) ? "r" : "-");
+        printf((file_stat.st_mode & S_IWOTH) ? "w" : "-");
+        printf((file_stat.st_mode & S_IXOTH) ? "x" : "-");
+        printf(" %lu", (unsigned long)file_stat.st_nlink);
+        printf(" %u", file_stat.st_uid);
+        printf(" %u", file_stat.st_gid);
+        printf(" %ld", (long)file_stat.st_size);
+        print_formatted_time(mod_time);
+        printf(" %s\n", current->name);
+    }
             else
 			{
 				fprintf(stderr, "%s: cannot access %s/%s: ", program_name, path, current->name);
