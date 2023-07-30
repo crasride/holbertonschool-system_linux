@@ -150,8 +150,7 @@ void list_files(const char *path, const char *program_name, int num_args, int di
 		{
 			char full_path[1024];
             struct stat file_stat;
-            struct passwd *user;
-            struct group *group;
+
             time_t mod_time;
             char *mod_time_str;
 
@@ -160,33 +159,40 @@ void list_files(const char *path, const char *program_name, int num_args, int di
 			my_strcpy(full_path + my_strlen(full_path), "/");
 			my_strcpy(full_path + my_strlen(full_path), current->name);
 
-			if (lstat(full_path, &file_stat) == 0)
-			{
-				user = getpwuid(file_stat.st_uid);
-                group = getgrgid(file_stat.st_gid);
+			 if (lstat(full_path, &file_stat) == 0)
+            {
+
                 mod_time = file_stat.st_mtime;
 
                 mod_time_str = ctime(&mod_time);
                 mod_time_str[my_strlen(mod_time_str) - 1] = '\0';
 
-				printf((S_ISDIR(file_stat.st_mode)) ? "d" : "-");
-				printf((file_stat.st_mode & S_IRUSR) ? "r" : "-");
-				printf((file_stat.st_mode & S_IWUSR) ? "w" : "-");
-				printf((file_stat.st_mode & S_IXUSR) ? "x" : "-");
-				printf((file_stat.st_mode & S_IRGRP) ? "r" : "-");
-				printf((file_stat.st_mode & S_IWGRP) ? "w" : "-");
-				printf((file_stat.st_mode & S_IXGRP) ? "x" : "-");
-				printf((file_stat.st_mode & S_IROTH) ? "r" : "-");
-				printf((file_stat.st_mode & S_IWOTH) ? "w" : "-");
-				printf((file_stat.st_mode & S_IXOTH) ? "x" : "-");
-				printf(" %lu", (unsigned long)file_stat.st_nlink);
-                printf(" %s", (user) ? user->pw_name : "");
-                printf(" %s", (group) ? group->gr_name : "");
-                printf(" %lu", (unsigned long)file_stat.st_size);
+                printf((S_ISDIR(file_stat.st_mode)) ? "d" : "-");
+                printf((file_stat.st_mode & S_IRUSR) ? "r" : "-");
+                printf((file_stat.st_mode & S_IWUSR) ? "w" : "-");
+                printf((file_stat.st_mode & S_IXUSR) ? "x" : "-");
+                printf((file_stat.st_mode & S_IRGRP) ? "r" : "-");
+                printf((file_stat.st_mode & S_IWGRP) ? "w" : "-");
+                printf((file_stat.st_mode & S_IXGRP) ? "x" : "-");
+                printf((file_stat.st_mode & S_IROTH) ? "r" : "-");
+                printf((file_stat.st_mode & S_IWOTH) ? "w" : "-");
+                printf((file_stat.st_mode & S_IXOTH) ? "x" : "-");
+                printf(" %lu", (unsigned long)file_stat.st_nlink);
+
+
+                printf(" %d", (int)file_stat.st_uid);
+
+
+				printf(" %d", (int)file_stat.st_gid);
+
+                printf(" %ld", (long)file_stat.st_size);
+
+
                 printf(" %s", mod_time_str);
+
                 printf(" %s\n", current->name);
-			}
-			else
+            }
+            else
 			{
 				fprintf(stderr, "%s: cannot access %s/%s: ", program_name, path, current->name);
 				perror("");
