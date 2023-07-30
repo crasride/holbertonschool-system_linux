@@ -178,18 +178,10 @@ void list_files(const char *path, const char *program_name, int num_args, int di
                 printf((file_stat.st_mode & S_IWOTH) ? "w" : "-");
                 printf((file_stat.st_mode & S_IXOTH) ? "x" : "-");
                 printf(" %lu", (unsigned long)file_stat.st_nlink);
-
-
-                printf(" %d", (int)file_stat.st_uid);
-
-
-				printf(" %d", (int)file_stat.st_gid);
-
+                printf(" %u", file_stat.st_uid);
+                printf(" %u", file_stat.st_gid);
                 printf(" %ld", (long)file_stat.st_size);
-
-
                 printf(" %s", mod_time_str);
-
                 printf(" %s\n", current->name);
             }
             else
