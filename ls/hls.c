@@ -171,7 +171,7 @@ void list_files(const char *path, const char *program_name, int num_args, int di
 
 
 				time_info = localtime(&mod_time);
-				strftime(time_str, sizeof(time_str), "%b %e %H:%M", time_info);
+				strftime(time_str, sizeof(time_str), "%b %d %H:%M", time_info);
 
 
 				printf((S_ISDIR(file_stat.st_mode)) ? "d" : "-");
