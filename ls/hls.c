@@ -152,6 +152,7 @@ void list_files(const char *path, const char *program_name, int num_args, int di
 			char full_path[1024];
 			struct stat file_stat;
 			struct passwd *user;
+			struct group *group;
 
 
 			my_strcpy(full_path, path);
@@ -161,6 +162,7 @@ void list_files(const char *path, const char *program_name, int num_args, int di
 		if (lstat(full_path, &file_stat) == 0)
 			{
 				user = getpwuid(file_stat.st_uid);
+				group = getgrgid(file_stat.st_gid);
 				time_str = ctime(&file_stat.st_mtime);
 				time_str[my_strlen(time_str) - 1] = '\0';
 
@@ -176,6 +178,7 @@ void list_files(const char *path, const char *program_name, int num_args, int di
 				printf((file_stat.st_mode & S_IXOTH) ? "x" : "-");
 				printf(" %lu", (unsigned long)file_stat.st_nlink);
 				printf(" %s", (user) ? user->pw_name : "");
+				printf(" %s", (group) ? group->gr_name : "");
 				printf(" %lu", (unsigned long)file_stat.st_size);
 				printf(" %s", time_str);
 				printf(" %s\n", current->name);
