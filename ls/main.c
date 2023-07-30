@@ -16,6 +16,7 @@ int i, k, j;
 int display_one_per_line = 0;
 int show_hidden = 0; /* Flag to indicate if hidden files should be shown */
 int show_almost_all = 0;
+int detailed_listing = 0;
 
 /* Check for the "-1" and "-a" options in the command-line arguments */
 for (i = 1; i < argc; i++)
@@ -23,6 +24,7 @@ for (i = 1; i < argc; i++)
 int is_option_1 = 1;
 int is_option_a = 1;
 int is_option_A = 1;
+int is_option_l = 1;
 
 for (j = 0; argv[i][j] != '\0'; j++)
 {
@@ -37,6 +39,10 @@ for (j = 0; argv[i][j] != '\0'; j++)
 	if (argv[i][j] != '-' && argv[i][j] != 'A')
 	{
 		is_option_A = 0;
+	}
+	if (argv[i][j] != '-' && argv[i][j] != 'l')
+	{
+		is_option_l = 0;
 	}
 }
 
@@ -70,6 +76,16 @@ else if (is_option_A)
 	argc--;
 	i--;
 }
+else if (is_option_l)
+{
+	detailed_listing = 1;
+	for (k = i; k < argc - 1; k++)
+	{
+		argv[k] = argv[k + 1];
+	}
+	argc--;
+	i--;
+}
 }
 
 
@@ -79,7 +95,7 @@ else if (is_option_A)
 		struct EntryList list;
 		list.head = NULL;
 		list.count = 0;
-		list_files(".", argv[0], argc, display_one_per_line, show_hidden, show_almost_all, &list);
+		list_files(".", argv[0], argc, display_one_per_line, show_hidden, show_almost_all, detailed_listing, &list);
 		free_entry_list(&list);
 	}
 	else
@@ -91,7 +107,7 @@ else if (is_option_A)
 			struct EntryList list;
 			list.head = NULL;
 			list.count = 0;
-			list_files(argv[i], argv[0], argc, display_one_per_line, show_hidden, show_almost_all, &list);
+			list_files(argv[i], argv[0], argc, display_one_per_line, show_hidden, show_almost_all, detailed_listing, &list);
 			free_entry_list(&list);
 
 			if (i < argc - 1)

@@ -6,7 +6,10 @@
 #include <sys/types.h>
 #include <sys/stat.h>
 #include <errno.h>
-
+#include <errno.h>
+#include <pwd.h>
+#include <grp.h>
+#include <time.h>
 
 /**
  * my_strlen - Function to calculate the length of a string.
@@ -39,8 +42,6 @@ char *my_strcpy(char *dest, const char *src)
 	return (dest_start);
 }
 
-
-
 /**
  * list_files - Function that lists the files in a directory excluding hidden
  * ones (those starting with '.').
@@ -51,12 +52,13 @@ char *my_strcpy(char *dest, const char *src)
  * @list: Pointer to the EntryList to store the entries.
  * @show_hidden: Whether to show hidden
  */
-void list_files(const char *path, const char *program_name, int num_args, int display_one_per_line, int show_hidden, int show_almost_all, struct EntryList *list)
+void list_files(const char *path, const char *program_name, int num_args, int display_one_per_line, int show_hidden, int show_almost_all, int detailed_listing, struct EntryList *list)
 {
 	DIR *dir;
 	struct dirent *ent;
 	struct Entry *current = NULL;
 
+	/* Check if we are listing a regular file */
 	struct stat file_stat;
 	if (lstat(path, &file_stat) == 0 && S_ISREG(file_stat.st_mode))
 	{
@@ -64,6 +66,7 @@ void list_files(const char *path, const char *program_name, int num_args, int di
 		return;
 	}
 
+	/* Print directory name if multiple directories are listed */
 	if (num_args > 2)
 	{
 		printf("%s:\n", path);
@@ -114,6 +117,7 @@ void list_files(const char *path, const char *program_name, int num_args, int di
 
 			if (lstat(full_path, &file_stat) == 0)
 			{
+				/* Add the entry to the linked list */
 				add_entry_to_list(list, ent->d_name, file_stat.st_mode, (ent->d_name[0] == '.'));
 			}
 			else
@@ -135,8 +139,61 @@ void list_files(const char *path, const char *program_name, int num_args, int di
 		exit(EXIT_FAILURE);
 	}
 
-	if (display_one_per_line)
+	if (detailed_listing)
 	{
+		/* Print detailed information when using -l */
+		while (current != NULL)
+		{
+			char full_path[1024];
+			struct stat file_stat;
+			struct passwd *user;
+			struct group *group;
+			char time_buf[80];
+
+			my_strcpy(full_path, path);
+			my_strcpy(full_path + my_strlen(full_path), "/");
+			my_strcpy(full_path + my_strlen(full_path), current->name);
+
+			if (lstat(full_path, &file_stat) == 0)
+			{
+				/* Get user and group names */
+				user = getpwuid(file_stat.st_uid);
+				group = getgrgid(file_stat.st_gid);
+
+				/* Get user and group names*/
+				strftime(time_buf, sizeof(time_buf), "%b %d %H:%M", localtime(&file_stat.st_mtime));
+
+				/* Print detailed information */
+				printf((S_ISDIR(file_stat.st_mode)) ? "d" : "-");
+				printf((file_stat.st_mode & S_IRUSR) ? "r" : "-");
+				printf((file_stat.st_mode & S_IWUSR) ? "w" : "-");
+				printf((file_stat.st_mode & S_IXUSR) ? "x" : "-");
+				printf((file_stat.st_mode & S_IRGRP) ? "r" : "-");
+				printf((file_stat.st_mode & S_IWGRP) ? "w" : "-");
+				printf((file_stat.st_mode & S_IXGRP) ? "x" : "-");
+				printf((file_stat.st_mode & S_IROTH) ? "r" : "-");
+				printf((file_stat.st_mode & S_IWOTH) ? "w" : "-");
+				printf((file_stat.st_mode & S_IXOTH) ? "x" : "-");
+				printf(" %ld", (long)file_stat.st_nlink);
+				printf(" %s", (user) ? user->pw_name : "");
+				printf(" %s", (group) ? group->gr_name : "");
+				printf(" %lld", (long long)file_stat.st_size);
+				printf(" %s", time_buf);
+				printf(" %s\n", current->name);
+			}
+			else
+			{
+				fprintf(stderr, "%s: cannot access %s/%s: ", program_name, path, current->name);
+				perror("");
+				exit(EXIT_FAILURE);
+			}
+
+			current = current->next;
+		}
+	}
+	else if (display_one_per_line)
+	{
+		/* Print filenames with one per line when using -1 */
 		while (current != NULL)
 		{
 			printf("%s\n", current->name);
@@ -145,6 +202,7 @@ void list_files(const char *path, const char *program_name, int num_args, int di
 	}
 	else
 	{
+		/* Print filenames with spaces when not using -l or -1*/
 		while (current != NULL)
 		{
 			printf("%s  ", current->name);
@@ -152,7 +210,8 @@ void list_files(const char *path, const char *program_name, int num_args, int di
 		}
 		printf("\n");
 	}
-}
+	}
+
 /**
  * add_entry_to_list - Function to add a new entry to the linked list.
  * @list: Pointer to the EntryList where the entry will be added.
