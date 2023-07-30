@@ -153,10 +153,11 @@ void list_files(const char *path, const char *program_name, int num_args, int di
 			struct stat file_stat;
 			struct passwd *user;
 			struct group *group;
-			struct tm *time_info;
-			char time_str[80];
 
-		time_t mod_time = file_stat.st_mtime;
+			char time_str[80];
+			char *mod_time_str;
+
+
 
 			my_strcpy(full_path, path);
 			my_strcpy(full_path + my_strlen(full_path), "/");
@@ -170,8 +171,8 @@ void list_files(const char *path, const char *program_name, int num_args, int di
 
 
 
-				time_info = localtime(&mod_time);
-				strftime(time_str, sizeof(time_str), "%b %d %H:%M", time_info);
+				mod_time_str = ctime(&file_stat.st_mtime);
+				mod_time_str[strlen(mod_time_str) - 1] = '\0';
 
 
 				printf((S_ISDIR(file_stat.st_mode)) ? "d" : "-");
