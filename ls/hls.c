@@ -13,6 +13,18 @@
 #include <pwd.h>
 #include <time.h>
 
+// Arreglos de cadenas para los nombres de los meses y días de la semana
+const char *months[] = {
+    "Jan", "Feb", "Mar", "Apr", "May", "Jun",
+    "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"
+};
+
+const char *weekdays[] = {
+    "Sun", "Mon", "Tue", "Wed", "Thu", "Fri", "Sat"
+};
+
+
+
 /**
  * my_strlen - Function to calculate the length of a string.
  * @str: The input string.
@@ -153,10 +165,10 @@ void list_files(const char *path, const char *program_name, int num_args, int di
 			struct stat file_stat;
 			struct passwd *user;
 			struct group *group;
-			struct tm *time_info;
+			struct tm mod_time_info;
 			char time_str[80];
 
-		time_t mod_time = file_stat.st_mtime;
+
 
 			my_strcpy(full_path, path);
 			my_strcpy(full_path + my_strlen(full_path), "/");
@@ -167,11 +179,16 @@ void list_files(const char *path, const char *program_name, int num_args, int di
 				user = getpwuid(file_stat.st_uid);
 				group = getgrgid(file_stat.st_gid);
 
+				 // Get the modification time as a struct tm
+                localtime_r(&file_stat.st_mtime, &mod_time_info);
 
-
-
-				time_info = localtime(&mod_time);
-				strftime(time_str, sizeof(time_str), "%b %d %H:%M", time_info);
+                // Format the time manually (Mon Jul 30 13:06)
+                snprintf(time_str, sizeof(time_str), "%3s %3s %2d %02d:%02d",
+						months[mod_time_info.tm_mon],
+						weekdays[mod_time_info.tm_wday],
+						mod_time_info.tm_mday,
+						mod_time_info.tm_hour,
+						mod_time_info.tm_min);
 
 
 				printf((S_ISDIR(file_stat.st_mode)) ? "d" : "-");
@@ -185,11 +202,11 @@ void list_files(const char *path, const char *program_name, int num_args, int di
 				printf((file_stat.st_mode & S_IWOTH) ? "w" : "-");
 				printf((file_stat.st_mode & S_IXOTH) ? "x" : "-");
 				printf(" %lu", (unsigned long)file_stat.st_nlink);
-				printf(" %s", (user) ? user->pw_name : "");
-				printf(" %s", (group) ? group->gr_name : "");
-				printf(" %lu", (unsigned long)file_stat.st_size);
-				printf(" %s", time_str);
-				printf(" %s\n", current->name);
+                printf(" %s", (user) ? user->pw_name : "");
+                printf(" %s", (group) ? group->gr_name : "");
+                printf(" %lu", (unsigned long)file_stat.st_size);
+                printf(" %s", time_str);
+                printf(" %s\n", current->name);
 			}
 			else
 			{
