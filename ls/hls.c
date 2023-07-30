@@ -15,10 +15,11 @@
 
 
 void print_formatted_time(time_t mod_time) {
-    struct tm *timeinfo = localtime(&mod_time);
-    char months[][4] = {"Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"};
-
-    printf("%s %02d %02d:%02d", months[timeinfo->tm_mon], timeinfo->tm_mday, timeinfo->tm_hour, timeinfo->tm_min);
+    char *mod_time_str = ctime(&mod_time);
+    char formatted_time[17];
+    memcpy(formatted_time, mod_time_str + 4, 12);
+    formatted_time[12] = '\0';
+    printf("%s", formatted_time);
 }
 
 /**
