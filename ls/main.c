@@ -102,23 +102,29 @@ else if (is_option_l)
 	{
 		int files_listed = 0; /* Flag to indicate if at least one file has been listed in the current directory */
 
-		for (i = 1; i < argc; i++)
+	for (i = 1; i < argc; i++)
+	{
+		if (i > 1 && argv[i][0] != '-')
 		{
-			struct EntryList list;
-			list.head = NULL;
-			list.count = 0;
-			list_files(argv[i], argv[0], argc, display_one_per_line, show_hidden, show_almost_all, detailed_listing, &list);
-			free_entry_list(&list);
+			printf("\n"); /* Add a space between directories */
+		}
 
-			if (i < argc - 1)
+		struct EntryList list;
+		list.head = NULL;
+		list.count = 0;
+		list_files(argv[i], argv[0], argc, display_one_per_line, show_hidden, show_almost_all, detailed_listing, &list);
+		free_entry_list(&list);
+
+		if (i < argc - 1)
+		{
+			if (files_listed)
 			{
-				if (files_listed)
-				{
-					printf("\n"); /* Print line break only when files have been listed */
-				}
-				files_listed = 1; /* Set the flag to 1 to indicate that files in this directory have been listed */
+				printf("\n"); /* Print line break only when files have been listed */
 			}
+			files_listed = 1; /* Set the flag to 1 to indicate that files in this directory have been listed */
 		}
 	}
-	return (0);
-	}
+}
+
+return 0;
+}
