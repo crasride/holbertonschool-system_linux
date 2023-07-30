@@ -63,7 +63,7 @@ void list_files(const char *path, const char *program_name, int num_args, int di
 
 	/* Check if we are listing a regular file */
 	struct stat file_stat;
-	char *time_str;
+
 
 	if (lstat(path, &file_stat) == 0 && S_ISREG(file_stat.st_mode))
 	{
@@ -163,8 +163,13 @@ void list_files(const char *path, const char *program_name, int num_args, int di
 			{
 				user = getpwuid(file_stat.st_uid);
 				group = getgrgid(file_stat.st_gid);
-				time_str = ctime(&file_stat.st_mtime);
-				time_str[my_strlen(time_str) - 1] = '\0';
+				time_t mod_time = file_stat.st_mtime;
+				struct tm *time_info;
+				char time_str[80];
+
+				time_info = localtime(&mod_time);
+				strftime(time_str, sizeof(time_str), "%b %e %H:%M", time_info);
+
 
 				printf((S_ISDIR(file_stat.st_mode)) ? "d" : "-");
 				printf((file_stat.st_mode & S_IRUSR) ? "r" : "-");
