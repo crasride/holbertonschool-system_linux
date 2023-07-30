@@ -60,8 +60,11 @@ void list_files(const char *path, const char *program_name, int num_args, int di
 	struct dirent *ent;
 	struct Entry *current = NULL;
 
+
 	/* Check if we are listing a regular file */
 	struct stat file_stat;
+	char *time_str;
+
 	if (lstat(path, &file_stat) == 0 && S_ISREG(file_stat.st_mode))
 	{
 		printf("%s\n", path);
@@ -134,7 +137,6 @@ void list_files(const char *path, const char *program_name, int num_args, int di
 	closedir(dir);
 
 	current = list->head;
-	char *time_str = ctime(&file_stat.st_mtime);
 
 	if (list->count == 0)
 	{
@@ -159,7 +161,7 @@ void list_files(const char *path, const char *program_name, int num_args, int di
 			 if (lstat(full_path, &file_stat) == 0)
         {
             user = getpwuid(file_stat.st_uid);
-
+			time_str = ctime(&file_stat.st_mtime);
             time_str[my_strlen(time_str) - 1] = '\0';
 
             printf((S_ISDIR(file_stat.st_mode)) ? "d" : "-");
