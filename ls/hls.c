@@ -158,28 +158,28 @@ void list_files(const char *path, const char *program_name, int num_args, int di
 			my_strcpy(full_path + my_strlen(full_path), "/");
 			my_strcpy(full_path + my_strlen(full_path), current->name);
 
-			 if (lstat(full_path, &file_stat) == 0)
-        {
-            user = getpwuid(file_stat.st_uid);
-			time_str = ctime(&file_stat.st_mtime);
-            time_str[my_strlen(time_str) - 1] = '\0';
+		if (lstat(full_path, &file_stat) == 0)
+			{
+				user = getpwuid(file_stat.st_uid);
+				time_str = ctime(&file_stat.st_mtime);
+				time_str[my_strlen(time_str) - 1] = '\0';
 
-            printf((S_ISDIR(file_stat.st_mode)) ? "d" : "-");
-            printf((file_stat.st_mode & S_IRUSR) ? "r" : "-");
-            printf((file_stat.st_mode & S_IWUSR) ? "w" : "-");
-            printf((file_stat.st_mode & S_IXUSR) ? "x" : "-");
-            printf((file_stat.st_mode & S_IRGRP) ? "r" : "-");
-            printf((file_stat.st_mode & S_IWGRP) ? "w" : "-");
-            printf((file_stat.st_mode & S_IXGRP) ? "x" : "-");
-            printf((file_stat.st_mode & S_IROTH) ? "r" : "-");
-            printf((file_stat.st_mode & S_IWOTH) ? "w" : "-");
-            printf((file_stat.st_mode & S_IXOTH) ? "x" : "-");
-            printf(" %ld", (long)file_stat.st_nlink);
-            printf(" %s", (user) ? user->pw_name : "");
-            printf(" %ld", (long)file_stat.st_size);
-            printf(" %s", time_str);
-            printf(" %s\n", current->name);
-        }
+				printf((S_ISDIR(file_stat.st_mode)) ? "d" : "-");
+				printf((file_stat.st_mode & S_IRUSR) ? "r" : "-");
+				printf((file_stat.st_mode & S_IWUSR) ? "w" : "-");
+				printf((file_stat.st_mode & S_IXUSR) ? "x" : "-");
+				printf((file_stat.st_mode & S_IRGRP) ? "r" : "-");
+				printf((file_stat.st_mode & S_IWGRP) ? "w" : "-");
+				printf((file_stat.st_mode & S_IXGRP) ? "x" : "-");
+				printf((file_stat.st_mode & S_IROTH) ? "r" : "-");
+				printf((file_stat.st_mode & S_IWOTH) ? "w" : "-");
+				printf((file_stat.st_mode & S_IXOTH) ? "x" : "-");
+				printf(" %lu", (unsigned long)file_stat.st_nlink);
+				printf(" %s", (user) ? user->pw_name : "");
+				printf(" %lu", (unsigned long)file_stat.st_size);
+				printf(" %s", time_str);
+				printf(" %s\n", current->name);
+			}
 			else
 			{
 				fprintf(stderr, "%s: cannot access %s/%s: ", program_name, path, current->name);
