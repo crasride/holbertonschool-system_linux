@@ -209,7 +209,6 @@ void list_files(const char *path, const char *program_name, int num_args, int di
 				printf(" ");
 				print_formatted_time(mod_time);
 				printf(" %s\n", current->name);
-				printf("\n");
 			}
 			else
 			{
