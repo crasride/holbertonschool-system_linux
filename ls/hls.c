@@ -14,17 +14,6 @@
 #include <time.h>
 
 
-const char *months[] = {
-    "Jan", "Feb", "Mar", "Apr", "May", "Jun",
-    "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"
-};
-
-const char *weekdays[] = {
-    "Sun", "Mon", "Tue", "Wed", "Thu", "Fri", "Sat"
-};
-
-
-
 /**
  * my_strlen - Function to calculate the length of a string.
  * @str: The input string.
@@ -72,10 +61,8 @@ void list_files(const char *path, const char *program_name, int num_args, int di
 	struct dirent *ent;
 	struct Entry *current = NULL;
 
-
 	/* Check if we are listing a regular file */
 	struct stat file_stat;
-
 
 	if (lstat(path, &file_stat) == 0 && S_ISREG(file_stat.st_mode))
 	{
@@ -162,33 +149,25 @@ void list_files(const char *path, const char *program_name, int num_args, int di
 		while (current != NULL)
 		{
 			char full_path[1024];
-			struct stat file_stat;
-			struct passwd *user;
-			struct group *group;
-			struct tm mod_time_info;
-			char time_str[80];
-
+            struct stat file_stat;
+            struct passwd *user;
+            struct group *group;
+            time_t mod_time;
+            char *mod_time_str;
 
 
 			my_strcpy(full_path, path);
 			my_strcpy(full_path + my_strlen(full_path), "/");
 			my_strcpy(full_path + my_strlen(full_path), current->name);
 
-		if (lstat(full_path, &file_stat) == 0)
+			if (lstat(full_path, &file_stat) == 0)
 			{
 				user = getpwuid(file_stat.st_uid);
-				group = getgrgid(file_stat.st_gid);
+                group = getgrgid(file_stat.st_gid);
+                mod_time = file_stat.st_mtime;
 
-
-                localtime_r(&file_stat.st_mtime, &mod_time_info);
-
-                snprintf(time_str, sizeof(time_str), "%3s %3s %2d %02d:%02d",
-						months[mod_time_info.tm_mon],
-						weekdays[mod_time_info.tm_wday],
-						mod_time_info.tm_mday,
-						mod_time_info.tm_hour,
-						mod_time_info.tm_min);
-
+                mod_time_str = ctime(&mod_time);
+                mod_time_str[my_strlen(mod_time_str) - 1] = '\0';
 
 				printf((S_ISDIR(file_stat.st_mode)) ? "d" : "-");
 				printf((file_stat.st_mode & S_IRUSR) ? "r" : "-");
@@ -204,7 +183,7 @@ void list_files(const char *path, const char *program_name, int num_args, int di
                 printf(" %s", (user) ? user->pw_name : "");
                 printf(" %s", (group) ? group->gr_name : "");
                 printf(" %lu", (unsigned long)file_stat.st_size);
-                printf(" %s", time_str);
+                printf(" %s", mod_time_str);
                 printf(" %s\n", current->name);
 			}
 			else
@@ -236,7 +215,7 @@ void list_files(const char *path, const char *program_name, int num_args, int di
 		}
 		printf("\n");
 	}
-	}
+}
 
 /**
  * add_entry_to_list - Function to add a new entry to the linked list.
