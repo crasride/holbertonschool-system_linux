@@ -40,6 +40,7 @@ char *my_strcpy(char *dest, const char *src)
 }
 
 
+
 /**
  * list_files - Function that lists the files in a directory excluding hidden
  * ones (those starting with '.').
@@ -50,7 +51,7 @@ char *my_strcpy(char *dest, const char *src)
  * @list: Pointer to the EntryList to store the entries.
  * @show_hidden: Whether to show hidden
  */
-void list_files(const char *path, const char *program_name, int num_args, int display_one_per_line, int show_hidden, struct EntryList *list)
+void list_files(const char *path, const char *program_name, int num_args, int display_one_per_line, int show_hidden, int show_almost_all, struct EntryList *list)
 {
 	DIR *dir;
 	struct dirent *ent;
@@ -87,7 +88,22 @@ void list_files(const char *path, const char *program_name, int num_args, int di
 
 	while ((ent = readdir(dir)) != NULL)
 	{
-		if (show_hidden || ent->d_name[0] != '.')
+		if (!show_hidden && ent->d_name[0] == '.')
+		{
+			if (show_almost_all)
+			{
+				if (ent->d_name[1] == '\0' || (ent->d_name[1] == '.' && ent->d_name[2] == '\0'))
+				{
+					continue; /* Skip "." and ".." when using -A*/
+				}
+			}
+			else
+			{
+				continue; /* Skip hidden files and directories when using -a*/
+			}
+		}
+
+		if (show_hidden || show_almost_all || ent->d_name[0] != '.')
 		{
 			char full_path[1024];
 			struct stat file_stat;
@@ -126,7 +142,6 @@ void list_files(const char *path, const char *program_name, int num_args, int di
 			printf("%s\n", current->name);
 			current = current->next;
 		}
-		printf("\n");
 	}
 	else
 	{

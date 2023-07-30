@@ -30,8 +30,8 @@ struct EntryList
  * @list: Pointer to the EntryList to store the entries.
  * @show_hidden: Whether to display hidden
  */
-void list_files(const char *path, const char *program_name, int num_args, int display_one_per_line, int show_hidden, struct EntryList *list);
-
+//void list_files(const char *path, const char *program_name, int num_args, int display_one_per_line, int show_hidden, struct EntryList *list);
+void list_files(const char *path, const char *program_name, int num_args, int display_one_per_line, int show_hidden, int show_almost_all, struct EntryList *list);
 /**
  * add_entry_to_list - Function to add a new entry to the linked list.
  * @list: Pointer to the EntryList where the entry will be added.
