@@ -13,7 +13,7 @@
 #include <pwd.h>
 #include <time.h>
 
-// Arreglos de cadenas para los nombres de los meses y días de la semana
+
 const char *months[] = {
     "Jan", "Feb", "Mar", "Apr", "May", "Jun",
     "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"
@@ -179,10 +179,9 @@ void list_files(const char *path, const char *program_name, int num_args, int di
 				user = getpwuid(file_stat.st_uid);
 				group = getgrgid(file_stat.st_gid);
 
-				 // Get the modification time as a struct tm
+
                 localtime_r(&file_stat.st_mtime, &mod_time_info);
 
-                // Format the time manually (Mon Jul 30 13:06)
                 snprintf(time_str, sizeof(time_str), "%3s %3s %2d %02d:%02d",
 						months[mod_time_info.tm_mon],
 						weekdays[mod_time_info.tm_wday],
