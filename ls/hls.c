@@ -154,6 +154,7 @@ void list_files(const char *path, const char *program_name, int num_args, int di
 			struct passwd *user;
 			struct group *group;
 
+		time_t mod_time = file_stat.st_mtime;
 
 			my_strcpy(full_path, path);
 			my_strcpy(full_path + my_strlen(full_path), "/");
@@ -163,7 +164,7 @@ void list_files(const char *path, const char *program_name, int num_args, int di
 			{
 				user = getpwuid(file_stat.st_uid);
 				group = getgrgid(file_stat.st_gid);
-				time_t mod_time = file_stat.st_mtime;
+
 				struct tm *time_info;
 				char time_str[80];
 
