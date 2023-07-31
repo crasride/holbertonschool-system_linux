@@ -3,75 +3,111 @@
 #include "laps.h"
 
 static Car *cars;
+
+/**
+ * race_state - computes and displays the state of the race
+ * @id: array of int for `identifiers` of each cars
+ * @size: size of id's array
+ */
 void race_state(int *id, size_t size)
 {
-    Car *current = cars;
-    size_t i; // Mover la declaración de i aquí
+	size_t i;
+	Car *current = cars;
 
-    if (size == 0)
-    {
-        /* Free all allocated memory size is 0 */
-        while (cars != NULL)
-        {
-            Car *temp = cars;
-            cars = cars->next;
-            free(temp);
-        }
-        return;
-    }
+	if (size == 0)
+	{
+		free_allocated_memory();
+		return;
+	}
 
-    for (i = 0; i < size; i++)
-    {
-        current = cars;
-        Car *prev = NULL;
-        int found = 0;
+	for (i = 0; i < size; i++)
+	{
+		update_laps(id[i]);
+	}
 
-        /* Check car with the given id exists */
-        while (current != NULL)
-        {
-            if (current->id == id[i])
-            {
-                current->laps++;
-                found = 1;
-                break;
-            }
-            prev = current;
-            current = current->next;
-        }
+	/* Print state of race */
+	printf("Race state:\n");
+	while (current != NULL)
+	{
+		printf("Car %d [%d laps]\n", current->id, current->laps);
+		current = current->next;
+	}
+}
 
-        if (!found)
-        {
-            /* Create a new car if the given id not exist */
-            Car *new_car = malloc(sizeof(Car));
-            if (new_car == NULL)
-            {
-                fprintf(stderr, "Memory allocation error\n");
-                exit(EXIT_FAILURE);
-            }
-            new_car->id = id[i];
-            new_car->laps = 0;
-            new_car->next = NULL;
+/**
+ * update_laps - updates the laps of a car or creates a new car
+ * @car_id: ID of the car to update the laps
+ */
+void update_laps(int car_id)
+{
+	Car *current = cars;
+	int found = 0;
 
-            if (prev == NULL)
-            {
-                cars = new_car;
-            }
-            else
-            {
-                prev->next = new_car;
-            }
+	while (current != NULL)
+	{
+		if (current->id == car_id)
+		{
+			current->laps++;
+			found = 1;
+			break;
+		}
+		current = current->next;
+	}
 
-            /* Print new car joins the race*/
-            printf("Car %d joined the race\n", id[i]);
-        }
-    }
+	if (!found)
+	{
+		create_new_car(car_id);
+	}
+}
 
-    /* Print state of race */
-    printf("Race state:\n");
-    current = cars;
-    while (current != NULL)
-    {
-        printf("Car %d [%d laps]\n", current->id, current->laps);
-        current = current->next;
-    }
+/**
+ * create_new_car - creates a new car and adds it to the race
+ * @car_id: ID of the new car
+ */
+void create_new_car(int car_id)
+{
+	/* Create a new car if the given id does not exist */
+	Car *new_car = malloc(sizeof(Car));
+	if (new_car == NULL)
+	{
+		fprintf(stderr, "Memory allocation error\n");
+		exit(EXIT_FAILURE);
+	}
+
+	new_car->id = car_id;
+	new_car->laps = 0;
+
+	if (cars == NULL || car_id < cars->id)
+	{
+		new_car->next = cars;
+		cars = new_car;
+	}
+	else
+	{
+		Car *current = cars;
+		while (current->next != NULL && current->next->id <= car_id)
+		{
+			current = current->next;
+		}
+		new_car->next = current->next;
+		current->next = new_car;
+	}
+
+	/* Print new car joins the race */
+	printf("Car %d joined the race\n", car_id);
+}
+
+/**
+ * free_allocated_memory - frees all allocated memory for cars
+ */
+void free_allocated_memory(void)
+{
+	/* Free all allocated memory */
+	while (cars != NULL)
+	{
+		Car *temp = cars;
+
+		cars = cars->next;
+		free(temp);
+	}
 }
