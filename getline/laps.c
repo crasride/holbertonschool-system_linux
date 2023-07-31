@@ -93,6 +93,7 @@ void free_allocated_memory(void)
 	while (cars != NULL)
 	{
 		Car *temp = cars;
+
 		cars = cars->next;
 		free(temp);
 	}
