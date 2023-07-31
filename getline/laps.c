@@ -14,6 +14,8 @@ typedef struct Car
 
 void race_state(int *id, size_t size)
 {
+	Car *current = cars;
+
 	if (size == 0)
 	{
 		/*Free all allocated memory size is 0 */
@@ -72,7 +74,7 @@ void race_state(int *id, size_t size)
 
 	/* Print state of race */
 	printf("Race state:\n");
-	Car *current = cars;
+	current = cars;
 	while (current != NULL)
 	{
 		printf("Car %d [%d laps]\n", current->id, current->laps);
