@@ -16,7 +16,7 @@ static Car *cars;
 
 	if (size == 0)
 	{
-		/* printf("Race state: (empty)\n"); */
+		free_allocated_memory();
 		return;
 	}
 
@@ -69,11 +69,11 @@ void create_new_car(int car_id)
 {
 	/* Create a new car if the given id does not exist */
 	Car *new_car = malloc(sizeof(Car));
-	if (new_car == NULL)
-	{
-		fprintf(stderr, "Memory allocation error\n");
-		exit(EXIT_FAILURE);
-	}
+		if (new_car == NULL)
+		{
+			fprintf(stderr, "Memory allocation error\n");
+			exit(EXIT_FAILURE);
+		}
 
 	new_car->id = car_id;
 	new_car->laps = 0;
@@ -86,6 +86,7 @@ void create_new_car(int car_id)
 	else
 	{
 		Car *current = cars;
+
 		while (current->next != NULL && current->next->id <= car_id)
 		{
 			current = current->next;
