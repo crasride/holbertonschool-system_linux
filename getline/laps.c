@@ -5,9 +5,9 @@
 static Car *cars;
 
 /**
- * race_state - calculates and says the state of the race
- * @id: int for `identifiers` of each cars
- * @size: size of id's
+ * race_state - computes and displays the state of the race
+ * @id: array of int for `identifiers` of each cars
+ * @size: size of id's array
  */
 void race_state(int *id, size_t size)
 {
@@ -68,11 +68,11 @@ void create_new_car(int car_id)
 {
 	/* Create a new car if the given id does not exist */
 	Car *new_car = malloc(sizeof(Car));
-		if (new_car == NULL)
-		{
-			fprintf(stderr, "Memory allocation error\n");
-			exit(EXIT_FAILURE);
-		}
+	if (new_car == NULL)
+	{
+		fprintf(stderr, "Memory allocation error\n");
+		exit(EXIT_FAILURE);
+	}
 
 	new_car->id = car_id;
 	new_car->laps = 0;
@@ -85,12 +85,12 @@ void create_new_car(int car_id)
 	else
 	{
 		Car *current = cars;
-			while (current->next != NULL && current->next->id <= car_id)
-			{
-				current = current->next;
-			}
-			new_car->next = current->next;
-			current->next = new_car;
+		while (current->next != NULL && current->next->id <= car_id)
+		{
+			current = current->next;
+		}
+		new_car->next = current->next;
+		current->next = new_car;
 	}
 
 	/* Print new car joins the race */
@@ -111,5 +111,3 @@ void free_allocated_memory(void)
 		free(temp);
 	}
 }
-
-
