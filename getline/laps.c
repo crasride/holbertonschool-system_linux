@@ -5,9 +5,9 @@
 static Car *cars;
 
 /**
- * race_state - computes and displays the state of the race
- * @id: array of int for `identifiers` of each cars
- * @size: size of id's array
+ * race_state - calculates and says the state of the race
+ * @id: int for `identifiers` of each cars
+ * @size: size of id's
  */
 void race_state(int *id, size_t size)
 {
@@ -27,7 +27,6 @@ void race_state(int *id, size_t size)
 
 	/* Print state of race */
 	printf("Race state:\n");
-	current = cars;
 	while (current != NULL)
 	{
 		printf("Car %d [%d laps]\n", current->id, current->laps);
@@ -77,8 +76,22 @@ void create_new_car(int car_id)
 
 	new_car->id = car_id;
 	new_car->laps = 0;
-	new_car->next = cars;
-	cars = new_car;
+
+	if (cars == NULL || car_id < cars->id)
+	{
+		new_car->next = cars;
+		cars = new_car;
+	}
+	else
+	{
+		Car *current = cars;
+			while (current->next != NULL && current->next->id <= car_id)
+			{
+				current = current->next;
+			}
+			new_car->next = current->next;
+			current->next = new_car;
+	}
 
 	/* Print new car joins the race */
 	printf("Car %d joined the race\n", car_id);
@@ -98,3 +111,5 @@ void free_allocated_memory(void)
 		free(temp);
 	}
 }
+
+
