@@ -16,7 +16,7 @@ static Car *cars;
 
 	if (size == 0)
 	{
-		// printf("Race state: (empty)\n");
+		/* printf("Race state: (empty)\n"); */
 		return;
 	}
 
