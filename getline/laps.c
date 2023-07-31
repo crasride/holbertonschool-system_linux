@@ -9,31 +9,31 @@ static Car *cars;
  * @id: array of int for `identifiers` of each cars
  * @size: size of id's array
  */
-void race_state(int *id, size_t size)
-{
-    size_t i;
+	void race_state(int *id, size_t size)
+	{
+	size_t i;
 	Car *current = cars;
 
-    if (size == 0)
-    {
-        printf("Race state: (empty)\n");
-        return;
-    }
+	if (size == 0)
+	{
+		// printf("Race state: (empty)\n");
+		return;
+	}
 
-    for (i = 0; i < size; i++)
-    {
-        update_laps(id[i]);
-    }
+	for (i = 0; i < size; i++)
+	{
+		update_laps(id[i]);
+	}
 
-    /* Print state of race */
-    printf("Race state:\n");
+	/* Print state of race */
+	printf("Race state:\n");
 	current = cars;
-    while (current != NULL)
-    {
-        printf("Car %d [%d laps]\n", current->id, current->laps);
-        current = current->next;
-    }
-}
+	while (current != NULL)
+	{
+		printf("Car %d [%d laps]\n", current->id, current->laps);
+		current = current->next;
+	}
+	}
 
 /**
  * update_laps - updates the laps of a car or creates a new car
