@@ -11,27 +11,27 @@ static Car *cars;
  */
 void race_state(int *id, size_t size)
 {
-	size_t i;
-	Car *current = cars;
+    size_t i;
 
-	if (size == 0)
-	{
-		free_allocated_memory();
-		return;
-	}
+    if (size == 0)
+    {
+        printf("Race state: (empty)\n");
+        return;
+    }
 
-	for (i = 0; i < size; i++)
-	{
-		update_laps(id[i]);
-	}
+    for (i = 0; i < size; i++)
+    {
+        update_laps(id[i]);
+    }
 
-	/* Print state of race */
-	printf("Race state:\n");
-	while (current != NULL)
-	{
-		printf("Car %d [%d laps]\n", current->id, current->laps);
-		current = current->next;
-	}
+    /* Print state of race */
+    printf("Race state:\n");
+    Car *current = cars;
+    while (current != NULL)
+    {
+        printf("Car %d [%d laps]\n", current->id, current->laps);
+        current = current->next;
+    }
 }
 
 /**
@@ -75,7 +75,7 @@ void create_new_car(int car_id)
 	}
 
 	new_car->id = car_id;
-	new_car->laps = 0;
+	new_car->laps = 0; // Set the initial laps to 0 for newly created car
 
 	if (cars == NULL || car_id < cars->id)
 	{
@@ -96,6 +96,7 @@ void create_new_car(int car_id)
 	/* Print new car joins the race */
 	printf("Car %d joined the race\n", car_id);
 }
+
 
 /**
  * free_allocated_memory - frees all allocated memory for cars
