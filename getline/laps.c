@@ -12,6 +12,7 @@ static Car *cars;
 void race_state(int *id, size_t size)
 {
     size_t i;
+	Car *current = cars;
 
     if (size == 0)
     {
@@ -26,7 +27,7 @@ void race_state(int *id, size_t size)
 
     /* Print state of race */
     printf("Race state:\n");
-    Car *current = cars;
+	current = cars;
     while (current != NULL)
     {
         printf("Car %d [%d laps]\n", current->id, current->laps);
@@ -75,7 +76,7 @@ void create_new_car(int car_id)
 	}
 
 	new_car->id = car_id;
-	new_car->laps = 0; // Set the initial laps to 0 for newly created car
+	new_car->laps = 0;
 
 	if (cars == NULL || car_id < cars->id)
 	{
