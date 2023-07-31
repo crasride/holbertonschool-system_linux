@@ -15,6 +15,7 @@ typedef struct Car
 void race_state(int *id, size_t size)
 {
 	Car *current = cars;
+	size_t i;
 
 	if (size == 0)
 	{
@@ -28,7 +29,7 @@ void race_state(int *id, size_t size)
 		return;
 	}
 
-	size_t i; 
+
 	for (i = 0; i < size; i++)
 	{
 		Car *current = cars;
