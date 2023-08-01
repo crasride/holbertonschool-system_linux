@@ -21,7 +21,7 @@ static ssize_t read_data(const int fd, char *buffer, ssize_t bytes_to_read)
 
 /* find the end of the line in the buffer */
 static ssize_t find_end_of_line(char *buffer, ssize_t start_position,
-									ssize_t bytes_read)
+								ssize_t bytes_read)
 {
 	ssize_t i = start_position;
 
@@ -32,8 +32,8 @@ static ssize_t find_end_of_line(char *buffer, ssize_t start_position,
 
 /* find the end of the line in the buffer*/
 static char *allocate_and_copy_line(char *line, ssize_t line_length,
-										char *buffer, ssize_t start_position,
-											ssize_t end_position)
+									char *buffer, ssize_t start_position,
+									ssize_t end_position)
 {
 	char *line_realloc = realloc(line,
 							line_length + end_position - start_position + 1);
@@ -44,9 +44,8 @@ static char *allocate_and_copy_line(char *line, ssize_t line_length,
 	}
 
 	line = line_realloc;
+	ssize_t k, j;
 
-	ssize_t k;
-	size_t j;
 		for (k = start_position, j = 0; k < end_position; k++, j++)
 		{
 			line[j] = buffer[k];
