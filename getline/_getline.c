@@ -1,106 +1,157 @@
+#include <fcntl.h>
+#include <stdio.h>
 #include <unistd.h>
 #include <stdlib.h>
+#include <string.h>
+#include <errno.h>
 #include "_getline.h"
+
 #ifndef READ_SIZE
 #define READ_SIZE 1024
 #endif
 
+
 /**
- * read_data -rtrtr
- * @fd:trrtrtr
- * @buffer:trtr
- * @bytes_to_read:rtrtr
- * Return:rtrtr
-*/
-static ssize_t read_data(const int fd, char *buffer, ssize_t bytes_to_read)
+ * _getline - Reads a line from a file descriptor and returns it as a string.
+ * @fd: The file descriptor from which to read the line.
+ * Return: On success, it returns a pointer to the line as a string.
+ * If fd is -1, it frees the resources and returns NULL.
+ * If the end-of-file is reached or an error occurs, it returns NULL.
+ */
+char *_getline(const int fd)
 {
-	ssize_t bytes_read = read(fd, buffer, bytes_to_read);
+	static line_head *lines;
+	line_head *current_node;
+	char *read_data_buffer;
+	int bytes_read;
 
-	return (bytes_read);
-}
-
-/* find the end of the line in the buffer */
-static ssize_t find_end_of_line(char *buffer, ssize_t start_position,
-								ssize_t bytes_read)
-{
-	ssize_t i = start_position;
-
-	while (i < bytes_read && buffer[i] != '\n')
-		i++;
-	return (i);
-}
-
-/* find the end of the line in the buffer*/
-static char *allocate_and_copy_line(char *line, ssize_t line_length,
-									char *buffer, ssize_t start_position,
-									ssize_t end_position)
-{
-	ssize_t k, j;
-	char *line_realloc = realloc(line,
-							line_length + end_position - start_position + 1);
-	if (!line_realloc)
+	if (fd == -1)
 	{
-		free(line); /* Cleanup in case of allocation failure*/
+		free_lines(lines);
 		return (NULL);
 	}
 
-	line = line_realloc;
-
-		for (k = start_position, j = 0; k < end_position; k++, j++)
-		{
-			line[j] = buffer[k];
-		}
-		line[end_position - start_position] = '\0'; /* Null-terminate the line */
-
-		return (line);
-	}
-
-/**
- * _getline -rter
- * @fd:rtrt
- * Return:rtert
-*/
-char *_getline(const int fd)
-{
-	static char buffer[READ_SIZE];
-	static ssize_t bytes_read;
-	static ssize_t current_position;
-	char *line = NULL;
-	ssize_t i = current_position;
-	ssize_t j = 0;
-
-	while (1)
+	for (current_node = lines; current_node != NULL;
+		current_node = current_node->next)
 	{
-		ssize_t end_position;
-		ssize_t line_length;
-		/* Check if no more bytes in buffer,or if it's the first time reading */
-		if (current_position == bytes_read)
+		if (current_node->fd == fd)
 		{
-			bytes_read = read_data(fd, buffer, READ_SIZE);
-			if (bytes_read <= 0)
-				return (NULL); /* End of file or error, return NULL*/
-
-			current_position = 0; /* Reset the buffer position */
-			i = 0; /* Reset the line parsing index */
+			if (current_node->bytes <= 0)
+				current_node->bytes = read(fd, current_node->buffer, READ_SIZE);
+			return (read_line_chars(current_node));
 		}
-
-		/* Find the end of the line */
-		end_position = find_end_of_line(buffer, i, bytes_read);
-
-		/* Calculate the length of the line and allocate memory for it*/
-		line_length = end_position - current_position + 1;
-
-		line = allocate_and_copy_line(line, j, buffer, current_position,
-										end_position);
-
-		/* Move to the next character after the newline */
-		current_position = end_position + 1;
-
-		if (end_position < bytes_read
-							|| (end_position == bytes_read && line_length > 1))
-			return (line); /* If we found a newline, return the line */
 	}
 
-	return (NULL);
+	read_data_buffer = malloc(sizeof(char) * READ_SIZE);
+	bytes_read = read(fd, read_data_buffer, READ_SIZE);
+	if (bytes_read <= 0)
+	{
+		free(read_data_buffer);
+		return (NULL);
+	}
+
+	current_node = add_line_node(&lines, fd, read_data_buffer, bytes_read);
+	if (!current_node)
+	{
+		free(read_data_buffer);
+		return (NULL);
+	}
+
+	return (read_line_chars(current_node));
 }
 
+/**
+ * free_lines - Frees the memory allocated for the linked list of line nodes.
+ * @lines: The head of the linked list of line nodes.
+ */
+void free_lines(line_head *lines)
+{
+	/* int i = 0;*/
+	line_head *current_node = lines;
+	line_head *next_node;
+
+	while (current_node != NULL)
+	{
+		next_node = current_node->next;
+		free(current_node->buffer);
+		free(current_node);
+		current_node = next_node;
+	}
+}
+
+/**
+ * add_line_node - Adds new node to the linked list for a new file descriptor.
+ * @lines: A pointer to the head pointer of the linked list.
+ * @fd: The file descriptor associated with the new node.
+ * @buffer: The buffer containing the read data for the file descriptor.
+ * @bytes: The number of bytes read into the buffer.
+ * Return: On success, it returns a pointer to the newly added node.
+ * If memory allocation fails, it returns NULL.
+ */
+line_head *add_line_node(line_head **lines, const int fd, char *buffer,
+						int bytes)
+{
+	line_head *new_node = malloc(sizeof(line_head));
+		if (!new_node)
+			return (NULL);
+
+	new_node->fd = fd;
+	new_node->bytes = bytes;
+	new_node->buffer = buffer;
+	new_node->next = *lines;
+	*lines = new_node;
+
+	return (new_node);
+}
+
+/**
+ * read_line_chars - Extracts a complete line from the current node's buffer.
+ * @current_node: The node containing the buffer to read from.
+ * Return: On success, it returns a pointer to the line as a string.
+ * If memory allocation fails, it returns NULL.
+ */
+char *read_line_chars(line_head *current_node)
+{
+char *line = NULL;
+int size = 0, bytes_c = 0, i, j;
+while (current_node->bytes > 0)
+{
+	if (size < bytes_c + current_node->bytes + 1)
+	{
+		size += current_node->bytes + 1;
+		char *tmp = malloc(sizeof(char) * size);
+
+		if (!tmp)
+			{
+			free(line);
+			return (NULL);
+			}
+		memcpy(tmp, line, bytes_c);
+		memset(tmp + bytes_c, '\0', size - bytes_c);
+		free(line);
+		line = tmp;
+	}
+	for (i = 0; i < current_node->bytes; i++)
+	{
+		if (current_node->buffer[i] == '\n')
+		{
+			current_node->buffer[i++] = '\0';
+			current_node->bytes -= i;
+			memcpy(line + bytes_c, current_node->buffer, i);
+
+			for (j = 0; i + j < READ_SIZE; j++)
+				current_node->buffer[j] = current_node->buffer[i + j];
+
+			for (; j < READ_SIZE; j++)
+				current_node->buffer[j] = '\0';
+
+			return (line);
+		}
+	}
+	memcpy(line + bytes_c, current_node->buffer, current_node->bytes);
+	bytes_c += current_node->bytes;
+	current_node->bytes = read(current_node->fd, current_node->buffer,
+								READ_SIZE);
+}
+return (line);
+}

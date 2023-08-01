@@ -3,12 +3,29 @@
 
 
 /**
- * _getline -rtrt
- * @fd:rtrt
- * Return:rtrt
-*/
+ * struct line_head - struct of linked list to store our chunks
+ * of lines being read
+ * @fd: file descriptor read
+ * @bytes: bytes read
+ * @buffer: pointer to buffer characters
+ * @next: pointer to next struct
+ */
 
+typedef struct line_head
+{
+int fd;
+int bytes;
+char *buffer;
+struct line_head *next;
+} line_head;
+
+
+/* Function for our homemade getline */
 char *_getline(const int fd);
-
+char *read_line_chars(line_head *current_node);
+void free_lines(line_head *lines);
+line_head *add_line_node(line_head **lines, const int fd, char *buffer,
+						int bytes);
+char *read_line_chars(line_head *current_node);
 
 #endif /* _GETLINE_H */
