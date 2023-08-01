@@ -78,22 +78,19 @@ char *_getline(const int fd)
 		{
 			bytes_read = read_data(fd, buffer, READ_SIZE);
 			if (bytes_read <= 0)
-
+			{
 				return (NULL); /* End of file or error, return NULL*/
-			
+			}
 			current_position = 0; /* Reset the buffer position */
 			i = 0; /* Reset the line parsing index */
 		}
 
 		/* Find the end of the line */
 		end_position = find_end_of_line(buffer, i, bytes_read);
-
 		/* Calculate the length of the line and allocate memory for it*/
 		line_length = end_position - current_position + 1;
-
 		line = allocate_and_copy_line(line, j, buffer, current_position,
 										end_position);
-
 		/* Move to the next character after the newline */
 		current_position = end_position + 1;
 
