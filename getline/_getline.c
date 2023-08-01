@@ -1,11 +1,9 @@
 #include <unistd.h>
 #include <stdlib.h>
 #include "_getline.h"
-
 #ifndef READ_SIZE
 #define READ_SIZE 1024
 #endif
-
 
 /**
  * read_data -rtrtr
@@ -47,16 +45,16 @@ static char *allocate_and_copy_line(char *line, ssize_t line_length,
 
 	line = line_realloc;
 
-	ssize_t k, j;
-	for (k = start_position, j = 0; k < end_position; k++, j++)
-	{
-		line[j] = buffer[k];
+	ssize_t k;
+	size_t j;
+		for (k = start_position, j = 0; k < end_position; k++, j++)
+		{
+			line[j] = buffer[k];
+		}
+		line[end_position - start_position] = '\0'; /* Null-terminate the line */
+
+		return (line);
 	}
-	line[end_position - start_position] = '\0'; /* Null-terminate the line */
-
-	return (line);
-}
-
 
 /**
  * _getline -rter
@@ -91,7 +89,6 @@ char *_getline(const int fd)
 		end_position = find_end_of_line(buffer, i, bytes_read);
 
 		/* Calculate the length of the line and allocate memory for it*/
-		/* null terminator */
 		line_length = end_position - current_position + 1;
 
 		line = allocate_and_copy_line(line, j, buffer, current_position,
@@ -100,10 +97,9 @@ char *_getline(const int fd)
 		/* Move to the next character after the newline */
 		current_position = end_position + 1;
 
-		/* If we found a newline, return the line */
 		if (end_position < bytes_read
 							|| (end_position == bytes_read && line_length > 1))
-			return (line);
+			return (line); /* If we found a newline, return the line */
 	}
 
 	return (NULL);
