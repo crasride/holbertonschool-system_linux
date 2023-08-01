@@ -114,12 +114,14 @@ char *read_line_chars(line_head *current_node)
 {
 char *line = NULL;
 int size = 0, bytes_c = 0, i, j;
+char *tmp = NULL;
+
 while (current_node->bytes > 0)
 {
 	if (size < bytes_c + current_node->bytes + 1)
 	{
 		size += current_node->bytes + 1;
-		char *tmp = malloc(sizeof(char) * size);
+		tmp = malloc(sizeof(char) * size);
 
 		if (!tmp)
 			{
