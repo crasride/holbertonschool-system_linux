@@ -32,28 +32,28 @@ static ssize_t find_end_of_line(char *buffer, ssize_t start_position,
 
 /* find the end of the line in the buffer*/
 static char *allocate_and_copy_line(char *line, ssize_t line_length,
-									char *buffer, ssize_t start_position,
-									ssize_t end_position)
-{
-	ssize_t k, j;
-	char *line_realloc = realloc(line,
-							line_length + end_position - start_position + 1);
-	if (!line_realloc)
+										char *buffer, ssize_t start_position,
+										ssize_t end_position)
 	{
-		free(line); /* Cleanup in case of allocation failure*/
-		return (NULL);
-	}
+		ssize_t k, j;
+		char *line_realloc = realloc(line, line_length + end_position - start_position + 1);
+		if (!line_realloc)
+		{
+			free(line); /* Cleanup in case of allocation failure */
+			return NULL;
+		}
 
-	line = line_realloc;
+		line = line_realloc;
 
-		for (k = start_position, j = 0; k < end_position; k++, j++)
+		for (k = start_position, j = line_length; k < end_position; k++, j++)
 		{
 			line[j] = buffer[k];
 		}
-		line[end_position - start_position] = '\0'; /* Null-terminate the line */
+		line[j] = '\0'; /* Null-terminate the line */
 
-		return (line);
+		return line;
 	}
+
 
 /**
  * _getline -rter
