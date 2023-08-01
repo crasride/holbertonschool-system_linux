@@ -20,53 +20,45 @@
  */
 char *_getline(const int fd)
 {
-    static line_head *lines;
-    line_head *current_node;
-    char *read_data_buffer;
-    int bytes_read;
+	static line_head *lines;
+	line_head *current_node;
+	char *read_data_buffer;
+	int bytes_read;
 
-    if (fd == -1)
-    {
-        free_lines(lines);
-        return (NULL);
-    }
+	if (fd == -1)
+	{
+		free_lines(lines);
+		return (NULL);
+	}
 
-    for (current_node = lines; current_node != NULL;
-         current_node = current_node->next)
-    {
-        if (current_node->fd == fd)
-        {
-            if (current_node->bytes <= 0)
-            {
-                current_node->bytes = read(fd, current_node->buffer, READ_SIZE);
-                if (current_node->bytes < 0)
-                    return (NULL);
-            }
-            return (read_line_chars(current_node));
-        }
-    }
+	for (current_node = lines; current_node != NULL;
+		current_node = current_node->next)
+	{
+		if (current_node->fd == fd)
+		{
+			if (current_node->bytes <= 0)
+				current_node->bytes = read(fd, current_node->buffer, READ_SIZE);
+			return (read_line_chars(current_node));
+		}
+	}
 
-    read_data_buffer = malloc(sizeof(char) * READ_SIZE);
-    if (!read_data_buffer)
-        return (NULL);
+	read_data_buffer = malloc(sizeof(char) * READ_SIZE);
+	bytes_read = read(fd, read_data_buffer, READ_SIZE);
+	if (bytes_read <= 0)
+	{
+		free(read_data_buffer);
+		return (NULL);
+	}
 
-    bytes_read = read(fd, read_data_buffer, READ_SIZE);
-    if (bytes_read <= 0)
-    {
-        free(read_data_buffer);
-        return (NULL);
-    }
+	current_node = add_line_node(&lines, fd, read_data_buffer, bytes_read);
+	if (!current_node)
+	{
+		free(read_data_buffer);
+		return (NULL);
+	}
 
-    current_node = add_line_node(&lines, fd, read_data_buffer, bytes_read);
-    if (!current_node)
-    {
-        free(read_data_buffer);
-        return (NULL);
-    }
-
-    return (read_line_chars(current_node));
+	return (read_line_chars(current_node));
 }
-
 
 /**
  * free_lines - Frees the memory allocated for the linked list of line nodes.
