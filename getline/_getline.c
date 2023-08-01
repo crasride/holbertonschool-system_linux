@@ -47,7 +47,8 @@ static char *allocate_and_copy_line(char *line, ssize_t line_length,
 
 	line = line_realloc;
 
-	for (ssize_t k = start_position, j = 0; k < end_position; k++, j++)
+	ssize_t k, j;
+	for (k = start_position, j = 0; k < end_position; k++, j++)
 	{
 		line[j] = buffer[k];
 	}
@@ -73,6 +74,7 @@ char *_getline(const int fd)
 
 	while (1)
 	{
+		ssize_t end_position;
 		/* Check if no more bytes in buffer,or if it's the first time reading */
 		if (current_position == bytes_read)
 		{
@@ -85,7 +87,7 @@ char *_getline(const int fd)
 		}
 
 		/* Find the end of the line */
-		ssize_t end_position = find_end_of_line(buffer, i, bytes_read);
+		end_position = find_end_of_line(buffer, i, bytes_read);
 
 		/* Calculate the length of the line and allocate memory for it*/
 		/* null terminator */
