@@ -35,6 +35,7 @@ static char *allocate_and_copy_line(char *line, ssize_t line_length,
 									char *buffer, ssize_t start_position,
 									ssize_t end_position)
 {
+	ssize_t k, j;
 	char *line_realloc = realloc(line,
 							line_length + end_position - start_position + 1);
 	if (!line_realloc)
@@ -44,7 +45,6 @@ static char *allocate_and_copy_line(char *line, ssize_t line_length,
 	}
 
 	line = line_realloc;
-	ssize_t k, j;
 
 		for (k = start_position, j = 0; k < end_position; k++, j++)
 		{
