@@ -75,6 +75,7 @@ char *_getline(const int fd)
 	while (1)
 	{
 		ssize_t end_position;
+		ssize_t line_length;
 		/* Check if no more bytes in buffer,or if it's the first time reading */
 		if (current_position == bytes_read)
 		{
@@ -91,7 +92,7 @@ char *_getline(const int fd)
 
 		/* Calculate the length of the line and allocate memory for it*/
 		/* null terminator */
-		ssize_t line_length = end_position - current_position + 1;
+		line_length = end_position - current_position + 1;
 
 		line = allocate_and_copy_line(line, j, buffer, current_position,
 										end_position);
