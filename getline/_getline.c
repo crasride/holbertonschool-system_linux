@@ -113,26 +113,18 @@ line_head *add_line_node(line_head **lines, const int fd, char *buffer,
 char *read_line_chars(line_head *current_node)
 {
 char *line = NULL;
-int size = 0, bytes_c = 0, i, j;
-char *tmp = NULL;
+int size = 0, bytes_c = 0, i;
 
 while (current_node->bytes > 0)
 {
 	if (size < bytes_c + current_node->bytes + 1)
 	{
 		size += current_node->bytes + 1;
-		tmp = malloc(sizeof(char) * size);
-
-		if (!tmp)
-			{
-			free(line);
-			return (NULL);
-			}
-		memcpy(tmp, line, bytes_c);
-		memset(tmp + bytes_c, '\0', size - bytes_c);
-		free(line);
-		line = tmp;
+		line = realloc(line, sizeof(char) * size);
+		if (!line)
+		return (NULL);
 	}
+
 	for (i = 0; i < current_node->bytes; i++)
 	{
 		if (current_node->buffer[i] == '\n')
@@ -140,20 +132,15 @@ while (current_node->bytes > 0)
 			current_node->buffer[i++] = '\0';
 			current_node->bytes -= i;
 			memcpy(line + bytes_c, current_node->buffer, i);
-
-			for (j = 0; i + j < READ_SIZE; j++)
-				current_node->buffer[j] = current_node->buffer[i + j];
-
-			for (; j < READ_SIZE; j++)
-				current_node->buffer[j] = '\0';
-
+			memmove(current_node->buffer, current_node->buffer + i, READ_SIZE - i);
+			memset(current_node->buffer + current_node->bytes, '\0', i);
 			return (line);
 		}
 	}
+
 	memcpy(line + bytes_c, current_node->buffer, current_node->bytes);
 	bytes_c += current_node->bytes;
-	current_node->bytes = read(current_node->fd, current_node->buffer,
-								READ_SIZE);
+	current_node->bytes = read(current_node->fd, current_node->buffer, READ_SIZE);
 }
 return (line);
 }
