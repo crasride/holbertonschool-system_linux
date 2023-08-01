@@ -40,7 +40,7 @@ char *_getline(const int fd)
             {
                 current_node->bytes = read(fd, current_node->buffer, READ_SIZE);
                 if (current_node->bytes < 0)
-                    return (NULL); // Error occurred
+                    return (NULL);
             }
             return (read_line_chars(current_node));
         }
