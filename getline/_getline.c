@@ -78,8 +78,9 @@ char *_getline(const int fd)
 		{
 			bytes_read = read_data(fd, buffer, READ_SIZE);
 			if (bytes_read <= 0)
-				return (NULL); /* End of file or error, return NULL*/
 
+				return (NULL); /* End of file or error, return NULL*/
+			
 			current_position = 0; /* Reset the buffer position */
 			i = 0; /* Reset the line parsing index */
 		}
