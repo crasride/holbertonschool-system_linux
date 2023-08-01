@@ -94,6 +94,12 @@ char *_getline(const int fd)
 		/* Move to the next character after the newline */
 		current_position = end_position + 1;
 
+		if (current_position >= bytes_read)
+		{
+			bytes_read = 0;
+			current_position = 0;
+		}
+
 		if (end_position < bytes_read
 							|| (end_position == bytes_read && line_length > 1))
 			return (line); /* If we found a newline, return the line */
