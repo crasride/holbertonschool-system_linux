@@ -32,28 +32,28 @@ static ssize_t find_end_of_line(char *buffer, ssize_t start_position,
 
 /* find the end of the line in the buffer*/
 static char *allocate_and_copy_line(char *line, ssize_t line_length,
-										char *buffer, ssize_t start_position,
-										ssize_t end_position)
+									char *buffer, ssize_t start_position,
+									ssize_t end_position)
+{
+	ssize_t k, j;
+	char *line_realloc = realloc(line,
+							line_length + end_position - start_position + 1);
+	if (!line_realloc)
 	{
-		ssize_t k, j;
-		char *line_realloc = realloc(line, line_length + end_position - start_position + 1);
-		if (!line_realloc)
-		{
-			free(line); /* Cleanup in case of allocation failure */
-			return NULL;
-		}
+		free(line); /* Cleanup in case of allocation failure*/
+		return (NULL);
+	}
 
-		line = line_realloc;
+	line = line_realloc;
 
-		for (k = start_position, j = line_length; k < end_position; k++, j++)
+		for (k = start_position, j = 0; k < end_position; k++, j++)
 		{
 			line[j] = buffer[k];
 		}
-		line[j] = '\0'; /* Null-terminate the line */
+		line[end_position - start_position] = '\0'; /* Null-terminate the line */
 
-		return line;
+		return (line);
 	}
-
 
 /**
  * _getline -rter
@@ -78,19 +78,21 @@ char *_getline(const int fd)
 		{
 			bytes_read = read_data(fd, buffer, READ_SIZE);
 			if (bytes_read <= 0)
-			{
 				return (NULL); /* End of file or error, return NULL*/
-			}
+
 			current_position = 0; /* Reset the buffer position */
 			i = 0; /* Reset the line parsing index */
 		}
 
 		/* Find the end of the line */
 		end_position = find_end_of_line(buffer, i, bytes_read);
+
 		/* Calculate the length of the line and allocate memory for it*/
 		line_length = end_position - current_position + 1;
+
 		line = allocate_and_copy_line(line, j, buffer, current_position,
 										end_position);
+
 		/* Move to the next character after the newline */
 		current_position = end_position + 1;
 
@@ -101,3 +103,4 @@ char *_getline(const int fd)
 
 	return (NULL);
 }
+
