@@ -138,8 +138,8 @@ while (current_node->bytes > 0)
 			current_node->buffer[i++] = '\0';
 			current_node->bytes -= i;
 			memcpy(line + bytes_c, current_node->buffer, i);
-			for (j = 0; i + j < READ_SIZE; j++, i++)
-				current_node->buffer[j] = current_node->buffer[i];
+			for (j = 0; i + j < READ_SIZE; j++)
+				current_node->buffer[j] = current_node->buffer[i + j];
 			for (; j < READ_SIZE; j++)
 				current_node->buffer[j] = '\0';
 
