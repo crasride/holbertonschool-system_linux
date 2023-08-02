@@ -18,6 +18,7 @@
  * If fd is -1, it frees the resources and returns NULL.
  * If the end-of-file is reached or an error occurs, it returns NULL.
  */
+static int read_calls;
 char *_getline(const int fd)
 {
 	static line_head *lines;
@@ -37,13 +38,16 @@ char *_getline(const int fd)
 		if (current_node->fd == fd)
 		{
 			if (current_node->bytes <= 0)
+			{
+				read_calls++;
 				current_node->bytes = read(fd, current_node->buffer, READ_SIZE);
+			}
 			return (read_line_chars(current_node));
 		}
 	}
-
 	read_data_buffer = malloc(sizeof(char) * READ_SIZE);
 	bytes_read = read(fd, read_data_buffer, READ_SIZE);
+	read_calls++;
 	if (bytes_read <= 0)
 	{
 		free(read_data_buffer);
