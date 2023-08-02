@@ -6,10 +6,6 @@
 #include <errno.h>
 #include "_getline.h"
 
-#ifndef READ_SIZE
-#define READ_SIZE 1024
-#endif
-
 
 /**
  * _getline - Reads a line from a file descriptor and returns it as a string.
@@ -24,29 +20,26 @@ char *_getline(const int fd)
 	line_head *current_node;
 	char *read_data_buffer;
 	int bytes_read;
-	static int read_calls;
 
 	if (fd == -1)
 	{
 		free_lines(lines);
 		return (NULL);
 	}
+
 	for (current_node = lines; current_node != NULL;
 		current_node = current_node->next)
 	{
 		if (current_node->fd == fd)
 		{
 			if (current_node->bytes <= 0)
-			{
-				read_calls++;
 				current_node->bytes = read(fd, current_node->buffer, READ_SIZE);
-			}
 			return (read_line_chars(current_node));
 		}
 	}
+
 	read_data_buffer = malloc(sizeof(char) * READ_SIZE);
 	bytes_read = read(fd, read_data_buffer, READ_SIZE);
-	read_calls++;
 	if (bytes_read <= 0)
 	{
 		free(read_data_buffer);
@@ -59,6 +52,7 @@ char *_getline(const int fd)
 		free(read_data_buffer);
 		return (NULL);
 	}
+
 	return (read_line_chars(current_node));
 }
 
