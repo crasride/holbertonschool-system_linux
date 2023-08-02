@@ -14,16 +14,18 @@
  * @next: pointer to next struct
  */
 
-typedef struct line_node {
-	int fd;
-	int bytes;
-	char *buffer;
-	struct line_node *next;
+typedef struct line_head
+{
+int fd;
+int bytes;
+char *buffer;
+struct line_head *next;
 } line_head;
 
 
 /* Function for our homemade getline */
 char *_getline(const int fd);
+char *read_line_chars(line_head *current_node);
 void free_lines(line_head *lines);
 line_head *add_line_node(line_head **lines, const int fd, char *buffer,
 						int bytes);
