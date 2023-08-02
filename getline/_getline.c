@@ -131,15 +131,15 @@ while (current_node->bytes > 0)
 		free(line);
 		line = tmp;
 	}
-	for (i = 0; i < READ_SIZE; i++)
+	for (i = 0; i < current_node->bytes; i++)
 	{
 		if (current_node->buffer[i] == '\n')
 		{
 			current_node->buffer[i++] = '\0';
 			current_node->bytes -= i;
 			memcpy(line + bytes_c, current_node->buffer, i);
-			for (j = 0; i < READ_SIZE; j++, i++)
-				current_node->buffer[j] = current_node->buffer[i];
+			for (j = 0; i + j < READ_SIZE; j++)
+				current_node->buffer[j] = current_node->buffer[i + j];
 			for (; j < READ_SIZE; j++)
 				current_node->buffer[j] = '\0';
 
