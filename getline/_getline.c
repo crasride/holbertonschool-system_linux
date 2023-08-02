@@ -7,7 +7,7 @@
 #include "_getline.h"
 
 #ifndef READ_SIZE
-#define READ_SIZE 1024
+#define READ_SIZE 1
 #endif
 
 
@@ -56,7 +56,6 @@ char *_getline(const int fd)
 		free(read_data_buffer);
 		return (NULL);
 	}
-
 	return (read_line_chars(current_node));
 }
 
