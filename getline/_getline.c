@@ -18,20 +18,19 @@
  * If fd is -1, it frees the resources and returns NULL.
  * If the end-of-file is reached or an error occurs, it returns NULL.
  */
-static int read_calls;
 char *_getline(const int fd)
 {
 	static line_head *lines;
 	line_head *current_node;
 	char *read_data_buffer;
 	int bytes_read;
+	static int read_calls;
 
 	if (fd == -1)
 	{
 		free_lines(lines);
 		return (NULL);
 	}
-
 	for (current_node = lines; current_node != NULL;
 		current_node = current_node->next)
 	{
