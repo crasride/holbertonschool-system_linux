@@ -2,7 +2,8 @@
     <img width="150" height="150" src="./images/c.webp">
 </p>
 
-<h1 align="center">Holberton School :
+<h1 align="center">Holberton School
+
 Spe - System programming & Algorithm :</h1>
 This repository contains files written in C.
 
