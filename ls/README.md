@@ -79,7 +79,7 @@ hls: cannot access test/random: No such file or directory
 wilfried@~$
 ```
 
-### Repo:
+## Repo:
 
 GitHub repository: `holbertonschool-system_linux`
 
@@ -111,7 +111,7 @@ folder3
 wilfried@~$
 ```
 
-### Repo:
+## Repo:
 
 GitHub repository: `holbertonschool-system_linux`
 
@@ -131,7 +131,7 @@ wilfried@~$ ./hls -a test/folder1
 wilfried@~$
 ```
 
-### Repo:
+## Repo:
 
 GitHub repository: `holbertonschool-system_linux`
 
@@ -151,7 +151,7 @@ folder1-1  folder1-2  folder1-3
 wilfried@~$
 ```
 
-### Repo:
+## Repo:
 
 GitHub repository: `holbertonschool-system_linux`
 
@@ -182,7 +182,7 @@ drwxrwxr-x 3 wilfried wilfried 4096 May  7 15:37 folder3
 wilfried@~$
 ```
 
-### Repo:
+## Repo:
 
 GitHub repository: `holbertonschool-system_linux`
 
