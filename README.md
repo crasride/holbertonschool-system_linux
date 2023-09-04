@@ -1,6 +1,8 @@
-<p align="center">
-    <img width="150" height="150" src="./images/c.webp">
-</p>
+<div style="text-align: center;">
+<img width="150" height="150" src="./images/c.webp" style="display: inline-block;">
+<img width="150" height="150" src="./images/python.png" style="display: inline-block;; margin-left: 20px;">
+</div>
+
 
 <h1 align="center">Holberton School
 
