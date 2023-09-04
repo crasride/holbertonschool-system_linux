@@ -5,7 +5,7 @@
 <h1 align="center">Holberton School
 
 Spe - System programming & Algorithm :</h1>
-This repository contains files written in C.
+This repository contains files written in C & Python.
 
 The list of projects contained follows :
 
