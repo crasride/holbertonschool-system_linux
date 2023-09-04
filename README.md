@@ -11,7 +11,7 @@ The list of projects contained follows :
 
 * [C - ls](./ls/)
 * [C - Static variables, getline](./getline/)
-* [C - Python - /proc filesystem](./pro_filesysytem/)
+* [Python - /proc filesystem](./pro_filesysytem/)
 
 
 ## Author 
