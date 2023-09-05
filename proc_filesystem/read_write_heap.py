@@ -51,10 +51,17 @@ def find_and_replace_string(pid, search_string, replace_string):
             if offset != -1:
                 print("Found '{}' at {}".format(search_string,
                                                 hex(start + offset)))
-                print("Writing '{}' at {}".format(replace_string,
-                                                  hex(start + offset)))
-                mem.seek(start + offset)
-                mem.write(replace_string.encode("ASCII") + b'\0')
+                if replace_string:
+                    print("Writing '{}' at {}".format(replace_string,
+                                                      hex(start + offset)))
+                    mem.seek(start + offset)
+                    mem.write(replace_string.encode("ASCII") + b'\0')
+                else:
+                    print("Deleting '{}' at {}".format(search_string,
+                                                       hex(start + offset)))
+                    # Replace with empty string by overwriting with null bytes
+                    mem.seek(start + offset)
+                    mem.write(b'\0' * len(search_string.encode("ASCII")))
             else:
                 print("Can't find '{}' in the heap.".format(search_string))
     except IOError as e:
@@ -70,7 +77,8 @@ def main():
     search_string = sys.argv[2]
     replace_string = sys.argv[3]
 
-    if not search_string or not replace_string:
+    if not search_string:
+        print("Search string cannot be empty.")
         print_usage()
 
     find_and_replace_string(pid, search_string, replace_string)
