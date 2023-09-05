@@ -5,11 +5,13 @@ Script that finds and replaces a string in the heap of a running process.
 import sys
 
 
+# Function to print usage information
 def print_usage():
     print("Usage: {} [PID] search_string replace_string".format(sys.argv[0]))
     sys.exit(1)
 
 
+# Function to read memory mapping of a process
 def read_process_memory(pid):
     maps_file = "/proc/{}/maps".format(pid)
     mem_file = "/proc/{}/mem".format(pid)
@@ -36,6 +38,7 @@ def read_process_memory(pid):
     return None, None
 
 
+# Function to find and replace a string in the process's heap
 def find_and_replace_string(pid, search_string, replace_string):
     start, end = read_process_memory(pid)
 
@@ -49,13 +52,16 @@ def find_and_replace_string(pid, search_string, replace_string):
             offset = heap.find(search_string.encode("ASCII"))
 
             if offset != -1:
+                # If the search string is found in the heap
                 print("Found '{}' at {}".format(search_string,
                                                 hex(start + offset)))
+                # If a replacement string is provided
                 if replace_string:
                     print("Writing '{}' at {}".format(replace_string,
                                                       hex(start + offset)))
                     mem.seek(start + offset)
                     mem.write(replace_string.encode("ASCII") + b'\0')
+                # If the replacement string is empty (deleting)
                 else:
                     print("Deleting '{}' at {}".format(search_string,
                                                        hex(start + offset)))
@@ -63,14 +69,18 @@ def find_and_replace_string(pid, search_string, replace_string):
                     mem.seek(start + offset)
                     mem.write(b'\0' * len(search_string.encode("ASCII")))
             else:
+                # If the search string is not found in the heap
                 print("Can't find '{}' in the heap.".format(search_string))
     except IOError as e:
+        # Handle file open error when working with /proc/<PID>/mem
         print("[ERROR] Can't open memory file for PID {}: I/O error({}): {}"
               .format(pid, e.errno, e.strerror))
 
 
+# Main function
 def main():
     if len(sys.argv) != 4:
+        # Check if the correct number of command-line arguments is provided
         print_usage()
 
     pid = int(sys.argv[1])
@@ -84,5 +94,6 @@ def main():
     find_and_replace_string(pid, search_string, replace_string)
 
 
+# Entry point of the script
 if __name__ == "__main__":
     main()
