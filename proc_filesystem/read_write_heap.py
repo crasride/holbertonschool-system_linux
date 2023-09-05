@@ -2,84 +2,72 @@
 '''
 Script that finds and replaces a string in the heap of a running process.
 '''
-
 import sys
 
 
-# Función para encontrar la dirección del heap en el proceso especificado.
-def find_heap_address(pid):
-    maps_path = f"/proc/{pid}/maps"
-    heap_info = None
-
-    with open(maps_path) as maps:
-        for line in maps:
-            if "[heap]" in line:
-                parts = line.split()
-                # Parsea las partes relevantes del archivo /proc/pid/maps.
-                start, end = map(lambda x: int(x, 16), parts[0].split('-'))
-                mode = parts[1]
-                offset = parts[2]
-                device = parts[3]
-                inode = parts[4]
-                # Almacena la información del heap en un diccionario.
-                heap_info = {
-                    "start": start,
-                    "end": end,
-                    "mode": mode,
-                    "offset": offset,
-                    "device": device,
-                    "inode": inode
-                }
-                break
-
-    return heap_info
+def print_usage():
+    print("Usage: {} [PID] search_string replace_string".format(sys.argv[0]))
+    sys.exit(1)
 
 
-# Función para reemplazar una cadena en el heap del proceso especificado.
-def replace_string_in_heap(pid, search_string, replace_string):
-    mem_path = f"/proc/{pid}/mem"
-    heap = find_heap_address(pid)
+def read_process_memory(pid):
+    maps_file = "/proc/{}/maps".format(pid)
+    mem_file = "/proc/{}/mem".format(pid)
 
-    if heap is None:
-        print("Heap not found")
+    try:
+        with open(maps_file, 'r') as maps:
+            for line in maps:
+                if "[heap]" in line:
+                    start, end = map(lambda x: int(x, 16), line.split()[0].split("-"))
+                    print("Found [heap]:")
+                    print("    addresses =", line.split()[0])
+                    print("    permissions =", line.split()[1])
+                    print("    offset =", line.split()[2])
+                    print("    device =", line.split()[3])
+                    print("    inode =", line.split()[4])
+                    print("    Addr start [{}] | end [{}]".format(line.split()[0].split("-")[0], line.split()[0].split("-")[1]))
+                    return start, end
+    except IOError as e:
+        print("[ERROR] Can't open file {}: I/O error({}): {}".format(maps_file, e.errno, e.strerror))
+    return None, None
+
+
+def find_and_replace_string(pid, search_string, replace_string):
+    start, end = read_process_memory(pid)
+
+    if start is None or end is None:
         return
 
-    print(":Found [heap]:")
-    print(f"\taddresses = {heap['start']:X}-{heap['end']:X}")
-    print(f"\tpermissions = {heap['mode']}")
-    print(f"\toffset = {heap['offset']}")
-    print(f"\tdevice = {heap['device']}")
-    print(f"\tinode = {heap['inode']}")
-    print(f"Addr start [{heap['start']:X}] | end [{heap['end']:X}]")
+    try:
+        with open("/proc/{}/mem".format(pid), 'rb+') as mem:
+            mem.seek(start)
+            heap = mem.read(end - start)
+            offset = heap.find(search_string.encode("ASCII"))
 
-    if not replace_string:
-        replace_string = ' ' * len(search_string)
+            if offset != -1:
+                print("Found '{}' at {}".format(search_string, hex(start + offset)))
+                print("Writing '{}' at {}".format(replace_string, hex(start + offset)))
+                mem.seek(start + offset)
+                mem.write(replace_string.encode("ASCII") + b'\0')
+            else:
+                print("Can't find '{}' in the heap.".format(search_string))
+    except IOError as e:
+        print("[ERROR] Can't open memory file for PID {}: I/O error({}): {}".format(pid, e.errno, e.strerror))
 
-    with open(mem_path, 'rb+') as mem:
-        mem.seek(heap['start'])
-        heap_memory = mem.read(heap['end'] - heap['start'])
 
-        try:
-            i = heap_memory.index(search_string.encode("ASCII"))
-            print(f"Found '{search_string}' at {i:X}")
-        except ValueError:
-            print("No matching string found")
-            return
+def main():
+    if len(sys.argv) != 4:
+        print_usage()
 
-        mem.seek(heap['start'] + i)
-        mem.write(replace_string.encode("ASCII"))
-        print(f"Writing '{replace_string}' at {heap['start'] + i:X}")
+    pid = int(sys.argv[1])
+    search_string = sys.argv[2]
+    replace_string = sys.argv[3]
+
+    if not search_string or not replace_string:
+        print_usage()
+
+    find_and_replace_string(pid, search_string, replace_string)
 
 
 if __name__ == "__main__":
-    if len(sys.argv) != 4:
-        print("Usage: {} pid search_string replace_string".format(sys.argv[0]))
-        sys.exit(1)
-
-    pid, search, replace = sys.argv[1:]
-
-    if not pid or not search:
-        print("Missing value")
-        sys.exit(1)
-
-    replace_string_in_heap(pid, search, replace)
+    main()
