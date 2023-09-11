@@ -19,6 +19,20 @@ const char *get_osabi_name(uint8_t osabi)
 	}
 }
 
+const char *get_osabi_version(uint8_t version)
+{
+	switch (version)
+	{
+		case ELFOSABI_NONE:
+			return "0";
+		case ELFOSABI_NETBSD:
+			return "0";
+		case ELFOSABI_SOLARIS:
+			return "1";
+		default:
+			return "unknown version";
+	}
+}
 const char *get_osabi_type(uint16_t type)
 {
 	switch (type)
@@ -90,7 +104,7 @@ void print_elf32_header(Elf32_Header *elf32)
 	printf("  Data:                              %s\n", get_osabi_data(elf32->ehdr.e_ident[EI_DATA]));
 	printf("  Version:                           %d (current)\n", elf32->ehdr.e_version);
 	printf("  OS/ABI:                            %s\n", get_osabi_name(elf32->ehdr.e_ident[EI_OSABI]));
-	printf("  ABI Version:                       %d\n", elf32->ehdr.e_ident[EI_OSABI]);
+	printf("  ABI Version:                       %s\n", get_osabi_version(elf32->ehdr.e_ident[EI_OSABI]));
 	printf("  Type:                              %s\n", get_osabi_type(elf32->ehdr.e_type));
 	printf("  Machine:                           %s\n", get_osabi_machine(elf32->ehdr.e_machine));
 	printf("  Version:                           0x%x\n", elf32->ehdr.e_version);
@@ -120,7 +134,8 @@ void print_elf64_header(Elf64_Header *elf64)
 	printf("  Data:                              %s\n", get_osabi_data(elf64->ehdr.e_ident[EI_DATA]));
 	printf("  Version:                           %d (current)\n", elf64->ehdr.e_version);
 	printf("  OS/ABI:                            %s\n", get_osabi_name(elf64->ehdr.e_ident[EI_OSABI]));
-	printf("  ABI Version:                       %d\n", elf64->ehdr.e_ident[EI_OSABI]);
+	/* printf("  ABI Version:                       %d\n", elf64->ehdr.e_ident[EI_OSABI]); */
+	printf("  ABI Version:                       %s\n", get_osabi_version(elf64->ehdr.e_ident[EI_OSABI]));
 	printf("  Type:                              %s\n", get_osabi_type(elf64->ehdr.e_type));
 	printf("  Machine:                           %s\n", get_osabi_machine(elf64->ehdr.e_machine));
 	printf("  Version:                           0x%x\n", elf64->ehdr.e_version);
