@@ -26,7 +26,7 @@ const char *get_osabi_type(uint16_t type)
 		case ET_NONE:
 			return ("An unknown type");
 		case ET_DYN:
-			return "DYN (Shared object)";
+			return "DYN (Shared object file)";
 		case ET_EXEC:
 			return "EXEC (Executable file)";
 		case ET_REL:
