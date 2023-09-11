@@ -2,6 +2,8 @@
 #define HELF_H
 
 #include <elf.h>
+#include <stdio.h>
+#include <stdlib.h>
 
 typedef struct
 {
