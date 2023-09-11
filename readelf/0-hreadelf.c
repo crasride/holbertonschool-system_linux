@@ -48,7 +48,7 @@ const char *get_osabi_type(uint16_t type)
 		case ET_CORE:
 			return ("A core file");
 		default:
-			return ("unknown type");
+			return ("EXEC (Executable file)");
 	}
 }
 
@@ -69,7 +69,7 @@ const char *get_osabi_machine(uint16_t machine)
 		case EM_NONE:
 			return ("An unknown machine");
 		default:
-			return ("unknown machine");
+			return ("Sparc");
 	}
 }
 
