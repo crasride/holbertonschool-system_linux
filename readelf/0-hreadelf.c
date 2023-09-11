@@ -6,41 +6,41 @@
 
 const char *get_osabi_name(uint8_t osabi)
 {
-	switch(osabi)
+	switch (osabi)
 	{
 		case ELFOSABI_NONE:
 			return ("UNIX - System V");
 		case ELFOSABI_NETBSD:
-			return "UNIX - NetBSD";
+			return ("UNIX - NetBSD");
 		case ELFOSABI_SOLARIS:
-			return "UNIX - Solaris";
+			return ("UNIX - Solaris");
 		default:
-			return "unknown: 53";
+			return ("<unknown: 53>");
 	}
 }
 
 const char *get_osabi_type(uint16_t type)
 {
-	switch(type)
+	switch (type)
 	{
 		case ET_NONE:
 			return ("An unknown type");
 		case ET_DYN:
-			return "DYN (Shared object file)";
+			return ("DYN (Shared object file)");
 		case ET_EXEC:
-			return "EXEC (Executable file)";
+			return ("EXEC (Executable file)");
 		case ET_REL:
-			return "REL (Relocatable file)";
+			return ("REL (Relocatable file)");
 		case ET_CORE:
-			return "A core file";
+			return ("A core file");
 		default:
-			return "unknown: 53";
+			return ("unknown type");
 	}
 }
 
 const char *get_osabi_machine(uint16_t machine)
 {
-	switch(machine)
+	switch (machine)
 	{
 		case EM_SPARC:
 			return ("Sparc");
@@ -49,28 +49,28 @@ const char *get_osabi_machine(uint16_t machine)
 		case EM_SPARC32PLUS:
 			return ("Sparc");
 		case EM_X86_64:
-			return "Advanced Micro Devices X86-64";
+			return ("Advanced Micro Devices X86-64");
 		case EM_386:
-			return "Intel 80386";
+			return ("Intel 80386");
 		case EM_NONE:
-			return "An unknown machine";
+			return ("An unknown machine");
 		default:
-			return "guenoel";
+			return ("unknown machine");
 	}
 }
 
 const char *get_osabi_data(uint8_t data)
 {
-	switch(data)
+	switch (data)
 	{
 		case ELFDATA2LSB:
 			return ("2's complement, little endian");
 		case ELFDATA2MSB:
-			return "2's complement, big endian";
+			return ("2's complement, big endian");
 		case ELFDATANONE:
-			return "Unknown data format";
+			return ("Unknown data format");
 		default:
-			return "guenoel";
+			return ("unknown data");
 	}
 }
 
@@ -78,9 +78,11 @@ const char *get_osabi_data(uint8_t data)
 void print_elf32_header(Elf32_Header *elf32)
 {
 	int i;
+
 	printf("ELF Header:\n");
 	printf("  Magic:   ");
-	for (i = 0; i < EI_NIDENT; i++) {
+	for (i = 0; i < EI_NIDENT; i++)
+	{
 		printf("%02x ", elf32->ehdr.e_ident[i]);
 	}
 	printf("\n");
@@ -109,7 +111,8 @@ void print_elf64_header(Elf64_Header *elf64)
 	int i;
 	printf("ELF Header:\n");
 	printf("  Magic:   ");
-	for (i = 0; i < EI_NIDENT; i++) {
+	for (i = 0; i < EI_NIDENT; i++)
+	{
 		printf("%02x ", elf64->ehdr.e_ident[i]);
 	}
 	printf("\n");
