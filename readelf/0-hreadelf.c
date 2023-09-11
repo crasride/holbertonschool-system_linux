@@ -1,7 +1,5 @@
 #include <elf.h>
 #include "hreadelf.h"
-#include <stdio.h>
-#include <stdlib.h>
 
 
 const char *get_osabi_name(uint8_t osabi)
@@ -101,21 +99,32 @@ void print_elf32_header(Elf32_Header *elf32)
 	}
 	printf("\n");
 	printf("  Class:                             ELF32\n");
-	printf("  Data:                              %s\n", get_osabi_data(elf32->ehdr.e_ident[EI_DATA]));
-	printf("  Version:                           %d (current)\n", elf32->ehdr.e_version);
-	printf("  OS/ABI:                            %s\n", get_osabi_name(elf32->ehdr.e_ident[EI_OSABI]));
-	printf("  ABI Version:                       %s\n", get_osabi_version(elf32->ehdr.e_ident[EI_OSABI]));
-	printf("  Type:                              %s\n", get_osabi_type(elf32->ehdr.e_type));
-	printf("  Machine:                           %s\n", get_osabi_machine(elf32->ehdr.e_machine));
+	printf("  Data:                              %s\n",
+			get_osabi_data(elf32->ehdr.e_ident[EI_DATA]));
+	printf("  Version:                           %d (current)\n",
+			elf32->ehdr.e_version);
+	printf("  OS/ABI:                            %s\n",
+			get_osabi_name(elf32->ehdr.e_ident[EI_OSABI]));
+	printf("  ABI Version:                       %s\n",
+			get_osabi_version(elf32->ehdr.e_ident[EI_OSABI]));
+	printf("  Type:                              %s\n",
+			get_osabi_type(elf32->ehdr.e_type));
+	printf("  Machine:                           %s\n",
+			get_osabi_machine(elf32->ehdr.e_machine));
 	printf("  Version:                           0x%x\n", elf32->ehdr.e_version);
 	printf("  Entry point address:               0x%x\n", elf32->ehdr.e_entry);
-	printf("  Start of program headers:          %d (bytes into file)\n", elf32->ehdr.e_phoff);
-	printf("  Start of section headers:          %d (bytes into file)\n", elf32->ehdr.e_shoff);
+	printf("  Start of program headers:          %d (bytes into file)\n",
+			elf32->ehdr.e_phoff);
+	printf("  Start of section headers:          %d (bytes into file)\n",
+			elf32->ehdr.e_shoff);
 	printf("  Flags:                             0x%x\n", elf32->ehdr.e_flags);
-	printf("  Size of this header:               %d (bytes)\n", elf32->ehdr.e_ehsize);
-	printf("  Size of program headers:           %d (bytes)\n", elf32->ehdr.e_phentsize);
+	printf("  Size of this header:               %d (bytes)\n",
+			elf32->ehdr.e_ehsize);
+	printf("  Size of program headers:           %d (bytes)\n",
+			elf32->ehdr.e_phentsize);
 	printf("  Number of program headers:         %d\n", elf32->ehdr.e_phnum);
-	printf("  Size of section headers:           %d (bytes)\n", elf32->ehdr.e_shentsize);
+	printf("  Size of section headers:           %d (bytes)\n",
+			elf32->ehdr.e_shentsize);
 	printf("  Number of section headers:         %d\n", elf32->ehdr.e_shnum);
 	printf("  Section header string table index: %d\n", elf32->ehdr.e_shstrndx);
 }
@@ -123,6 +132,7 @@ void print_elf32_header(Elf32_Header *elf32)
 void print_elf64_header(Elf64_Header *elf64)
 {
 	int i;
+
 	printf("ELF Header:\n");
 	printf("  Magic:   ");
 	for (i = 0; i < EI_NIDENT; i++)
@@ -131,22 +141,34 @@ void print_elf64_header(Elf64_Header *elf64)
 	}
 	printf("\n");
 	printf("  Class:                             ELF64\n");
-	printf("  Data:                              %s\n", get_osabi_data(elf64->ehdr.e_ident[EI_DATA]));
-	printf("  Version:                           %d (current)\n", elf64->ehdr.e_version);
-	printf("  OS/ABI:                            %s\n", get_osabi_name(elf64->ehdr.e_ident[EI_OSABI]));
-	/* printf("  ABI Version:                       %d\n", elf64->ehdr.e_ident[EI_OSABI]); */
-	printf("  ABI Version:                       %s\n", get_osabi_version(elf64->ehdr.e_ident[EI_OSABI]));
-	printf("  Type:                              %s\n", get_osabi_type(elf64->ehdr.e_type));
-	printf("  Machine:                           %s\n", get_osabi_machine(elf64->ehdr.e_machine));
+	printf("  Data:                              %s\n",
+			get_osabi_data(elf64->ehdr.e_ident[EI_DATA]));
+	printf("  Version:                           %d (current)\n",
+			elf64->ehdr.e_version);
+	printf("  OS/ABI:                            %s\n",
+			get_osabi_name(elf64->ehdr.e_ident[EI_OSABI]));
+	/* printf("  ABI Version:        %d\n", elf64->ehdr.e_ident[EI_OSABI]); */
+	printf("  ABI Version:                       %s\n",
+			get_osabi_version(elf64->ehdr.e_ident[EI_OSABI]));
+	printf("  Type:                              %s\n",
+			get_osabi_type(elf64->ehdr.e_type));
+	printf("  Machine:                           %s\n",
+			get_osabi_machine(elf64->ehdr.e_machine));
 	printf("  Version:                           0x%x\n", elf64->ehdr.e_version);
 	printf("  Entry point address:               0x%lx\n", elf64->ehdr.e_entry);
-	printf("  Start of program headers:          %ld (bytes into file)\n", (long)elf64->ehdr.e_phoff);
-	printf("  Start of section headers:          %ld (bytes into file)\n", elf64->ehdr.e_shoff);
+	printf("  Start of program headers:          %ld (bytes into file)\n",
+			(long)elf64->ehdr.e_phoff);
+	printf("  Start of section headers:          %ld (bytes into file)\n",
+			elf64->ehdr.e_shoff);
 	printf("  Flags:                             0x%x\n", elf64->ehdr.e_flags);
-	printf("  Size of this header:               %d (bytes)\n", elf64->ehdr.e_ehsize);
-	printf("  Size of program headers:           %d (bytes)\n", elf64->ehdr.e_phentsize);
-	printf("  Number of program headers:         %d\n", elf64->ehdr.e_phnum);
-	printf("  Size of section headers:           %d (bytes)\n", elf64->ehdr.e_shentsize);
+	printf("  Size of this header:               %d (bytes)\n",
+			elf64->ehdr.e_ehsize);
+	printf("  Size of program headers:           %d (bytes)\n",
+			elf64->ehdr.e_phentsize);
+	printf("  Number of program headers:         %d\n",
+			elf64->ehdr.e_phnum);
+	printf("  Size of section headers:           %d (bytes)\n",
+			elf64->ehdr.e_shentsize);
 	printf("  Number of section headers:         %d\n", elf64->ehdr.e_shnum);
 	printf("  Section header string table index: %d\n", elf64->ehdr.e_shstrndx);
 }
