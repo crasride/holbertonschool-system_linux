@@ -24,13 +24,13 @@ const char *get_osabi_version(uint8_t version)
 	switch (version)
 	{
 		case ELFOSABI_NONE:
-			return "0";
+			return ("0");
 		case ELFOSABI_NETBSD:
-			return "0";
+			return ("0");
 		case ELFOSABI_SOLARIS:
-			return "1";
+			return ("1");
 		default:
-			return "unknown version";
+			return ("0");
 	}
 }
 const char *get_osabi_type(uint16_t type)
