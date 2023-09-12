@@ -110,18 +110,6 @@ void print_elf64_header(Elf64_Header *elf64)
 	printf("  Section header string table index: %d\n", elf64->ehdr.e_shstrndx);
 }
 
-uint16_t my_be16toh(uint16_t value)
-{
-	return (((value >> 8) & 0xFF) | ((value & 0xFF) << 8));
-}
-
-uint32_t my_be32toh(uint32_t value)
-{
-	return (((value >> 24) & 0xFF) |
-		((value >>  8) & 0xFF00) |
-		((value & 0xFF00) <<  8) |
-		((value & 0xFF) << 24));
-}
 
 void read_elf32_be_header(Elf32_Header *elf32, FILE *file)
 {
@@ -180,14 +168,10 @@ int main(int argc, char *argv[])
 			print_elf64_header(&elf64);
 		}
 		else if (elf32.ehdr.e_ident[EI_CLASS] == ELFCLASS32)
-		{
 			print_elf32_header(&elf32);/*ELF de 32 bitsformato little-endian */
-		}
 		else
-		{
 			fprintf(stderr, "Format not supported\n");
 		}
-	}
 	fclose(file);
 	return (0);
 }
