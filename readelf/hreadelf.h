@@ -24,4 +24,8 @@ const char *get_osabi_type(uint16_t type);
 const char *get_osabi_machine(uint16_t machine);
 const char *get_osabi_data(uint8_t data);
 
+/* Functions 0-hreadelf_convert.c */
+uint16_t my_be16toh(uint16_t value);
+uint32_t my_be32toh(uint32_t value);
+
 #endif /* HELF_H */

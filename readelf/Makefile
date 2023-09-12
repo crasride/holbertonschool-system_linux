@@ -2,8 +2,8 @@
 CC = gcc
 
 # Compiler Flags
-CFLAGS = -Wall -Werror -Wextra -pedantic
-FILES_0 = 0-hreadelf_tools.c
+CFLAGS = -std=c90 -Wall -Werror -Wextra -pedantic
+FILES_0 = 0-hreadelf_tools.c 0-hreadelf_convert.c
 
 # Linker Flags (empty in this case)
 LDFLAGS =
