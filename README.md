@@ -1,22 +1,25 @@
-<div style="text-align: center;">
-<img width="150" height="150" src="./images/c.webp" style="display: inline-block;">
-<img width="150" height="150" src="./images/python.png" style="display: inline-block; margin-left: 20px;">
-</div>
+<p align="center">
+	<img width="150" height="150" src="./images/c.webp" alt="C Logo">
+	<img width="150" height="150" src="./images/python.png" alt="Python Logo">
+</p>
+
 
 
 <h1 align="center">Holberton School
 
-Spe - System programming & Algorithm :</h1>
+Spe - System programming & Low Level :</h1>
 This repository contains files written in C & Python.
 
 The list of projects contained follows :
 
 * [C - ls](./ls/)
 * [C - Static variables, getline](./getline/)
+* [C - ELF: readelf](./)
 * [Python - /proc filesystem](./proc_filesystem/)
 
 
-## Author 
+
+## Author
 
 * José Fernàndez Armas
 
