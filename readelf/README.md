@@ -90,7 +90,7 @@ Check out `/usr/include/elf.h`
 - [x] Shared library `.so`
 - [ ] Static library `.a`
 - [ ] Compiled Python file `.pyc`
-- [ x] Executable file linked with `ld`
+- [ ] Executable file linked with `ld`
 - [x] Core dump
 
 ## Question #3
