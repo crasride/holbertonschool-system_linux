@@ -165,28 +165,32 @@ const char *getSectionFlags(unsigned int sh_flags)
 }
 const char *getSectionTypeName(unsigned int sh_type)
 {
-	switch (sh_type)
-	{
-	case SHT_NULL:    return "NULL";
-	case SHT_PROGBITS:    return "PROGBITS";
-	case SHT_RELA:        return "RELA";
-	case SHT_NOTE:        return "NOTE";
-	case SHT_HASH:        return "HASH";
-	case SHT_DYNSYM:    return "DYNSYM";
-	case SHT_STRTAB:        return "STRTAB";
-	case SHT_REL:        return "REL";
-	case SHT_NOBITS:        return "NOBITS";
-	case SHT_SYMTAB:        return "SYMTAB";
-	case SHT_INIT_ARRAY:        return "INI_ARRAY";
-	case SHT_FINI_ARRAY:        return "FINI_ARRAY";
-	case DT_VERSYM:        return "VERSYM";
-	case SHT_GNU_versym:        return "VERSYM";
-	case DT_VERNEED:        return "VERNEED";
-	case SHT_DYNAMIC:        return "DYNAMIC";
-	case SHT_GNU_HASH:        return "GNU_HASH";
-	default:               return "UNKNOWN";
-	}
+    switch (sh_type)
+    {
+    case SHT_NULL:         return "NULL";
+    case SHT_PROGBITS:     return "PROGBITS";
+    case SHT_RELA:         return "RELA";
+    case SHT_NOTE:         return "NOTE";
+    case SHT_HASH:         return "HASH";
+    case SHT_DYNSYM:       return "DYNSYM";
+    case SHT_STRTAB:       return "STRTAB";
+    case SHT_REL:          return "REL";
+    case SHT_NOBITS:       return "NOBITS";
+    case SHT_SYMTAB:       return "SYMTAB";
+    case SHT_INIT_ARRAY:   return "INI_ARRAY";
+    case SHT_FINI_ARRAY:   return "FINI_ARRAY";
+    case DT_VERSYM:        return "VERSYM";
+    case SHT_GNU_versym:   return "VERSYM";
+    case DT_VERNEED:       return "VERNEED";
+    case SHT_DYNAMIC:      return "DYNAMIC";
+    case SHT_GNU_HASH:     return "GNU_HASH";
+    case DT_VERDEF:        return "VERDEF";
+    case SHT_LOOS + 0xffffff3: return "LOOS+ffffff3";
+    case SHT_LOOS + 0xffffff1: return "LOOS+ffffff1";
+    default:               return "UNKNOWN";
+    }
 }
+
 char *get_section_name32(Elf32_Shdr section_header, FILE *file)
 {
 	char* SectNames = NULL;
