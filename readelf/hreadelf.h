@@ -56,9 +56,9 @@ typedef struct {
 } MyElf64_Shdr;
 
 
-void printElf32SectionHeader(const MyElf32_Shdr *section_header);
-void printElf64SectionHeader(const MyElf64_Shdr *section_header);
-
+void printElf32SectionHeader(const MyElf32_Shdr *section_header, int section_number);
+void printElf64SectionHeader(const MyElf64_Shdr *section_header, int section_number);
+const char *getSectionTypeName(unsigned int sh_type);
 
 
 

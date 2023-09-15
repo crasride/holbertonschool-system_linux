@@ -35,21 +35,24 @@ int main(int argc, char *argv[])
 		MyElf32_Shdr section_header;
 		printf("There's a 32-bit ELF file.\n");
 
+		int section_number = 0;
+
 		while (fread(&section_header, sizeof(MyElf32_Shdr), 1, file))
 		{
 			/* Print todo */
-			printElf32SectionHeader(&section_header);
+			printElf32SectionHeader(&section_header, section_number);
+			section_number++;
 		}
 	}
 	else if (elf_class == ELFCLASS64)
 	{
 		MyElf64_Shdr section_header;
 		printf("There's a 64-bit ELF file.\n");
-
+		int section_number =0;
 		while (fread(&section_header, sizeof(MyElf64_Shdr), 1, file))
 		{
 			/* Print todo */
-			printElf64SectionHeader(&section_header);
+			printElf64SectionHeader(&section_header, section_number);
 		}
 	}
 	else
@@ -62,20 +65,50 @@ int main(int argc, char *argv[])
 	return 0;
 }
 
-void printElf32SectionHeader(const MyElf32_Shdr *section_header)
+void printElf32SectionHeader(const MyElf32_Shdr *section_header, int section_number)
 {
-printf("  [ %2u] %-16s %-8s %08x %08x %08x %2u %2u %2u %08x\n",
-	section_header->sh_name, "NULL", "NULL", section_header->sh_addr,
+printf("  [%2d] %18s %16s %8d %08x %08x %08x %2u %2u %2u %08x\n",
+	section_number,
+	section_header->sh_name == 0? "NULL" :".strtab",
+	getSectionTypeName(section_header->sh_type),
+	section_header->sh_addr,
+	section_header->sh_offset,
+	section_header->sh_size,
+	section_header->sh_entsize,
+	section_header->sh_flags,
+	section_header->sh_link,
+	section_header->sh_info,
+	section_header->sh_addralign);
+}
+
+void printElf64SectionHeader(const MyElf64_Shdr *section_header, int section_number)
+{
+printf("  [%2d] %2u %-16s %-8s %016lx %016lx %016lx %2u %2lu %2lu %016x\n",
+	section_number,	section_header->sh_name, "NULL", "NULL", section_header->sh_addr,
 	section_header->sh_offset, section_header->sh_size,
 	section_header->sh_type, section_header->sh_flags,
 	section_header->sh_entsize, section_header->sh_link);
 }
 
-void printElf64SectionHeader(const MyElf64_Shdr *section_header)
+
+const char *getSectionTypeName(unsigned int sh_type)
 {
-printf("  [ %2u] %-16s %-8s %016lx %016lx %016lx %2u %2lu %2lu %016x\n",
-	section_header->sh_name, "NULL", "NULL", section_header->sh_addr,
-	section_header->sh_offset, section_header->sh_size,
-	section_header->sh_type, section_header->sh_flags,
-	section_header->sh_entsize, section_header->sh_link);
+    switch (sh_type)
+    {
+	case SHT_NULL:    return "NULL";
+	case SHT_PROGBITS:    return "PROGBITS";
+	case SHT_RELA:        return "RELA";
+	case SHT_HASH:        return "HASH";
+	case SHT_DYNSYM:    return "DYNSYM";
+	case SHT_STRTAB:        return "STRAB";
+	case SHT_REL:        return "REL";
+	case SHT_NOBITS:        return "NOBITS";
+	case SHT_SYMTAB:        return "SYMTAB";
+	case SHT_INIT_ARRAY:        return "INI_ARRAY";
+	case SHT_FINI_ARRAY:        return "FINI_ARRAY";
+	case DT_VERSYM:        return "VERSYM";
+	case DT_VERNEED:        return "VERNEED";
+	case SHT_DYNAMIC:        return "DYNAMIC";
+	default:               return "UNKNOWN";
+    }
 }
