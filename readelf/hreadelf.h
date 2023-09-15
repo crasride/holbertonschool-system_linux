@@ -62,6 +62,10 @@ void printElf32SectionHeader(const MyElf32_Shdr *section_header, int section_num
 void printElf64SectionHeader(const MyElf64_Shdr *section_header, int section_number);
 const char *getSectionTypeName(unsigned int sh_type);
 const char *getSectionFlags(unsigned int sh_flags);
-void print_Section_Info_32bits(int index, Elf32_Shdr section_header);
+void print_Section_Info_32bits(int index, Elf32_Shdr section_header, char *name);
+void print_Section_Info_64bits(int index, Elf64_Shdr section_header, char *name);
+void printKeyToFlags();
+char *get_section_name32(Elf32_Shdr section_header, FILE *file);
+char *get_section_name64(Elf64_Shdr section_header, FILE *file);
 
 #endif /* HELF_H */
