@@ -15,8 +15,7 @@ int main(int argc, char *argv[])
 	char* SectNames = NULL;
 	int is_32bit = 0; /* Variable para detectar si es un archivo de 32 bits */
 	if (argc != 2) {
-		fprintf(stderr, "Uso: %s <archivo ELF>\n", argv[0]);
-		return 1;
+		return (EXIT_SUCCESS);
 	}
 	file = fopen(argv[1], "rb");
 	if (file == NULL) {
@@ -70,12 +69,9 @@ int main(int argc, char *argv[])
 		{
 			char* name = "";
 			fread(&section_header32, sizeof(Elf32_Shdr), 1, file);
-			/* fseek(file, elf_header32.e_shoff + index * sizeof(section_header32), SEEK_SET);
-			fread(&section_header32, 1, sizeof(section_header32), file);
- */
+
 			if (section_header32.sh_name)
 				name = SectNames + section_header32.sh_name;
-			/* fread(&section_header32, sizeof(Elf32_Shdr), 1, file); */
 			/* Llamar a la función para imprimir la información de la sección de 32 bits */
 			print_Section_Info_32bits(index, section_header32, name);
 		}
@@ -88,12 +84,8 @@ int main(int argc, char *argv[])
 			char* name = "";
 			fread(&section_header64, sizeof(Elf64_Shdr), 1, file);
 
-			/* fseek(file, elf_header64.e_shoff + index * sizeof(section_header64), SEEK_SET);
-			fread(&section_header64, 1, sizeof(section_header64), file); */
-
 			if (section_header64.sh_name)
 				name = SectNames + section_header64.sh_name;
-			/* fread(&section_header64, sizeof(Elf64_Shdr), 1, file); */
 			/* Llamar a la función para imprimir la información de la sección de 64 bits */
 			print_Section_Info_64bits(index, section_header64, name);
 		}
