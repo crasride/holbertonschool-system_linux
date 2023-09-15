@@ -70,8 +70,8 @@ int main(int argc, char *argv[])
 		{
 			char* name = "";
 
-			fseek(file, elf_header32.e_shoff + index * sizeof(section_header32), SEEK_SET);
-			fread(&section_header32, 1, sizeof(section_header32), file);
+			/* fseek(file, elf_header32.e_shoff + index * sizeof(section_header32), SEEK_SET);
+			fread(&section_header32, 1, sizeof(section_header32), file); */
 
 			if (section_header32.sh_name)
 				name = SectNames + section_header32.sh_name;
@@ -87,8 +87,8 @@ int main(int argc, char *argv[])
 		{
 			char* name = "";
 
-			fseek(file, elf_header64.e_shoff + index * sizeof(section_header64), SEEK_SET);
-			fread(&section_header64, 1, sizeof(section_header64), file);
+			/* fseek(file, elf_header64.e_shoff + index * sizeof(section_header64), SEEK_SET);
+			fread(&section_header64, 1, sizeof(section_header64), file); */
 
 			if (section_header64.sh_name)
 				name = SectNames + section_header64.sh_name;
