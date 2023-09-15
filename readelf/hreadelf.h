@@ -5,6 +5,8 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <stdint.h>
+#include <unistd.h>
+#include <sys/types.h>
 
 
 typedef struct
@@ -59,7 +61,7 @@ typedef struct {
 void printElf32SectionHeader(const MyElf32_Shdr *section_header, int section_number);
 void printElf64SectionHeader(const MyElf64_Shdr *section_header, int section_number);
 const char *getSectionTypeName(unsigned int sh_type);
-
-
+const char *getSectionFlags(unsigned int sh_flags);
+void print_Section_Info_32bits(int index, Elf32_Shdr section_header);
 
 #endif /* HELF_H */
