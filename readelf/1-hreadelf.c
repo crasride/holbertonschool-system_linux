@@ -14,11 +14,14 @@ int main(int argc, char *argv[])
 	Elf64_Shdr section_header64;
 	char* SectNames = NULL;
 	int is_32bit = 0; /* Variable para detectar si es un archivo de 32 bits */
-	if (argc != 2) {
+
+	if (argc != 2)
+	{
 		return (EXIT_SUCCESS);
 	}
 	file = fopen(argv[1], "rb");
-	if (file == NULL) {
+	if (file == NULL)
+	{
 		perror("No se puede abrir el archivo");
 		return 1;
 	}
@@ -28,6 +31,17 @@ int main(int argc, char *argv[])
 	if (elf_header32.e_ident[EI_CLASS] == ELFCLASS32)
 	{
 		is_32bit = 1;
+
+		/* Detectar el endianness del archivo ELF de 32 bits */
+		if (elf_header32.e_ident[EI_DATA] == ELFDATA2MSB) {
+			printf("Archivo ELF de 32 bits en formato big-endian.\n");
+			/* Si es big-endian, usa la función para leer el encabezado */
+		} else if (elf_header32.e_ident[EI_DATA] == ELFDATA2LSB) {
+			/* Si es little-endian, puedes seguir con el código actual. */
+		} else {
+			printf("Formato de datos ELF de 32 bits no reconocido.\n");
+			return 1;
+		}
 	}
 	else
 	{
@@ -54,18 +68,21 @@ int main(int argc, char *argv[])
 		is_32bit ? elf_header32.e_shnum : elf_header64.e_shnum,
 		section_table_offset);
 	/* Ubicar la tabla de secciones y encabezado de sección */
-	if (is_32bit) {
+	if (is_32bit)
+	{
 		fseek(file, elf_header32.e_shoff, SEEK_SET);
 		printf("Section Headers:\n");
 		printf("  [Nr] Name              Type            Addr     Off    Size   ES Flg Lk Inf Al\n");
 	}
-	else {
+	else
+	{
 		fseek(file, elf_header64.e_shoff, SEEK_SET);
 		printf("Section Headers:\n");
 		printf("  [Nr] Name              Type            Address          Off    Size   ES Flg Lk Inf Al\n");
 	}
 
-	if (is_32bit) {
+	if (is_32bit)
+	{
 		Elf32_Shdr section_header32;
 		for (index = 0; index < elf_header32.e_shnum; index++)
 		{
@@ -179,6 +196,7 @@ const char *getSectionFlags(unsigned int sh_flags)
 	}
 	return flags;
 }
+
 const char *getSectionTypeName(unsigned int sh_type)
 {
     switch (sh_type)
@@ -216,6 +234,7 @@ char *get_section_name32(Elf32_Shdr section_header, FILE *file)
 	fread(SectNames, 1, section_header.sh_size, file);
 	return (SectNames);
 }
+
 char *get_section_name64(Elf64_Shdr section_header, FILE *file)
 {
 	char* SectNames = NULL;
