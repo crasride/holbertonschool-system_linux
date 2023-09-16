@@ -177,7 +177,7 @@ const char *getSectionTypeName(unsigned int sh_type)
     case SHT_REL:          return "REL";
     case SHT_NOBITS:       return "NOBITS";
     case SHT_SYMTAB:       return "SYMTAB";
-    case SHT_INIT_ARRAY:   return "INI_ARRAY";
+    case SHT_INIT_ARRAY:   return "INIT_ARRAY";
     case SHT_FINI_ARRAY:   return "FINI_ARRAY";
     case DT_VERSYM:        return "VERSYM";
     case SHT_GNU_versym:   return "VERSYM";
