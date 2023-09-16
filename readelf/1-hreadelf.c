@@ -56,13 +56,16 @@ int main(int argc, char *argv[])
 	/* Ubicar la tabla de secciones */
 	if (is_32bit) {
 		fseek(file, elf_header32.e_shoff, SEEK_SET);
+		printf("Section Headers:\n");
+		printf("  [Nr] Name              Type            Addr     Off    Size   ES Flg Lk Inf Al\n");
 	}
 	else {
 		fseek(file, elf_header64.e_shoff, SEEK_SET);
+		printf("Section Headers:\n");
+		printf("  [Nr] Name              Type            Addr             Off    Size   ES Flg Lk Inf Al\n");
 	}
 	/* Leer cada entrada de encabezado de sección */
-	printf("Section Headers:\n");
-	printf("  [Nr] Name              Type            Addr     Off    Size   ES Flg Lk Inf Al\n");
+
 	if (is_32bit) {
 		Elf32_Shdr section_header32;
 		for (index = 0; index < elf_header32.e_shnum; index++)
