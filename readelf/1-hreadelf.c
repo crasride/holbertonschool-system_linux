@@ -115,7 +115,7 @@ void print_Section_Info_32bits(int index, Elf32_Shdr section_header, char *name)
 void print_Section_Info_64bits(int index, Elf64_Shdr section_header, char *name)
 {
 	const char *flags = getSectionFlags(section_header.sh_flags);
-	printf("  [%2d] %-17s %-15s %08lx %06lx %06lx %02lx %s %2d %3d %2ld\n",
+	printf("  [%2d] %-17s %-15s %016lx %06lx %06lx %02lx %s %2d %3d %2ld\n",
 		index, name, getSectionTypeName(section_header.sh_type),
 		section_header.sh_addr, section_header.sh_offset,
 		section_header.sh_size, section_header.sh_entsize, flags,
