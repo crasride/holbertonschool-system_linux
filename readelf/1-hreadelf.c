@@ -62,9 +62,9 @@ int main(int argc, char *argv[])
 	else {
 		fseek(file, elf_header64.e_shoff, SEEK_SET);
 		printf("Section Headers:\n");
-		printf("  [Nr] Name              Type            Addr             Off    Size   ES Flg Lk Inf Al\n");
+		printf("  [Nr] Name              Type            Address          Off    Size   ES Flg Lk Inf Al\n");
 	}
-	/* Leer cada entrada de encabezado de sección */
+	/*y encabezado de sección */
 
 	if (is_32bit) {
 		Elf32_Shdr section_header32;
