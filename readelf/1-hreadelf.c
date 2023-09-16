@@ -172,6 +172,11 @@ const char *getSectionFlags(unsigned int sh_flags)
 		flags[i] = 'W';
 		i--;
 	}
+		if (sh_flags & SHF_EXCLUDE)
+	{
+		flags[i] = 'E';
+		i--;
+	}
 	return flags;
 }
 const char *getSectionTypeName(unsigned int sh_type)
