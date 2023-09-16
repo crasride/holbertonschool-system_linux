@@ -53,7 +53,7 @@ int main(int argc, char *argv[])
 	printf("There are %u section headers, starting at offset 0x%lx:\n\n",
 		is_32bit ? elf_header32.e_shnum : elf_header64.e_shnum,
 		section_table_offset);
-	/* Ubicar la tabla de secciones */
+	/* Ubicar la tabla de secciones y encabezado de sección */
 	if (is_32bit) {
 		fseek(file, elf_header32.e_shoff, SEEK_SET);
 		printf("Section Headers:\n");
@@ -64,7 +64,6 @@ int main(int argc, char *argv[])
 		printf("Section Headers:\n");
 		printf("  [Nr] Name              Type            Address          Off    Size   ES Flg Lk Inf Al\n");
 	}
-	/*y encabezado de sección */
 
 	if (is_32bit) {
 		Elf32_Shdr section_header32;
@@ -78,6 +77,7 @@ int main(int argc, char *argv[])
 			/* Llamar a la función para imprimir la información de la sección de 32 bits */
 			print_Section_Info_32bits(index, section_header32, name);
 		}
+		printKeyToFlags_32bits();
 	}
 	else
 	{
@@ -92,17 +92,25 @@ int main(int argc, char *argv[])
 			/* Llamar a la función para imprimir la información de la sección de 64 bits */
 			print_Section_Info_64bits(index, section_header64, name);
 		}
+		printKeyToFlags_64bits();
 	}
-	printKeyToFlags();
 	fclose(file);
 	return 0;
 }
 
 
-void printKeyToFlags()
+void printKeyToFlags_32bits()
 {
 	printf("Key to Flags:\n");
 	printf("  W (write), A (alloc), X (execute), M (merge), S (strings)\n");
+	printf("  I (info), L (link order), G (group), T (TLS), E (exclude), x (unknown)\n");
+	printf("  O (extra OS processing required) o (OS specific), p (processor specific)\n");
+}
+
+void printKeyToFlags_64bits()
+{
+	printf("Key to Flags:\n");
+	printf("  W (write), A (alloc), X (execute), M (merge), S (strings), l (large)\n");
 	printf("  I (info), L (link order), G (group), T (TLS), E (exclude), x (unknown)\n");
 	printf("  O (extra OS processing required) o (OS specific), p (processor specific)\n");
 }
