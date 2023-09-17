@@ -8,7 +8,7 @@
 #include <unistd.h>
 #include <sys/types.h>
 
-
+/* Task 0-hreadelf.c */
 typedef struct
 {
 	Elf32_Ehdr ehdr;
@@ -30,7 +30,7 @@ const char *get_osabi_data(uint8_t data);
 uint16_t my_be16toh(uint16_t value);
 uint32_t my_be32toh(uint32_t value);
 
-
+/* Task 1-hreadelf.c */
 typedef struct {
 	Elf32_Word      sh_name;/* Section name, index in string tbl */
 	Elf32_Word      sh_type;/* Type of section */
@@ -68,5 +68,11 @@ void printKeyToFlags_32bits();
 void printKeyToFlags_64bits();
 char *get_section_name32(Elf32_Shdr section_header, FILE *file);
 char *get_section_name64(Elf64_Shdr section_header, FILE *file);
+
+void read_elf32_be_section(Elf32_Shdr *section_header32);
+void read_elf32_be_header(Elf32_Ehdr *ehdr);
+uint16_t my_be16toh(uint16_t value);
+uint32_t my_be32toh(uint32_t value);
+char *get_section_name32_big(Elf32_Shdr section_header, FILE *file);
 
 #endif /* HELF_H */
