@@ -8,13 +8,33 @@
 #include <unistd.h>
 #include <sys/types.h>
 
-/* Task 0-hreadelf.c */
-typedef struct
+/* ------------------- Task 0-hreadelf.c ----------------------------------*/
+/**
+* struct header32 - Represents a 32-bit ELF header.
+* Structure represents a 32-bit ELF (Executable and Linkable Format) header.
+* It includes a member named 'ehdr' of type 'Elf32_Ehdr', which holds the main
+* ELF header information.
+* ELF header provides essential information about the ELF file format, such
+* as its class (32-bit), data encoding, file type, machine architecture, entry
+* point, program header and section header information, and more.
+* @ehdr: structure is typically used for parsing and working with 32-bit ELF
+*/
+typedef struct header32
 {
 	Elf32_Ehdr ehdr;
 } Elf32_Header;
 
-typedef struct
+/**
+* struct header64 - Represents a 64-bit ELF header.
+* Structure represents a 64-bit ELF (Executable and Linkable Format) header.
+* It includes a member named 'ehdr' of type 'Elf64_Ehdr', which holds the main
+* ELF header information.
+* ELF header provides essential information about the ELF file format, such
+* as its class (64-bit), data encoding, file type, machine architecture, entry
+* point, program header and section header information, and more.
+* @ehdr: structure is typically used for parsing and working with 64-bit ELF
+*/
+typedef struct header64
 {
 	Elf64_Ehdr ehdr;
 } Elf64_Header;
@@ -30,49 +50,139 @@ const char *get_osabi_data(uint8_t data);
 uint16_t my_be16toh(uint16_t value);
 uint32_t my_be32toh(uint32_t value);
 
-/* Task 1-hreadelf.c */
-typedef struct {
-	Elf32_Word      sh_name;/* Section name, index in string tbl */
-	Elf32_Word      sh_type;/* Type of section */
-	Elf32_Word      sh_flags;/* Miscellaneous section attributes */
-	Elf32_Addr      sh_addr;/* Section virtual addr at execution */
-	Elf32_Off       sh_offset;/* Section file offset */
-	Elf32_Word      sh_size;/* Size of section in bytes */
-	Elf32_Word      sh_link;/* Index of another section */
-	Elf32_Word      sh_info;/* Additional section information */
-	Elf32_Word      sh_addralign; /* Section alignment */
-	Elf32_Word      sh_entsize;/* Entry size if section holds table */
+/* Functions 0-hreadelf.c */
+void print_elf32_header(Elf32_Header *elf32);
+void print_elf64_header(Elf64_Header *elf64);
+void read_elf32_be_header0(Elf32_Header *elf32, FILE *file);
+int main(int argc, char *argv[]);
+
+/* ------------------- Task 1-hreadelf.c ----------------------------------*/
+
+/**
+* struct Shdr32 - Represents a 32-bit ELF section header entry.
+* This structure represents a section header entry in a 32-bit ELF (Executable
+* and Linkable Format) file. It stores information about a specific section in
+* the ELF file, including its name, type, flags, memory address, file offset,
+* size, linkage, additional information, alignment, and entry size.
+*
+* The section header is a crucial part of the ELF file format, as it defines
+* the layout and properties of various sections within the file, such as code,
+* data, and symbol tables.
+* Structure is typically used for parsing and working with 32-bit ELF
+*
+* @sh_name: Section name, index in string tbl
+* @sh_type: Type of section
+* @sh_flags: Miscellaneous section attributes
+* @sh_addr: Section virtual addr at execution
+* @sh_offset: Section file offset
+* @sh_size: Size of section in bytes
+* @sh_link: Index of another section
+* @sh_info: Additional section information
+* @sh_addralign:Section alignment
+* @sh_entsize: Entry size if section holds table
+*/
+typedef struct Shdr32
+{
+	Elf32_Word sh_name;
+	Elf32_Word sh_type;
+	Elf32_Word sh_flags;
+	Elf32_Addr sh_addr;
+	Elf32_Off sh_offset;
+	Elf32_Word sh_size;
+	Elf32_Word sh_link;
+	Elf32_Word sh_info;
+	Elf32_Word sh_addralign;
+	Elf32_Word sh_entsize;
 } MyElf32_Shdr;
 
-typedef struct {
-	Elf64_Word      sh_name;
-	Elf64_Word      sh_type;
-	Elf64_Xword     sh_flags;
-	Elf64_Addr      sh_addr;
-	Elf64_Off       sh_offset;
-	Elf64_Xword     sh_size;
-	Elf64_Word      sh_link;
-	Elf64_Word      sh_info;
-	Elf64_Xword     sh_addralign;
-	Elf64_Xword     sh_entsize;
+/**
+* struct Shdr64 - Represents a 64-bit ELF section header entry.
+* This structure represents a section header entry in a 32-bit ELF (Executable
+* and Linkable Format) file. It stores information about a specific section in
+* the ELF file, including its name, type, flags, memory address, file offset,
+* size, linkage, additional information, alignment, and entry size.
+*
+* The section header is a crucial part of the ELF file format, as it defines
+* the layout and properties of various sections within the file, such as code,
+* data, and symbol tables.
+* Structure is typically used for parsing and working with 64-bit ELF.
+*
+* @sh_name: Section name, index in string tbl
+* @sh_type: Type of section
+* @sh_flags: Miscellaneous section attributes
+* @sh_addr: Section virtual addr at execution
+* @sh_offset: Section file offset
+* @sh_size: Size of section in bytes
+* @sh_link: Index of another section
+* @sh_info: Additional section information
+* @sh_addralign:Section alignment
+* @sh_entsize: Entry size if section holds table
+*/
+typedef struct Shdr64
+{
+	Elf64_Word sh_name;
+	Elf64_Word sh_type;
+	Elf64_Xword sh_flags;
+	Elf64_Addr sh_addr;
+	Elf64_Off sh_offset;
+	Elf64_Xword sh_size;
+	Elf64_Word sh_link;
+	Elf64_Word sh_info;
+	Elf64_Xword sh_addralign;
+	Elf64_Xword sh_entsize;
 } MyElf64_Shdr;
 
 
-void printElf32SectionHeader(const MyElf32_Shdr *section_header, int section_number);
-void printElf64SectionHeader(const MyElf64_Shdr *section_header, int section_number);
-const char *getSectionTypeName(unsigned int sh_type);
-const char *getSectionFlags(unsigned int sh_flags);
-void print_Section_Info_32bits(int index, Elf32_Shdr section_header, char *name);
-void print_Section_Info_64bits(int index, Elf64_Shdr section_header, char *name);
-void printKeyToFlags_32bits();
-void printKeyToFlags_64bits();
-char *get_section_name32(Elf32_Shdr section_header, FILE *file);
-char *get_section_name64(Elf64_Shdr section_header, FILE *file);
-
+/* Functions 1-hreadelf.c */
 void read_elf32_be_section(Elf32_Shdr *section_header32);
 void read_elf32_be_header(Elf32_Ehdr *ehdr);
-uint16_t my_be16toh(uint16_t value);
-uint32_t my_be32toh(uint32_t value);
+char *set_section_names(int is_32bit, FILE *file, Elf32_Ehdr elf_header32,
+						Elf64_Ehdr elf_header64);
+void loop_print(int is_32bit, FILE *file, Elf32_Ehdr elf_header32,
+				Elf64_Ehdr elf_header64, char *section_names);
+
+/* Functions 1-hreadelf_print.c*/
+void printKeyToFlags_32bits(void);
+void printKeyToFlags_64bits(void);
+void print_Section_Info_32bits(int index, Elf32_Shdr section_header,
+								char *name);
+void print_Section_Info_64bits(int index, Elf64_Shdr section_header,
+								char *name);
+void print_header(int is_32bit, FILE *file, Elf32_Ehdr elf_header32,
+					Elf64_Ehdr elf_header64, off_t section_table_offset);
+
+/* Functions 1-hreadelf_tools.c */
+char *get_section_name32(Elf32_Shdr section_header, FILE *file);
 char *get_section_name32_big(Elf32_Shdr section_header, FILE *file);
+char *get_section_name64(Elf64_Shdr section_header, FILE *file);
+const char *getSectionTypeName(unsigned int sh_type);
+const char *getSectionFlags(unsigned int sh_flags);
+
+/* ------------------- Task 2-hreadelf.c ----------------------------------*/
+
+typedef struct
+{
+uint32_t p_type;	/* Type of segment */
+uint32_t p_offset;	/* Offset of the segment in the file */
+uint32_t p_vaddr;	/* Virtual address of the segment in memory */
+uint32_t p_paddr;	/* Physical address of the segment in memory (reserved)*/
+uint32_t p_filesz;	/* Size of segment the file (may be smaller than p_memsz)*/
+uint32_t p_memsz;	/* Size of segment in memory (may be larger than p_filesz)*/
+uint32_t p_flags;	/* Segment flags (permissions, etc.) */
+uint32_t p_align;	/* Alignment of the segment in memory and the file */
+} MyElf32_Phdr;
+
+
+typedef struct
+{
+uint64_t p_type;
+uint64_t p_flags;
+uint64_t p_offset;
+uint64_t p_vaddr;
+uint64_t p_paddr;
+uint64_t p_filesz;
+uint64_t p_memsz;
+uint64_t p_align;
+} MyElf64_Phdr;
 
 #endif /* HELF_H */
