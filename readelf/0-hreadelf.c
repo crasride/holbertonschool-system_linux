@@ -111,7 +111,7 @@ void print_elf64_header(Elf64_Header *elf64)
 }
 
 
-void read_elf32_be_header(Elf32_Header *elf32, FILE *file)
+void read_elf32_be_header0(Elf32_Header *elf32, FILE *file)
 {
 	/* Leer el encabezado ELF de 32 bits en formato big-endian */
 	fread(elf32, sizeof(Elf32_Header), 1, file);
@@ -155,7 +155,7 @@ int main(int argc, char *argv[])
 	fseek(file, 0, SEEK_SET); /* Mover puntero del archivo vuelta al principio */
 	if (data == ELFDATA2MSB)
 	{
-		read_elf32_be_header(&elf32, file);/* ELF formato big-endian 32 bits */
+		read_elf32_be_header0(&elf32, file);/* ELF formato big-endian 32 bits */
 		print_elf32_header(&elf32);
 	}
 	else
