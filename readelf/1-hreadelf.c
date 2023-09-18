@@ -23,7 +23,7 @@ int main(int argc, char *argv[])
 	if (file == NULL)
 	{
 		perror("No se puede abrir el archivo");
-		return 1;
+		return (1);
 	}
 	/* Leer el encabezado ELF principal */
 	fread(&elf_header32, sizeof(Elf32_Ehdr), 1, file);
@@ -33,23 +33,25 @@ int main(int argc, char *argv[])
 		is_32bit = 1;
 
 		/* Detectar el endianness del archivo ELF de 32 bits */
-		if (elf_header32.e_ident[EI_DATA] == ELFDATA2MSB) {
+		if (elf_header32.e_ident[EI_DATA] == ELFDATA2MSB)
 		{
-			read_elf32_be_header(&elf_header32);
-		}
+			{
+				read_elf32_be_header(&elf_header32);
+			}
 			/* Si es big-endian, usa la función para leer el encabezado */
-		} else if (elf_header32.e_ident[EI_DATA] == ELFDATA2LSB) {
+		} else if (elf_header32.e_ident[EI_DATA] == ELFDATA2LSB)
+		{
 			/* Si es little-endian, puedes seguir con el código actual. */
-		} else {
+		} else
+		{
 			printf("Formato de datos ELF de 32 bits no reconocido.\n");
-			return 1;
+			return (1);
 		}
 	}
 	else
 	{
 		/* Retroceder al principio del archivo si no es un archivo de 32 bits */
 		fseek(file, 0, SEEK_SET);
-		/* Leer el encabezado ELF de 64 bits */
 		fread(&elf_header64, sizeof(Elf64_Ehdr), 1, file);
 	}
 
@@ -77,11 +79,10 @@ int main(int argc, char *argv[])
 		fseek(file, elf_header64.e_shoff + elf_header64.e_shstrndx * elf_header64.e_shentsize, SEEK_SET);
 		SectNames = get_section_name64(section_header64, file);
 	}
-	/* Imprimir la información sobre la tabla de secciones */
+	/* Imprimir la información sobre la tabla de secciones y encabezado */
 	printf("There are %u section headers, starting at offset 0x%lx:\n\n",
 		is_32bit ? elf_header32.e_shnum : elf_header64.e_shnum,
 		section_table_offset);
-	/* Ubicar la tabla de secciones y encabezado de sección */
 	if (is_32bit)
 	{
 		fseek(file, elf_header32.e_shoff, SEEK_SET);
@@ -110,7 +111,6 @@ int main(int argc, char *argv[])
 
 			if (section_header32.sh_name)
 				name = SectNames + section_header32.sh_name;
-			/* Llamar a la función para imprimir la información de la sección de 32 bits */
 			print_Section_Info_32bits(index, section_header32, name);
 		}
 		printKeyToFlags_32bits();
@@ -125,13 +125,12 @@ int main(int argc, char *argv[])
 
 			if (section_header64.sh_name)
 				name = SectNames + section_header64.sh_name;
-			/* Llamar a la función para imprimir la información de la sección de 64 bits */
 			print_Section_Info_64bits(index, section_header64, name);
 		}
 		printKeyToFlags_64bits();
 	}
 	fclose(file);
-	return 0;
+	return (0);
 }
 
 
@@ -150,6 +149,7 @@ void printKeyToFlags_64bits()
 	printf("  I (info), L (link order), G (group), T (TLS), E (exclude), x (unknown)\n");
 	printf("  O (extra OS processing required) o (OS specific), p (processor specific)\n");
 }
+
 void print_Section_Info_32bits(int index, Elf32_Shdr section_header, char *name)
 {
 	const char *flags = getSectionFlags(section_header.sh_flags);
@@ -159,6 +159,7 @@ void print_Section_Info_32bits(int index, Elf32_Shdr section_header, char *name)
 		section_header.sh_size, section_header.sh_entsize, flags,
 		section_header.sh_link, section_header.sh_info, section_header.sh_addralign);
 }
+
 void print_Section_Info_64bits(int index, Elf64_Shdr section_header, char *name)
 {
 	const char *flags = getSectionFlags(section_header.sh_flags);
@@ -168,6 +169,8 @@ void print_Section_Info_64bits(int index, Elf64_Shdr section_header, char *name)
 		section_header.sh_size, section_header.sh_entsize, flags,
 		section_header.sh_link, section_header.sh_info, section_header.sh_addralign);
 }
+
+
 const char *getSectionFlags(unsigned int sh_flags)
 {
 	int i;
@@ -178,42 +181,21 @@ const char *getSectionFlags(unsigned int sh_flags)
 	/* fill each character from the end with conditions */
 	flags[3] = '\0';
 	i = 2;
-	if (sh_flags & SHF_STRINGS)
-	{
-		flags[i] = 'S';
-		i--;
-	}
-	if (sh_flags & SHF_INFO_LINK)
-	{
-		flags[i] = 'I';
-		i--;
-	}
-	if (sh_flags & SHF_MERGE)
-	{
-		flags[i] = 'M';
-		i--;
-	}
-	if (sh_flags & SHF_EXECINSTR)
-	{
-		flags[i] = 'X';
-		i--;
-	}
-	if (sh_flags & SHF_ALLOC)
-	{
-		flags[i] = 'A';
-		i--;
-	}
-	if (sh_flags & SHF_WRITE)
-	{
-		flags[i] = 'W';
-		i--;
-	}
-		if (sh_flags & SHF_EXCLUDE)
-	{
-		flags[i] = 'E';
-		i--;
-	}
-	return flags;
+	if (sh_flags & SHF_STRINGS) flags[i--] = 'S';
+
+	if (sh_flags & SHF_INFO_LINK) flags[i--] = 'I';
+
+	if (sh_flags & SHF_MERGE) flags[i--] = 'M';
+
+	if (sh_flags & SHF_EXECINSTR) flags[i--] = 'X';
+
+	if (sh_flags & SHF_ALLOC) flags[i--] = 'A';
+
+	if (sh_flags & SHF_WRITE) flags[i--] = 'W';
+
+	if (sh_flags & SHF_EXCLUDE) flags[i--] = 'E';
+
+	return (flags);
 }
 
 const char *getSectionTypeName(unsigned int sh_type)
