@@ -1,5 +1,22 @@
 #include "hreadelf.h"
 
+/* typedef struct
+{
+	union
+	{
+		Elf32_Ehdr ehdr32;
+		Elf64_Ehdr ehdr64;
+	} ehdr;
+} ElfHeader;
+typedef struct
+{
+	union
+	{
+		Elf32_Phdr phdr32;
+		Elf64_Phdr phdr64;
+	} phdr;
+} ElfProgramHeader;
+ */
 
 int main(int argc, char *argv[])
 {
@@ -7,6 +24,8 @@ int main(int argc, char *argv[])
 	ElfHeader elf_header;
 	int is_32bit = 0;
 	int i = 0;
+	size_t program_header_size;
+	char interp[MAX_INTERP_SIZE];
 
 	if (argc != 2)
 	{
@@ -28,13 +47,10 @@ int main(int argc, char *argv[])
 	if (elf_header.ehdr.ehdr32.e_ident[EI_CLASS] == ELFCLASS32)
 	{
 		is_32bit = 1;
-		printf("32bits\n");
 	}
 	else if (elf_header.ehdr.ehdr64.e_ident[EI_CLASS] == ELFCLASS64)
 	{
 		is_32bit = 0;
-		printf("64bits\n");
-
 	}
 	else
 	{
@@ -45,25 +61,89 @@ int main(int argc, char *argv[])
 	/* Imprimir información del encabezado ELF */
 	print_elf_info(&elf_header, is_32bit);
 
+	 /* Calcular el tamaño de un encabezado de programa */
+	program_header_size = is_32bit ? sizeof(Elf32_Phdr) : sizeof(Elf64_Phdr);
+
+	/* Mover el puntero de archivo al inicio de los encabezados de programa */
+	fseek(file, (is_32bit ? elf_header.ehdr.ehdr32.e_phoff : elf_header.ehdr.ehdr64.e_phoff), SEEK_SET);
+
 	/* Leer y mostrar la información de los encabezados del programa ELF */
 	for (i = 0; i < (is_32bit ? elf_header.ehdr.ehdr32.e_phnum : elf_header.ehdr.ehdr64.e_phnum); i++)
 	{
-
 		if (is_32bit)
 		{
 			Elf32_Phdr program_header;
-			fread(&program_header, sizeof(Elf32_Phdr), 1, file);
+			fread(&program_header, program_header_size, 1, file);
 			print_program_header_info_32(&program_header);
+
+			if (program_header.p_type == PT_INTERP)
+			{
+				if (program_header.p_filesz <= MAX_INTERP_SIZE)
+				{
+					/* Guardo la posicion actual */
+					long current_pos = ftell(file);
+
+					/* Mover el puntero posicio del programa intérprete */
+					fseek(file, program_header.p_offset, SEEK_SET);
+
+					/* Leer el programa intérprete en la matriz interp */
+					fread(interp, program_header.p_filesz, 1, file);
+					interp[program_header.p_filesz] = '\0';
+
+					print_interpreter_info(interp);
+
+					/* Recupero la posicion guardada */
+					fseek(file, current_pos, SEEK_SET);
+				}
+				else
+				{
+					fprintf(stderr, "MAX_INTERP_SIZE.\n");
+					fclose(file);
+					return 1;
+				}
+			}
 		}
 		else
 		{
 			Elf64_Phdr program_header;
-			fread(&program_header, sizeof(Elf64_Phdr), 1, file);
+			fread(&program_header, program_header_size, 1, file);
 			print_program_header_info_64(&program_header);
+
+			if (program_header.p_type == PT_INTERP)
+			{
+				if (program_header.p_filesz <= MAX_INTERP_SIZE)
+				{
+					/* Guardo la posicion actual */
+					long current_pos = ftell(file);
+
+					fseek(file, program_header.p_offset, SEEK_SET);
+					fread(interp, program_header.p_filesz, 1, file);
+					interp[program_header.p_filesz] = '\0';
+					print_interpreter_info(interp);
+
+					/* Recupero la posicion guardada */
+					fseek(file, current_pos, SEEK_SET);
+				}
+				else
+				{
+					fprintf(stderr, "MAX_INTERP_SIZE.\n");
+					fclose(file);
+					return 1;
+				}
+			}
 		}
 	}
+	/* Imprimir la sección "Section to Segment mapping" */
+	printf("\nSection to Segment mapping:\n");
+	printf(" Segment Sections...\n");
+
 	fclose(file);
 	return 0;
+}
+
+void print_interpreter_info(const char *interp)
+{
+    printf("      [Requesting program interpreter: %s]\n", interp);
 }
 
 void print_elf_info(ElfHeader *elf_header, int is_32bit)
@@ -138,13 +218,13 @@ const char *getProgramHeaderTypeName64(uint64_t p_type)
 
 void print_program_header_info_32(Elf32_Phdr *program_header)
 {
-	printf("  %-14s 0x%08x 0x%08x 0x%08x 0x%08x 0x%08x %c%c%c 0x%08x\n",
+	printf("  %-14s 0x%06x 0x%08x 0x%08x 0x%05x 0x%05x %c%c%c %#x\n",
 		getProgramHeaderTypeName32(program_header->p_type),
-		(unsigned int)program_header->p_offset,
-		(unsigned int)program_header->p_vaddr,
-		(unsigned int)program_header->p_paddr,
-		(unsigned int)program_header->p_filesz,
-		(unsigned int)program_header->p_memsz,
+		program_header->p_offset,
+		program_header->p_vaddr,
+		program_header->p_paddr,
+		program_header->p_filesz,
+		program_header->p_memsz,
 		(program_header->p_flags & PF_R) ? 'R' : ' ',
 		(program_header->p_flags & PF_W) ? 'W' : ' ',
 		(program_header->p_flags & PF_X) ? 'E' : ' ',

@@ -8,6 +8,7 @@
 #include <unistd.h>
 #include <sys/types.h>
 
+
 /* ------------------- Task 0-hreadelf.c ----------------------------------*/
 /**
 * struct header32 - Represents a 32-bit ELF header.
@@ -159,30 +160,31 @@ const char *getSectionTypeName(unsigned int sh_type);
 const char *getSectionFlags(unsigned int sh_flags);
 
 /* ------------------- Task 2-hreadelf.c ----------------------------------*/
+#define MAX_INTERP_SIZE 1024
 
 typedef struct
 {
-uint32_t p_type;	/* Type of segment */
-uint32_t p_offset;	/* Offset of the segment in the file */
-uint32_t p_vaddr;	/* Virtual address of the segment in memory */
-uint32_t p_paddr;	/* Physical address of the segment in memory (reserved)*/
-uint32_t p_filesz;	/* Size of segment the file (may be smaller than p_memsz)*/
-uint32_t p_memsz;	/* Size of segment in memory (may be larger than p_filesz)*/
-uint32_t p_flags;	/* Segment flags (permissions, etc.) */
-uint32_t p_align;	/* Alignment of the segment in memory and the file */
-} MyElf32_Phdr;
-
-
+	union
+	{
+		Elf32_Ehdr ehdr32;
+		Elf64_Ehdr ehdr64;
+	} ehdr;
+} ElfHeader;
 typedef struct
 {
-uint64_t p_type;
-uint64_t p_flags;
-uint64_t p_offset;
-uint64_t p_vaddr;
-uint64_t p_paddr;
-uint64_t p_filesz;
-uint64_t p_memsz;
-uint64_t p_align;
-} MyElf64_Phdr;
+	union
+	{
+		Elf32_Phdr phdr32;
+		Elf64_Phdr phdr64;
+	} phdr;
+} ElfProgramHeader;
+
+const char *getElfTypeName(uint16_t e_type);
+void print_elf_info(ElfHeader *elf_header, int is_32bit);
+void print_program_header_info_64(Elf64_Phdr *program_header);
+void print_program_header_info_32(Elf32_Phdr *program_header);
+const char *getProgramHeaderTypeName32(uint32_t p_type);
+const char *getProgramHeaderTypeName64(uint64_t p_type);
+void print_interpreter_info(const char *interp);
 
 #endif /* HELF_H */
