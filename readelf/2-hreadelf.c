@@ -18,6 +18,8 @@ typedef struct
 } ElfProgramHeader;
  */
 
+
+
 int main(int argc, char *argv[])
 {
 	FILE *file = NULL;
@@ -47,6 +49,14 @@ int main(int argc, char *argv[])
 	if (elf_header.ehdr.ehdr32.e_ident[EI_CLASS] == ELFCLASS32)
 	{
 		is_32bit = 1;
+		if (elf_header.ehdr.ehdr32.e_ident[EI_DATA] == ELFDATA2LSB)
+		{
+
+		}
+		else if (elf_header.ehdr.ehdr32.e_ident[EI_DATA] == ELFDATA2MSB)
+		{
+			read_elf32_be_header(&elf_header.ehdr.ehdr32);
+		}
 	}
 	else if (elf_header.ehdr.ehdr64.e_ident[EI_CLASS] == ELFCLASS64)
 	{
@@ -74,6 +84,8 @@ int main(int argc, char *argv[])
 		{
 			Elf32_Phdr program_header;
 			fread(&program_header, program_header_size, 1, file);
+			if (elf_header.ehdr.ehdr32.e_ident[EI_DATA] == ELFDATA2MSB)
+				read_elf32_be_prog(&program_header);
 			print_program_header_info_32(&program_header);
 
 			if (program_header.p_type == PT_INTERP)
@@ -156,7 +168,6 @@ void print_elf_info(ElfHeader *elf_header, int is_32bit)
 	if (is_32bit)
 	{
 		printf("Entry point 0x%x\n", elf_header->ehdr.ehdr32.e_entry);
-		printf("Entry point 0x%1lx\n", elf_header->ehdr.ehdr64.e_entry);
 		printf("There are %d program headers, starting at offset %ld\n\n",
 		is_32bit ? elf_header->ehdr.ehdr32.e_phnum : elf_header->ehdr.ehdr64.e_phnum,
 		is_32bit ? (long)elf_header->ehdr.ehdr32.e_phoff : (long)elf_header->ehdr.ehdr64.e_phoff);
@@ -253,4 +264,53 @@ void print_program_header_info_64(Elf64_Phdr *program_header)
 		(program_header->p_flags & PF_W) ? 'W' : ' ',
 		(program_header->p_flags & PF_X) ? 'E' : ' ',
 		(unsigned long)program_header->p_align);
+}
+
+/**
+ * read_elf32_be_prog - Convert a 32-bit ELF header from big-endian to host
+ * byte order.
+ * This function takes a pointer to a 32-bit ELF header big-endian byte order
+ * and converts various header fields to the host byte order. It is used to
+ * ensure
+ * correct interpretation of the header on the host system.
+ *
+ * @phdr: A pointer to a 32-bit program header in big-endian byte order.
+ */
+void read_elf32_be_prog(Elf32_Phdr *phdr)
+{
+	phdr->p_type = my_be32toh(phdr->p_type);
+	phdr->p_offset = my_be32toh(phdr->p_offset);
+	phdr->p_vaddr = my_be32toh(phdr->p_vaddr);
+	phdr->p_paddr = my_be32toh(phdr->p_paddr);
+	phdr->p_filesz = my_be32toh(phdr->p_filesz);
+	phdr->p_memsz = my_be32toh(phdr->p_memsz);
+	phdr->p_flags = my_be32toh(phdr->p_flags);
+	phdr->p_align = my_be32toh(phdr->p_align);
+}
+
+/**
+ * read_elf32_be_header - Convert a 32-bit ELF header from big-endian to host
+ * byte order.
+ * This function takes a pointer to a 32-bit ELF header big-endian byte order
+ * and converts various header fields to the host byte order. It is used to
+ * ensure
+ * correct interpretation of the header on the host system.
+ *
+ * @ehdr: A pointer to a 32-bit ELF header in big-endian byte order.
+ */
+void read_elf32_be_header(Elf32_Ehdr *ehdr)
+{
+	ehdr->e_type = my_be16toh(ehdr->e_type);
+	ehdr->e_machine = my_be16toh(ehdr->e_machine);
+	ehdr->e_version = my_be32toh(ehdr->e_version);
+	ehdr->e_entry = my_be32toh(ehdr->e_entry);
+	ehdr->e_phoff = my_be32toh(ehdr->e_phoff);
+	ehdr->e_shoff = my_be32toh(ehdr->e_shoff);
+	ehdr->e_flags = my_be32toh(ehdr->e_flags);
+	ehdr->e_ehsize = my_be16toh(ehdr->e_ehsize);
+	ehdr->e_phentsize = my_be16toh(ehdr->e_phentsize);
+	ehdr->e_phnum = my_be16toh(ehdr->e_phnum);
+	ehdr->e_shentsize = my_be16toh(ehdr->e_shentsize);
+	ehdr->e_shnum = my_be16toh(ehdr->e_shnum);
+	ehdr->e_shstrndx = my_be16toh(ehdr->e_shstrndx);
 }

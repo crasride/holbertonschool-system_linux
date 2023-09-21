@@ -199,7 +199,7 @@ void print_program_header_info_32(Elf32_Phdr *program_header);
 const char *getProgramHeaderTypeName32(uint32_t p_type);
 const char *getProgramHeaderTypeName64(uint64_t p_type);
 void print_interpreter_info(const char *interp);
-void print_section_segment_mapping(ElfHeader *elf_header, int is_32bit, FILE *file);
+void read_elf32_be_prog(Elf32_Phdr *phdr);
 
 
 #endif /* HELF_H */
