@@ -1,24 +1,5 @@
 #include "hreadelf.h"
 
-/* typedef struct
-{
-	union
-	{
-		Elf32_Ehdr ehdr32;
-		Elf64_Ehdr ehdr64;
-	} ehdr;
-} ElfHeader;
-typedef struct
-{
-	union
-	{
-		Elf32_Phdr phdr32;
-		Elf64_Phdr phdr64;
-	} phdr;
-} ElfProgramHeader;
- */
-
-
 
 int main(int argc, char *argv[])
 {
@@ -44,7 +25,6 @@ int main(int argc, char *argv[])
 
 	/* Leer el encabezado ELF principal */
 	fread(&elf_header, sizeof(ElfHeader), 1, file);
-
 	/* Verificar si es un archivo ELF de 32 o 64 bits */
 	if (elf_header.ehdr.ehdr32.e_ident[EI_CLASS] == ELFCLASS32)
 	{
@@ -146,13 +126,55 @@ int main(int argc, char *argv[])
 		}
 	}
 
-	/* Imprimir la sección "Section to Segment mapping" */
 	printf("\nSection to Segment mapping:\n");
-	printf(" Segment Sections...\n");
-	/* print_section_segment_mapping(&elf_header, is_32bit, file); */
+	printf("  Segment Sections...\n");
+
+	for (i = 0; i < (is_32bit ? elf_header.ehdr.ehdr32.e_phnum : elf_header.ehdr.ehdr64.e_phnum); i++)
+	{
+		printf("  %02d     ", i);
+
+		for (int j = 0; j < (is_32bit ? elf_header.ehdr.ehdr32.e_shnum : elf_header.ehdr.ehdr64.e_shnum); j++)
+		{
+			Elf64_Shdr section_header;
+
+			fseek(file, (is_32bit ? elf_header.ehdr.ehdr32.e_shoff : elf_header.ehdr.ehdr64.e_shoff) + (j * sizeof(Elf64_Shdr)), SEEK_SET);
+			fread(&section_header, sizeof(Elf64_Shdr), 1, file);
+
+
+			Elf64_Phdr program_header;
+			fseek(file, (is_32bit ? elf_header.ehdr.ehdr32.e_phoff : elf_header.ehdr.ehdr64.e_phoff) + (i * program_header_size), SEEK_SET);
+			fread(&program_header, program_header_size, 1, file);
+
+			if (section_header.sh_addr >= program_header.p_vaddr &&
+				section_header.sh_addr < program_header.p_vaddr + program_header.p_memsz)
+			{
+
+				const char *section_name = getSectionName(file, section_header);
+				printf(".%s ", section_name);
+
+
+				free((void *)section_name);
+			}
+		}
+
+		printf("\n");
+	}
 
 	fclose(file);
 	return 0;
+}
+
+
+const char *getSectionName(FILE *file, Elf64_Shdr section_header)
+ {
+
+	char *section_names = NULL;
+
+	fread(&section_header, 1, sizeof(section_header), file);
+	section_names = (char *)malloc(section_header.sh_size);
+	fseek(file, section_header.sh_offset, SEEK_SET);
+	fread(section_names, 1, section_header.sh_size, file);
+	return (section_names);
 }
 
 

@@ -183,13 +183,14 @@ typedef struct
 
 /* estructura para el mapeo de sección a segmento */
 #define MAX_SECTIONS 100
-#define MAX_SEGMENTS 100
+#define MAX_SECTION_NAME 100
 
-typedef struct {
+struct SegmentSections {
 	int segment_index;
-	char section_names[MAX_SECTIONS][64];
+	char sections[MAX_SECTIONS][MAX_SECTION_NAME];
 	int section_count;
-} SectionSegmentMapping;
+};
+
 
 
 const char *getElfTypeName(uint16_t e_type);
@@ -200,6 +201,5 @@ const char *getProgramHeaderTypeName32(uint32_t p_type);
 const char *getProgramHeaderTypeName64(uint64_t p_type);
 void print_interpreter_info(const char *interp);
 void read_elf32_be_prog(Elf32_Phdr *phdr);
-
-
+const char *getSectionName(FILE *file, Elf64_Shdr section_header) ;
 #endif /* HELF_H */
