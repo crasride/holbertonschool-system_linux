@@ -133,13 +133,16 @@ int main(int argc, char *argv[])
 			}
 		}
 	}
+
 	/* Imprimir la sección "Section to Segment mapping" */
 	printf("\nSection to Segment mapping:\n");
 	printf(" Segment Sections...\n");
+	/* print_section_segment_mapping(&elf_header, is_32bit, file); */
 
 	fclose(file);
 	return 0;
 }
+
 
 void print_interpreter_info(const char *interp)
 {
@@ -153,20 +156,25 @@ void print_elf_info(ElfHeader *elf_header, int is_32bit)
 	if (is_32bit)
 	{
 		printf("Entry point 0x%x\n", elf_header->ehdr.ehdr32.e_entry);
-		printf("File is %s endian\n", (elf_header->ehdr.ehdr32.e_ident[EI_DATA] == ELFDATA2LSB) ? "little" : "big");
+		printf("Entry point 0x%1lx\n", elf_header->ehdr.ehdr64.e_entry);
+		printf("There are %d program headers, starting at offset %ld\n\n",
+		is_32bit ? elf_header->ehdr.ehdr32.e_phnum : elf_header->ehdr.ehdr64.e_phnum,
+		is_32bit ? (long)elf_header->ehdr.ehdr32.e_phoff : (long)elf_header->ehdr.ehdr64.e_phoff);
+
+	printf("Program Headers:\n");
+	printf("  Type           Offset   VirtAddr   PhysAddr  FileSiz  MemSiz  Flg Align\n");
+
 	}
 	else
 	{
 		printf("Entry point 0x%1lx\n", elf_header->ehdr.ehdr64.e_entry);
-		printf("File is %s endian\n", (elf_header->ehdr.ehdr64.e_ident[EI_DATA] == ELFDATA2LSB) ? "little" : "big");
-	}
-
-	printf("There are %d program headers, starting at offset %ld\n\n",
+		printf("There are %d program headers, starting at offset %ld\n\n",
 		is_32bit ? elf_header->ehdr.ehdr32.e_phnum : elf_header->ehdr.ehdr64.e_phnum,
 		is_32bit ? (long)elf_header->ehdr.ehdr32.e_phoff : (long)elf_header->ehdr.ehdr64.e_phoff);
 
 	printf("Program Headers:\n");
 	printf("  Type           Offset   VirtAddr           PhysAddr           FileSiz  MemSiz   Flg Align\n");
+	}
 }
 
 const char *getElfTypeName(uint16_t e_type)

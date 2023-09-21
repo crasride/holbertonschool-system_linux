@@ -7,6 +7,7 @@
 #include <stdint.h>
 #include <unistd.h>
 #include <sys/types.h>
+#include <string.h>
 
 
 /* ------------------- Task 0-hreadelf.c ----------------------------------*/
@@ -179,6 +180,18 @@ typedef struct
 	} phdr;
 } ElfProgramHeader;
 
+
+/* estructura para el mapeo de sección a segmento */
+#define MAX_SECTIONS 100
+#define MAX_SEGMENTS 100
+
+typedef struct {
+	int segment_index;
+	char section_names[MAX_SECTIONS][64];
+	int section_count;
+} SectionSegmentMapping;
+
+
 const char *getElfTypeName(uint16_t e_type);
 void print_elf_info(ElfHeader *elf_header, int is_32bit);
 void print_program_header_info_64(Elf64_Phdr *program_header);
@@ -186,5 +199,7 @@ void print_program_header_info_32(Elf32_Phdr *program_header);
 const char *getProgramHeaderTypeName32(uint32_t p_type);
 const char *getProgramHeaderTypeName64(uint64_t p_type);
 void print_interpreter_info(const char *interp);
+void print_section_segment_mapping(ElfHeader *elf_header, int is_32bit, FILE *file);
+
 
 #endif /* HELF_H */
