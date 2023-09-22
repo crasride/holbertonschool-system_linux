@@ -1,6 +1,12 @@
 #include "hreadelf.h"
 
 
+/**
+ * main - entry point of make 0
+ * @argc: count of arguments
+ * @argv: array of arguments
+ * Return: 0 success, 1 otherwise
+ */
 int main(int argc, char *argv[])
 {
 	FILE *file = NULL;
@@ -13,17 +19,15 @@ int main(int argc, char *argv[])
 	if (argc != 2)
 	{
 		fprintf(stderr, "Uso: %s elf_filename\n", argv[0]);
-		return 1;
+		return (1);
 	}
 
 	file = fopen(argv[1], "rb");
 	if (file == NULL)
 	{
 		perror("No se puede abrir el archivo");
-		return 1;
+		return (1);
 	}
-
-
 
 	/* Leer el encabezado ELF principal */
 	fread(&elf_header, sizeof(ElfHeader), 1, file);
@@ -58,7 +62,7 @@ int main(int argc, char *argv[])
 	{
 		fprintf(stderr, "El archivo ELF tiene una clase desconocida.\n");
 		fclose(file);
-		return 1;
+		return (1);
 	}
 	/* Imprimir información del encabezado ELF */
 	print_elf_info(&elf_header, is_32bit);
@@ -98,13 +102,12 @@ int main(int argc, char *argv[])
 
 					/* Recupero la posicion guardada */
 					fseek(file, current_pos, SEEK_SET);
-
 				}
 				else
 				{
 					fprintf(stderr, "MAX_INTERP_SIZE.\n");
 					fclose(file);
-					return 1;
+					return (1);
 				}
 			}
 		}
@@ -133,12 +136,11 @@ int main(int argc, char *argv[])
 				{
 					fprintf(stderr, "MAX_INTERP_SIZE.\n");
 					fclose(file);
-					return 1;
+					return (1);
 				}
 			}
 		}
 	}
-
 
 	/* Section to Segment mapping cucu*/
 	if (elf_header.ehdr.ehdr32.e_ident[EI_CLASS] == ELFCLASS32)
@@ -159,14 +161,23 @@ int main(int argc, char *argv[])
 		createSectionToSegmentMapping64(file, &elf_header, is_32bit);
 	}
 
-
-
-
 	fclose(file);
-	return 0;
+	return (0);
 }
 
-void createSectionToSegmentMapping64(FILE *file, ElfHeader *elf_header, int is_32bit)
+
+/**
+* createSectionToSegmentMapping64 - Create and print a mapping of sections
+* to segments in an ELF file (64-bit).
+* This function reads the ELF file generates a mapping of sections to segments.
+* It then prints this mapping to the standard output.
+*
+* @file:A pointer to the ELF file.
+* @elf_header: elf_header A pointer to the ELF header structure.
+* @is_32bit: A flag indicating whether the ELF file is 32-bit (1) or 64-bit (0).
+*/
+void createSectionToSegmentMapping64(FILE *file, ElfHeader *elf_header,
+									int is_32bit)
 {
 	int i, j;
 	Elf64_Shdr shstrtab_header;
@@ -244,8 +255,18 @@ void createSectionToSegmentMapping64(FILE *file, ElfHeader *elf_header, int is_3
 	free(mapping);
 }
 
-
-void createSectionToSegmentMapping32(FILE *file, ElfHeader *elf_header, int is_32bit)
+/**
+* createSectionToSegmentMapping32 - Create and print a mapping of sections
+* to segments in an ELF file (32-bit).
+* This function reads the ELF file generates a mapping of sections to segments.
+* It then prints this mapping to the standard output.
+*
+* @file:A pointer to the ELF file.
+* @elf_header: elf_header A pointer to the ELF header structure.
+* @is_32bit: A flag indicating whether the ELF file is 32-bit (1) or 64-bit (0).
+*/
+void createSectionToSegmentMapping32(FILE *file, ElfHeader *elf_header,
+									int is_32bit)
 {
 	int i, j;
 	Elf32_Shdr shstrtab_header;
@@ -349,24 +370,44 @@ void createSectionToSegmentMapping32(FILE *file, ElfHeader *elf_header, int is_3
 
 
 
-
+/**
+* print_interpreter_info - Print information about the program interpreter.
+*
+* This function prints information about the program interpreter requested by
+* an ELF file. The program interpreter is used in dynamically linked executables
+* to load and execute shared libraries.
+*
+* @interp: A string containing the path to the program interpreter.
+*/
 
 
 void print_interpreter_info(const char *interp)
 {
-    printf("      [Requesting program interpreter: %s]\n", interp);
+	printf("      [Requesting program interpreter: %s]\n", interp);
 }
 
+/**
+* print_elf_info - Print information about an ELF file.
+*
+* This function prints information about an ELF file, including its type, entry
+* point, program header details. It supports both 32-bit and 64-bit ELF files.
+*
+* @elf_header: A pointer to an `ElfHeader` structure containing ELF header data.
+* @is_32bit: A flag indicating whether the ELF file is 32-bit (1) or 64-bit (0).
+*/
 void print_elf_info(ElfHeader *elf_header, int is_32bit)
 {
-	printf("\nElf file type is %s\n", getElfTypeName(is_32bit ? elf_header->ehdr.ehdr32.e_type : elf_header->ehdr.ehdr64.e_type));
+	printf("\nElf file type is %s\n", getElfTypeName(is_32bit ? elf_header->
+	ehdr.ehdr32.e_type : elf_header->ehdr.ehdr64.e_type));
 
 	if (is_32bit)
 	{
 		printf("Entry point 0x%x\n", elf_header->ehdr.ehdr32.e_entry);
 		printf("There are %d program headers, starting at offset %ld\n\n",
-		is_32bit ? elf_header->ehdr.ehdr32.e_phnum : elf_header->ehdr.ehdr64.e_phnum,
-		is_32bit ? (long)elf_header->ehdr.ehdr32.e_phoff : (long)elf_header->ehdr.ehdr64.e_phoff);
+		is_32bit ? elf_header->ehdr.ehdr32.e_phnum : elf_header->
+		ehdr.ehdr64.e_phnum,
+		is_32bit ? (long)elf_header->ehdr.ehdr32.e_phoff : (long)elf_header->
+		ehdr.ehdr64.e_phoff);
 
 	printf("Program Headers:\n");
 	printf("  Type           Offset   VirtAddr   PhysAddr   FileSiz MemSiz  Flg Align\n");
@@ -376,14 +417,25 @@ void print_elf_info(ElfHeader *elf_header, int is_32bit)
 	{
 		printf("Entry point 0x%1lx\n", elf_header->ehdr.ehdr64.e_entry);
 		printf("There are %d program headers, starting at offset %ld\n\n",
-		is_32bit ? elf_header->ehdr.ehdr32.e_phnum : elf_header->ehdr.ehdr64.e_phnum,
-		is_32bit ? (long)elf_header->ehdr.ehdr32.e_phoff : (long)elf_header->ehdr.ehdr64.e_phoff);
+		is_32bit ? elf_header->ehdr.ehdr32.e_phnum : elf_header->
+		ehdr.ehdr64.e_phnum,
+		is_32bit ? (long)elf_header->ehdr.ehdr32.e_phoff : (long)elf_header->
+		ehdr.ehdr64.e_phoff);
 
 	printf("Program Headers:\n");
 	printf("  Type           Offset   VirtAddr           PhysAddr           FileSiz  MemSiz   Flg Align\n");
 	}
 }
 
+/**
+* getElfTypeName - Get a string representation of an ELF file type.
+* This function takes a 16-bit ELF file type (`e_type`) as input and returns a
+* human-readable string describing that type. It is used interpret the purpose
+* or category of an ELF file based on its type.
+*
+* @e_type: The 16-bit ELF file type.
+* Return:       A string describing the ELF file type.
+*/
 const char *getElfTypeName(uint16_t e_type)
 {
 	switch (e_type)
@@ -397,6 +449,17 @@ const char *getElfTypeName(uint16_t e_type)
 	}
 }
 
+/**
+* getProgramHeaderTypeName32 - Get a string representation of a 32-bit ELF
+* program header type.
+* This function takes a 32-bit ELF program header type (`p_type`) as input and
+* returns a human-readable string describing that type. It is useful for
+* converting the numeric program header type into a more understandable string
+* representation.
+*
+* @p_type:The 32-bit ELF program header type.
+* Return: A string describing the program header type.
+*/
 const char *getProgramHeaderTypeName32(uint32_t p_type)
 {
 	switch (p_type)
@@ -416,7 +479,19 @@ const char *getProgramHeaderTypeName32(uint32_t p_type)
 	case PT_IA_64_UNWIND: return "PT_SUNW_UNWIND";
 	default: return "UNKNOWN";
 	}
- }
+}
+
+/**
+* getProgramHeaderTypeName64 - Get a string representation of a 64-bit ELF
+* program header type.
+* This function takes a 64-bit ELF program header type (`p_type`) as input and
+* returns a human-readable string describing that type. It is useful for
+* converting the numeric program header type into a more understandable string
+* representation.
+*
+* @p_type:The 64-bit ELF program header type.
+* Return: A string describing the program header type.
+*/
 const char *getProgramHeaderTypeName64(uint64_t p_type)
 {
 	switch (p_type)
@@ -436,6 +511,17 @@ const char *getProgramHeaderTypeName64(uint64_t p_type)
 	}
 }
 
+
+/**
+* print_program_header_info_32 - Print information about a 64-bit ELF program
+* header.
+* This function takes a pointer to a 32-bit ELF program header and prints its
+* fields in a human-readable format. It displays details such as the program
+* header type,offset, virtual address, physical address, file size,
+* memory size, permissions (read,write, execute), and alignment.
+*
+* @program_header: A pointer to a 32-bit ELF program header.
+*/
 void print_program_header_info_32(Elf32_Phdr *program_header)
 {
 	printf("  %-14s 0x%06x 0x%08x 0x%08x 0x%05x 0x%05x %c%c%c %#x\n",
@@ -452,6 +538,16 @@ void print_program_header_info_32(Elf32_Phdr *program_header)
 }
 
 
+/**
+* print_program_header_info_64 - Print information about a 64-bit ELF program
+* header.
+* This function takes a pointer to a 64-bit ELF program header and prints its
+* fields in a human-readable format. It displays details such as the program
+* header type,offset, virtual address, physical address, file size,
+* memory size, permissions (read,write, execute), and alignment.
+*
+*@program_header: A pointer to a 64-bit ELF program header.
+*/
 void print_program_header_info_64(Elf64_Phdr *program_header)
 {
 	printf("  %-14s 0x%06lx 0x%016lx 0x%016lx 0x%06lx 0x%06lx %c%c%c 0x%01lx\n",
@@ -468,15 +564,15 @@ void print_program_header_info_64(Elf64_Phdr *program_header)
 }
 
 /**
- * read_elf32_be_prog - Convert a 32-bit ELF header from big-endian to host
- * byte order.
- * This function takes a pointer to a 32-bit ELF header big-endian byte order
- * and converts various header fields to the host byte order. It is used to
- * ensure
- * correct interpretation of the header on the host system.
- *
- * @phdr: A pointer to a 32-bit program header in big-endian byte order.
- */
+* read_elf32_be_prog - Convert a 32-bit ELF header from big-endian to host
+* byte order.
+* This function takes a pointer to a 32-bit ELF header big-endian byte order
+* and converts various header fields to the host byte order. It is used to
+* ensure
+* correct interpretation of the header on the host system.
+*
+* @phdr: A pointer to a 32-bit program header in big-endian byte order.
+*/
 void read_elf32_be_prog(Elf32_Phdr *phdr)
 {
 	phdr->p_type = my_be32toh(phdr->p_type);
@@ -490,15 +586,15 @@ void read_elf32_be_prog(Elf32_Phdr *phdr)
 }
 
 /**
- * read_elf32_be_header - Convert a 32-bit ELF header from big-endian to host
- * byte order.
- * This function takes a pointer to a 32-bit ELF header big-endian byte order
- * and converts various header fields to the host byte order. It is used to
- * ensure
- * correct interpretation of the header on the host system.
- *
- * @ehdr: A pointer to a 32-bit ELF header in big-endian byte order.
- */
+* read_elf32_be_header - Convert a 32-bit ELF header from big-endian to host
+* byte order.
+* This function takes a pointer to a 32-bit ELF header big-endian byte order
+* and converts various header fields to the host byte order. It is used to
+* ensure
+* correct interpretation of the header on the host system.
+*
+* @ehdr: A pointer to a 32-bit ELF header in big-endian byte order.
+*/
 void read_elf32_be_header(Elf32_Ehdr *ehdr)
 {
 	ehdr->e_type = my_be16toh(ehdr->e_type);
@@ -517,17 +613,17 @@ void read_elf32_be_header(Elf32_Ehdr *ehdr)
 }
 
 /**
- * read_elf32_be_section - Convert a 32-bit ELF section header from big-endian
- * to host byte order.
- * This function takes a pointer to a 32-bit ELF section header in big-endian
- * byte order
- * and converts various section header fields to the host byte order.It is used
- * to ensure
- * correct interpretation of the section header on the host system.
- *
- * @section_header32: pointer to a 32-bit ELF section header in big-endian
- * byte order.
- */
+* read_elf32_be_section - Convert a 32-bit ELF section header from big-endian
+* to host byte order.
+* This function takes a pointer to a 32-bit ELF section header in big-endian
+* byte order
+* and converts various section header fields to the host byte order.It is used
+* to ensure
+* correct interpretation of the section header on the host system.
+*
+* @section_header32: pointer to a 32-bit ELF section header in big-endian
+* byte order.
+*/
 void read_elf32_be_section(Elf32_Shdr *section_header32)
 {
 	section_header32->sh_name = my_be32toh(section_header32->sh_name);
