@@ -8,6 +8,7 @@
 #include <unistd.h>
 #include <sys/types.h>
 #include <string.h>
+#include <ctype.h>
 
 
 /* ------------------- Task 0-hreadelf.c ----------------------------------*/
@@ -194,14 +195,17 @@ typedef struct
 
 const char *getElfTypeName(uint16_t e_type);
 void print_elf_info(ElfHeader *elf_header, int is_32bit);
-void print_program_header_info_64(Elf64_Phdr *program_header);
-void print_program_header_info_32(Elf32_Phdr *program_header);
 const char *getProgramHeaderTypeName32(uint32_t p_type);
 const char *getProgramHeaderTypeName64(uint64_t p_type);
 void print_interpreter_info(const char *interp);
-void read_elf32_be_prog(Elf32_Phdr *phdr);
-
 void createSectionToSegmentMapping64(FILE *file, ElfHeader *elf_header, int is_32bit);
 void createSectionToSegmentMapping32(FILE *file, ElfHeader *elf_header, int is_32bit);
+
+/* Functions 2-hreadelf_tools.c */
+void print_program_header_info_64(Elf64_Phdr *program_header);
+void print_program_header_info_32(Elf32_Phdr *program_header);
+void read_elf32_be_prog(Elf32_Phdr *phdr);
+void read_elf32_be_header(Elf32_Ehdr *ehdr);
+void read_elf32_be_section(Elf32_Shdr *section_header32);
 
 #endif /* HELF_H */
