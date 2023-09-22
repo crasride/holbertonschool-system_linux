@@ -140,6 +140,7 @@ int main(int argc, char *argv[])
 			fseek(file, (is_32bit ? elf_header.ehdr.ehdr32.e_shoff : elf_header.ehdr.ehdr64.e_shoff) + (j * sizeof(Elf64_Shdr)), SEEK_SET);
 			fread(&section_header, sizeof(Elf64_Shdr), 1, file);
 
+			/* printf("Checking section %d, program %d...\n", j, i); */
 
 			Elf64_Phdr program_header;
 			fseek(file, (is_32bit ? elf_header.ehdr.ehdr32.e_phoff : elf_header.ehdr.ehdr64.e_phoff) + (i * program_header_size), SEEK_SET);
@@ -149,8 +150,9 @@ int main(int argc, char *argv[])
 				section_header.sh_addr < program_header.p_vaddr + program_header.p_memsz)
 			{
 
-				const char *section_name = getSectionName(file, section_header);
-				printf(".%s ", section_name);
+				char *section_name = set_section_names1(is_32bit, file, elf_header.ehdr.ehdr32, elf_header.ehdr.ehdr64, &section_header);
+
+				printf("%s ", section_name);
 
 
 				free((void *)section_name);
@@ -165,17 +167,46 @@ int main(int argc, char *argv[])
 }
 
 
-const char *getSectionName(FILE *file, Elf64_Shdr section_header)
- {
-
+char *set_section_names1(int is_32bit, FILE *file, Elf32_Ehdr elf_header32, Elf64_Ehdr elf_header64, Elf64_Shdr *section_header)
+{
 	char *section_names = NULL;
+	/* printf("set_section_names1: is_32bit=%d\n", is_32bit); */
+
+	if (is_32bit)
+	{
+		if (elf_header32.e_ident[EI_DATA] == ELFDATA2LSB)
+		{
+			fseek(file, elf_header32.e_shoff + elf_header32.e_shstrndx * elf_header32.e_shentsize, SEEK_SET);
+			section_names = getSectionName(file, *section_header);
+		}
+	}
+	else
+	{
+		fseek(file, elf_header64.e_shoff + elf_header64.e_shstrndx * elf_header64.e_shentsize, SEEK_SET);
+		section_names = getSectionName(file, *section_header);
+	}
+
+	return section_names;
+}
+
+
+char *getSectionName(FILE *file, Elf64_Shdr section_header)
+{
+	printf("getSectionName: file=%p, section_header.sh_size=%lu\n", (void *)file, section_header.sh_size);
+	char *section_names = NULL;
+
+	// Imprimir algunos valores para depuración
+	printf("section_header.sh_offset=%lu\n", section_header.sh_offset);
+	printf("section_header.sh_size=%lu\n", section_header.sh_size);
 
 	fread(&section_header, 1, sizeof(section_header), file);
 	section_names = (char *)malloc(section_header.sh_size);
 	fseek(file, section_header.sh_offset, SEEK_SET);
 	fread(section_names, 1, section_header.sh_size, file);
-	return (section_names);
+	return section_names;
 }
+
+
 
 
 void print_interpreter_info(const char *interp)

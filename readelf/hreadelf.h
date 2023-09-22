@@ -201,5 +201,7 @@ const char *getProgramHeaderTypeName32(uint32_t p_type);
 const char *getProgramHeaderTypeName64(uint64_t p_type);
 void print_interpreter_info(const char *interp);
 void read_elf32_be_prog(Elf32_Phdr *phdr);
-const char *getSectionName(FILE *file, Elf64_Shdr section_header) ;
+char *set_section_names1(int is_32bit, FILE *file, Elf32_Ehdr elf_header32, Elf64_Ehdr elf_header64, Elf64_Shdr *section_header);
+char *getSectionName(FILE *file, Elf64_Shdr section_header);
+
 #endif /* HELF_H */
