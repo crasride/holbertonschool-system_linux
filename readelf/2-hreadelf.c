@@ -125,7 +125,7 @@ int main(int argc, char *argv[])
 		}
 	}
 
-	/* Section to Segment mapping */
+	/* Section to Segment mapping cucu*/
 	if (elf_header.ehdr.ehdr32.e_ident[EI_CLASS] == ELFCLASS32)
 	{
 		is_32bit = 1;
