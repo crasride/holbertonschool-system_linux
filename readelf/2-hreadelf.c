@@ -47,6 +47,11 @@ int main(int argc, char *argv[])
 	}
 	else if (elf_header.ehdr.ehdr64.e_ident[EI_CLASS] == ELFCLASS64)
 	{
+		if (elf_header.ehdr.ehdr64.e_phoff == 0)
+		{
+			printf("\nThere are no program headers in this file.\n");
+			return (0);
+		}
 		is_32bit = 0;
 	}
 	else
