@@ -185,7 +185,7 @@ typedef struct
 #define MAX_SECTIONS 100
 #define MAX_SECTION_NAME 100
 
-typedef struct 
+typedef struct
 {
 	int segment_number;
 	char sections[MAX_INTERP_SIZE];
@@ -202,6 +202,7 @@ const char *getProgramHeaderTypeName64(uint64_t p_type);
 void print_interpreter_info(const char *interp);
 void read_elf32_be_prog(Elf32_Phdr *phdr);
 
-void createSectionToSegmentMapping(FILE *file, ElfHeader *elf_header, int is_32bit);
+void createSectionToSegmentMapping64(FILE *file, ElfHeader *elf_header, int is_32bit);
+void createSectionToSegmentMapping32(FILE *file, ElfHeader *elf_header);
 
 #endif /* HELF_H */
