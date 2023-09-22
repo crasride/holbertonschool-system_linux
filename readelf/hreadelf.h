@@ -192,7 +192,6 @@ typedef struct
 } SectionToSegmentMapping;
 
 
-
 const char *getElfTypeName(uint16_t e_type);
 void print_elf_info(ElfHeader *elf_header, int is_32bit);
 void print_program_header_info_64(Elf64_Phdr *program_header);
