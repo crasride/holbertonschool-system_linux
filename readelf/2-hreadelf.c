@@ -372,7 +372,7 @@ const char *getProgramHeaderTypeName32(uint32_t p_type)
 	case PT_SHLIB: return "SHLIB";
 	case PT_PHDR: return "PHDR";
 	case PT_TLS: return "TLS";
-	default: return "UNKNOWN";
+	default: return "LOOS+464e550";
 	}
 }
 const char *getProgramHeaderTypeName64(uint64_t p_type)
@@ -390,7 +390,7 @@ const char *getProgramHeaderTypeName64(uint64_t p_type)
 	case PT_GNU_EH_FRAME: return "GNU_EH_FRAME";
 	case PT_GNU_STACK: return "GNU_STACK";
 	case PT_GNU_RELRO: return "GNU_RELRO";
-	default: return "UNKNOWN";
+	default: return "LOOS+464e550";
 	}
 }
 
