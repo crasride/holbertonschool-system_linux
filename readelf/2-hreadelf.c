@@ -203,6 +203,7 @@ void createSectionToSegmentMapping64(FILE *file, ElfHeader *elf_header, int is_3
 			}
 		}
 		strcpy(mapping[i].sections, sections);
+
 	}
 	free(shstrtab);
 	/* Imprimir la tabla de mapeo de secciones a segmentos */
@@ -210,7 +211,7 @@ void createSectionToSegmentMapping64(FILE *file, ElfHeader *elf_header, int is_3
 	printf("  Segment Sections...\n");
 	for (i = 0; i < elf_header->ehdr.ehdr64.e_phnum; i++)
 	{
-		printf("   %02d     %s\n", mapping[i].segment_number, mapping[i].sections);
+		printf("   %02d     %s \n", mapping[i].segment_number, mapping[i].sections);
 	}
 	free(mapping);
 }
@@ -260,7 +261,7 @@ void createSectionToSegmentMapping32(FILE *file, ElfHeader *elf_header, int is_3
 			{
 				if (strlen(sections) > 0)
 				{
-					strcat(sections, "");
+					strcat(sections, " ");
 				}
 				strcat(sections, section_name);
 			}
@@ -273,7 +274,7 @@ void createSectionToSegmentMapping32(FILE *file, ElfHeader *elf_header, int is_3
 	printf("  Segment Sections...\n");
 	for (i = 0; i < elf_header->ehdr.ehdr32.e_phnum; i++)
 	{
-		printf("   %02d     %s\n", mapping[i].segment_number, mapping[i].sections);
+		printf("   %02d     %s \n", mapping[i].segment_number, mapping[i].sections);
 	}
 	free(mapping);
 }
