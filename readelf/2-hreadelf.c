@@ -305,6 +305,16 @@ void createSectionToSegmentMapping32(FILE *file, ElfHeader *elf_header, int is_3
 
 
 
+
+
+
+
+
+
+
+
+
+
 void print_interpreter_info(const char *interp)
 {
     printf("      [Requesting program interpreter: %s]\n", interp);
@@ -322,7 +332,7 @@ void print_elf_info(ElfHeader *elf_header, int is_32bit)
 		is_32bit ? (long)elf_header->ehdr.ehdr32.e_phoff : (long)elf_header->ehdr.ehdr64.e_phoff);
 
 	printf("Program Headers:\n");
-	printf("  Type           Offset   VirtAddr   PhysAddr  FileSiz  MemSiz  Flg Align\n");
+	printf("  Type           Offset   VirtAddr   PhysAddr   FileSiz MemSiz  Flg Align\n");
 
 	}
 	else
