@@ -204,7 +204,7 @@ void createSectionToSegmentMapping64(FILE *file, ElfHeader *elf_header, int is_3
 			Elf64_Shdr section_header = section_headers[j];
 			/* Obtener el nombre de la sección utilizando la tabla de cadenas de secciones */
 			const char *section_name = shstrtab + section_header.sh_name;
-			// Omitir la asignación de estas secciones específicas
+			/* Omitir la asignación de estas secciones específicas */
 			if (strcmp(section_name, ".gnu_debuglink") == 0 || strcmp(section_name, ".shstrtab") == 0 || strcmp(section_name, ".tm_clone_table") == 0)
 			{
 				continue;
@@ -284,8 +284,8 @@ void createSectionToSegmentMapping32(FILE *file, ElfHeader *elf_header, int is_3
 			/* Obtener el nombre de la sección utilizando la tabla de cadenas de secciones */
 			const char *section_name = shstrtab + section_header.sh_name;
 
-			// Omitir la asignación de estas secciones específicas
-			if (strcmp(section_name, ".gnu_debuglink") == 0 || strcmp(section_name, ".shstrtab") == 0)
+			/* Omitir la asignación de estas secciones específicas */
+			if (strcmp(section_name, ".gnu_debuglink") == 0 || strcmp(section_name, ".shstrtab") == 0 || strcmp(section_name, ".tm_clone_table") == 0)
 			{
 				continue;
 			}
