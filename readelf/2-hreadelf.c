@@ -98,6 +98,7 @@ int main(int argc, char *argv[])
 
 					/* Recupero la posicion guardada */
 					fseek(file, current_pos, SEEK_SET);
+
 				}
 				else
 				{
@@ -138,6 +139,7 @@ int main(int argc, char *argv[])
 		}
 	}
 
+
 	/* Section to Segment mapping cucu*/
 	if (elf_header.ehdr.ehdr32.e_ident[EI_CLASS] == ELFCLASS32)
 	{
@@ -148,7 +150,6 @@ int main(int argc, char *argv[])
 		}
 		else if (elf_header.ehdr.ehdr32.e_ident[EI_DATA] == ELFDATA2MSB)
 		{
-
 			createSectionToSegmentMapping32(file, &elf_header, is_32bit);
 		}
 	}
@@ -173,7 +174,7 @@ void createSectionToSegmentMapping64(FILE *file, ElfHeader *elf_header, int is_3
 	char *shstrtab = NULL;
 	char sections[MAX_INTERP_SIZE] = "";
 
-	SectionToSegmentMapping *mapping = malloc(elf_header->ehdr.ehdr64.e_phnum * sizeof(SectionToSegmentMapping));
+	SectionToSegmentMapping *mapping = (SectionToSegmentMapping *)malloc(elf_header->ehdr.ehdr64.e_phnum * sizeof(SectionToSegmentMapping));
 
 	for (i = 0; i < elf_header->ehdr.ehdr64.e_phnum; i++)
 	{
@@ -185,7 +186,7 @@ void createSectionToSegmentMapping64(FILE *file, ElfHeader *elf_header, int is_3
 	fseek(file, (is_32bit ? elf_header->ehdr.ehdr32.e_shoff : elf_header->ehdr.ehdr64.e_shoff) + elf_header->ehdr.ehdr64.e_shstrndx * sizeof(Elf64_Shdr), SEEK_SET);
 	fread(&shstrtab_header, sizeof(Elf64_Shdr), 1, file);
 
-	shstrtab = malloc(shstrtab_header.sh_size);
+	shstrtab = (char *)malloc(shstrtab_header.sh_size);
 	fseek(file, shstrtab_header.sh_offset, SEEK_SET);
 	fread(shstrtab, shstrtab_header.sh_size, 1, file);
 	/* Leer section headers */
@@ -252,7 +253,7 @@ void createSectionToSegmentMapping32(FILE *file, ElfHeader *elf_header, int is_3
 	char *shstrtab = NULL;
 	char sections[MAX_INTERP_SIZE] = "";
 
-	SectionToSegmentMapping *mapping = malloc(elf_header->ehdr.ehdr32.e_phnum * sizeof(SectionToSegmentMapping));
+	SectionToSegmentMapping *mapping = (SectionToSegmentMapping *)malloc(elf_header->ehdr.ehdr32.e_phnum * sizeof(SectionToSegmentMapping));
 
 	for (i = 0; i < elf_header->ehdr.ehdr32.e_phnum; i++)
 	{
@@ -262,11 +263,15 @@ void createSectionToSegmentMapping32(FILE *file, ElfHeader *elf_header, int is_3
 
 	/* Obtener la tabla de cadenas de secciones */
 	fseek(file, (is_32bit ? elf_header->ehdr.ehdr32.e_shoff : elf_header->ehdr.ehdr64.e_shoff) + elf_header->ehdr.ehdr32.e_shstrndx * sizeof(Elf32_Shdr), SEEK_SET);
-	fread(&shstrtab_header, sizeof(Elf32_Shdr), 1, file);
 
-	shstrtab = malloc(shstrtab_header.sh_size);
+	fread(&shstrtab_header, sizeof(Elf32_Shdr), 1, file);
+	if (elf_header->ehdr.ehdr32.e_ident[EI_DATA] == ELFDATA2MSB)
+		read_elf32_be_section(&shstrtab_header);
+
+	shstrtab = (char *)malloc(shstrtab_header.sh_size);
 	fseek(file, shstrtab_header.sh_offset, SEEK_SET);
 	fread(shstrtab, shstrtab_header.sh_size, 1, file);
+
 	/* Leer section headers */
 	fseek(file, (is_32bit ? elf_header->ehdr.ehdr32.e_shoff : elf_header->ehdr.ehdr64.e_shoff), SEEK_SET);
 	fread(section_headers, sizeof(Elf32_Shdr), elf_header->ehdr.ehdr32.e_shnum, file);
@@ -276,18 +281,27 @@ void createSectionToSegmentMapping32(FILE *file, ElfHeader *elf_header, int is_3
 	{
 		Elf32_Phdr program_header;
 		fread(&program_header, sizeof(Elf32_Phdr), 1, file);
+		if (elf_header->ehdr.ehdr32.e_ident[EI_DATA] == ELFDATA2MSB)
+			read_elf32_be_prog(&program_header);
 		strcpy(sections, "");
 
 		for (j = 0; j < elf_header->ehdr.ehdr32.e_shnum; j++)
 		{
-			Elf32_Shdr section_header = section_headers[j];
-			/* Obtener el nombre de la sección utilizando la tabla de cadenas de secciones */
-			const char *section_name = shstrtab + section_header.sh_name;
+			Elf32_Shdr section_header;
+			const char *section_name;
 
+			section_header = section_headers[j];
+			if (elf_header->ehdr.ehdr32.e_ident[EI_DATA] == ELFDATA2MSB)
+				read_elf32_be_section(&section_header);
+			/* Obtener el nombre de la sección utilizando la tabla de cadenas de secciones */
+			section_name = shstrtab + section_header.sh_name;
 			/* Omitir la asignación de estas secciones específicas */
-			if (strcmp(section_name, ".gnu_debuglink") == 0 || strcmp(section_name, ".shstrtab") == 0 || strcmp(section_name, ".tm_clone_table") == 0)
+			if (elf_header->ehdr.ehdr32.e_ident[EI_DATA] == ELFDATA2LSB)
 			{
-				continue;
+				if (strcmp(section_name, ".gnu_debuglink") == 0 || strcmp(section_name, ".shstrtab") == 0 || strcmp(section_name, ".tm_clone_table") == 0)
+				{
+					continue;
+				}
 			}
 
 			if (section_header.sh_addr >= program_header.p_vaddr && section_header.sh_addr + section_header.sh_size <= program_header.p_vaddr + program_header.p_memsz)
@@ -298,6 +312,7 @@ void createSectionToSegmentMapping32(FILE *file, ElfHeader *elf_header, int is_3
 				}
 				strcat(sections, section_name);
 			}
+
 		}
 		if (strlen(sections) > 0)
 		{
@@ -499,4 +514,30 @@ void read_elf32_be_header(Elf32_Ehdr *ehdr)
 	ehdr->e_shentsize = my_be16toh(ehdr->e_shentsize);
 	ehdr->e_shnum = my_be16toh(ehdr->e_shnum);
 	ehdr->e_shstrndx = my_be16toh(ehdr->e_shstrndx);
+}
+
+/**
+ * read_elf32_be_section - Convert a 32-bit ELF section header from big-endian
+ * to host byte order.
+ * This function takes a pointer to a 32-bit ELF section header in big-endian
+ * byte order
+ * and converts various section header fields to the host byte order.It is used
+ * to ensure
+ * correct interpretation of the section header on the host system.
+ *
+ * @section_header32: pointer to a 32-bit ELF section header in big-endian
+ * byte order.
+ */
+void read_elf32_be_section(Elf32_Shdr *section_header32)
+{
+	section_header32->sh_name = my_be32toh(section_header32->sh_name);
+	section_header32->sh_type = my_be32toh(section_header32->sh_type);
+	section_header32->sh_addr = my_be32toh(section_header32->sh_addr);
+	section_header32->sh_offset = my_be32toh(section_header32->sh_offset);
+	section_header32->sh_size = my_be32toh(section_header32->sh_size);
+	section_header32->sh_entsize = my_be32toh(section_header32->sh_entsize);
+	section_header32->sh_flags = my_be32toh(section_header32->sh_flags);
+	section_header32->sh_link = my_be32toh(section_header32->sh_link);
+	section_header32->sh_info = my_be32toh(section_header32->sh_info);
+	section_header32->sh_addralign = my_be32toh(section_header32->sh_addralign);
 }
