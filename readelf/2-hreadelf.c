@@ -33,7 +33,7 @@ int main(int argc, char *argv[])
 
 		if (elf_header.ehdr.ehdr32.e_phoff == 0)
 		{
-			printf("\nThere are no program headers in this file.\n\n");
+			printf("\nThere are no program headers in this file.\n");
 			return (0);
 		}
 		is_32bit = 1;
