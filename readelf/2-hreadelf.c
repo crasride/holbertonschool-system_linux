@@ -23,11 +23,6 @@ int main(int argc, char *argv[])
 		return 1;
 	}
 
-	if (elf_header.ehdr.ehdr32.e_phoff == 0)
-	{
-		printf("\nThere are no program headers in this file.\n\n");
-		return (0);
-	}
 
 
 	/* Leer el encabezado ELF principal */
@@ -35,6 +30,12 @@ int main(int argc, char *argv[])
 	/* Verificar si es un archivo ELF de 32 o 64 bits */
 	if (elf_header.ehdr.ehdr32.e_ident[EI_CLASS] == ELFCLASS32)
 	{
+
+		if (elf_header.ehdr.ehdr32.e_phoff == 0)
+		{
+			printf("\nThere are no program headers in this file.\n\n");
+			return (0);
+		}
 		is_32bit = 1;
 		if (elf_header.ehdr.ehdr32.e_ident[EI_DATA] == ELFDATA2LSB)
 		{
