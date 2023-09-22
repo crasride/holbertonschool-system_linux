@@ -260,7 +260,7 @@ void createSectionToSegmentMapping32(FILE *file, ElfHeader *elf_header, int is_3
 			{
 				if (strlen(sections) > 0)
 				{
-					strcat(sections, " ");
+					strcat(sections, "");
 				}
 				strcat(sections, section_name);
 			}
@@ -290,7 +290,7 @@ void print_interpreter_info(const char *interp)
 
 void print_elf_info(ElfHeader *elf_header, int is_32bit)
 {
-	printf("Elf file type is %s\n", getElfTypeName(is_32bit ? elf_header->ehdr.ehdr32.e_type : elf_header->ehdr.ehdr64.e_type));
+	printf("\nElf file type is %s\n", getElfTypeName(is_32bit ? elf_header->ehdr.ehdr32.e_type : elf_header->ehdr.ehdr64.e_type));
 
 	if (is_32bit)
 	{
