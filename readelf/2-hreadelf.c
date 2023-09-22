@@ -205,8 +205,7 @@ void createSectionToSegmentMapping64(FILE *file, ElfHeader *elf_header, int is_3
 			/* Obtener el nombre de la sección utilizando la tabla de cadenas de secciones */
 			const char *section_name = shstrtab + section_header.sh_name;
 
-			if (section_header.sh_addr >= program_header.p_vaddr &&
-				section_header.sh_addr + section_header.sh_size <= program_header.p_vaddr + program_header.p_memsz)
+			if (section_header.sh_addr >= program_header.p_vaddr && section_header.sh_addr + section_header.sh_size <= program_header.p_vaddr + program_header.p_memsz)
 			{
 				if (strlen(sections) > 0)
 				{
@@ -280,8 +279,7 @@ void createSectionToSegmentMapping32(FILE *file, ElfHeader *elf_header, int is_3
 			/* Obtener el nombre de la sección utilizando la tabla de cadenas de secciones */
 			const char *section_name = shstrtab + section_header.sh_name;
 
-			if (section_header.sh_addr >= program_header.p_vaddr &&
-				section_header.sh_addr + section_header.sh_size <= program_header.p_vaddr + program_header.p_memsz)
+			if (section_header.sh_addr >= program_header.p_vaddr && section_header.sh_addr + section_header.sh_size <= program_header.p_vaddr + program_header.p_memsz)
 			{
 				if (strlen(sections) > 0)
 				{
@@ -367,7 +365,7 @@ const char *getElfTypeName(uint16_t e_type)
 	case ET_NONE: return "NONE";
 	case ET_REL: return "REL";
 	case ET_EXEC: return "EXEC (Executable file)";
-	case ET_DYN: return "DYN";
+	case ET_DYN: return "DYN (Shared object file)";
 	case ET_CORE: return "CORE";
 	default: return "UNKNOWN";
 	}
