@@ -394,6 +394,9 @@ const char *getProgramHeaderTypeName32(uint32_t p_type)
 	case PT_SHLIB: return "SHLIB";
 	case PT_PHDR: return "PHDR";
 	case PT_TLS: return "TLS";
+	case PT_GNU_EH_FRAME: return "GNU_EH_FRAME";
+	case PT_GNU_STACK: return "GNU_STACK";
+	case PT_GNU_RELRO: return "GNU_RELRO";
 	case 0x6464E550:return ("LOOS+464e550");
 	case PT_IA_64_UNWIND: return "PT_SUNW_UNWIND";
 	default: return "UNKNOWN";
