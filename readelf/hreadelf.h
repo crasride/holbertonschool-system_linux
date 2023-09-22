@@ -193,13 +193,17 @@ typedef struct
 } SectionToSegmentMapping;
 
 
-const char *getElfTypeName(uint16_t e_type);
+
 void print_elf_info(ElfHeader *elf_header, int is_32bit);
-const char *getProgramHeaderTypeName32(uint32_t p_type);
-const char *getProgramHeaderTypeName64(uint64_t p_type);
 void print_interpreter_info(const char *interp);
+
 void createSectionToSegmentMapping64(FILE *file, ElfHeader *elf_header, int is_32bit);
 void createSectionToSegmentMapping32(FILE *file, ElfHeader *elf_header, int is_32bit);
+
+/* Functions 2-hreadelf_get_type.c */
+const char *getElfTypeName(uint16_t e_type);
+const char *getProgramHeaderTypeName32(uint32_t p_type);
+const char *getProgramHeaderTypeName64(uint64_t p_type);
 
 /* Functions 2-hreadelf_tools.c */
 void print_program_header_info_64(Elf64_Phdr *program_header);

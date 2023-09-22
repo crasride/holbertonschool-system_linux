@@ -5,7 +5,7 @@ CC = gcc
 CFLAGS =  -Wall -Werror -Wextra -pedantic
 FILES_0 = 0-hreadelf_tools.c 0-hreadelf_convert.c
 FILES_1 = 1-hreadelf_tools.c 0-hreadelf_convert.c 1-hreadelf_print.c
-FILES_2 = 2-hreadelf_tools.c 0-hreadelf_convert.c
+FILES_2 = 2-hreadelf_tools.c 0-hreadelf_convert.c 2-hreadelf_get_type.c
 
 # Linker Flags (empty in this case)
 LDFLAGS =
