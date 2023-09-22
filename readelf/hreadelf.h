@@ -202,6 +202,6 @@ void print_interpreter_info(const char *interp);
 void read_elf32_be_prog(Elf32_Phdr *phdr);
 
 void createSectionToSegmentMapping64(FILE *file, ElfHeader *elf_header, int is_32bit);
-void createSectionToSegmentMapping32(FILE *file, ElfHeader *elf_header);
+void createSectionToSegmentMapping32(FILE *file, ElfHeader *elf_header, int is_32bit);
 
 #endif /* HELF_H */
