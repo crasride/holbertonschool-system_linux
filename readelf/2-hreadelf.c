@@ -216,7 +216,7 @@ void createSectionToSegmentMapping64(FILE *file, ElfHeader *elf_header, int is_3
 	{
 		if (strlen(mapping[i].sections) > 0)
 		{
-			printf("   %02d     %s\n", mapping[i].segment_number, mapping[i].sections);
+			printf("   %02d     %s \n", mapping[i].segment_number, mapping[i].sections);
 		}
 		else
 		{
