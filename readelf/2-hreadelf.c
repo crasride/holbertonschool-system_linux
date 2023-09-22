@@ -23,6 +23,13 @@ int main(int argc, char *argv[])
 		return 1;
 	}
 
+	if (elf_header.ehdr.ehdr32.e_phoff == 0)
+	{
+		printf("\nThere are no program headers in this file.\n\n");
+		return (0);
+	}
+
+
 	/* Leer el encabezado ELF principal */
 	fread(&elf_header, sizeof(ElfHeader), 1, file);
 	/* Verificar si es un archivo ELF de 32 o 64 bits */
@@ -372,9 +379,11 @@ const char *getProgramHeaderTypeName32(uint32_t p_type)
 	case PT_SHLIB: return "SHLIB";
 	case PT_PHDR: return "PHDR";
 	case PT_TLS: return "TLS";
-	default: return "LOOS+464e550";
+	case 0x6464E550:return ("LOOS+464e550");
+	case PT_IA_64_UNWIND: return "PT_SUNW_UNWIND";
+	default: return "UNKNOWN";
 	}
-}
+ }
 const char *getProgramHeaderTypeName64(uint64_t p_type)
 {
 	switch (p_type)
@@ -390,7 +399,7 @@ const char *getProgramHeaderTypeName64(uint64_t p_type)
 	case PT_GNU_EH_FRAME: return "GNU_EH_FRAME";
 	case PT_GNU_STACK: return "GNU_STACK";
 	case PT_GNU_RELRO: return "GNU_RELRO";
-	default: return "LOOS+464e550";
+	default: return "UNKNOWN";
 	}
 }
 
