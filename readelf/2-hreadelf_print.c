@@ -5,7 +5,7 @@
 * print_interpreter_info - Print information about the program interpreter.
 *
 * This function prints information about the program interpreter requested by
-* an ELF file. The program interpreter is used in dynamically linked executables
+* an ELF file.The program interpreter is used in dynamically linked executables
 * to load and execute shared libraries.
 *
 * @interp: A string containing the path to the program interpreter.
@@ -23,8 +23,8 @@ void print_interpreter_info(const char *interp)
 * This function prints information about an ELF file, including its type, entry
 * point, program header details. It supports both 32-bit and 64-bit ELF files.
 *
-* @elf_header: A pointer to an `ElfHeader` structure containing ELF header data.
-* @is_32bit: A flag indicating whether the ELF file is 32-bit (1) or 64-bit (0).
+* @elf_header: A pointer to an `ElfHeader` structure containing ELF header data
+* @is_32bit: A flag indicating whether the ELF file is 32-bit (1) or 64-bit (0)
 */
 void print_elf_info(ElfHeader *elf_header, int is_32bit)
 {
@@ -41,7 +41,8 @@ void print_elf_info(ElfHeader *elf_header, int is_32bit)
 		ehdr.ehdr64.e_phoff);
 
 	printf("Program Headers:\n");
-	printf("  Type           Offset   VirtAddr   PhysAddr   FileSiz MemSiz  Flg Align\n");
+	printf("  Type           Offset   VirtAddr   PhysAddr   FileSiz MemSiz");
+	printf("  Flg Align\n");
 
 	}
 	else
@@ -54,6 +55,7 @@ void print_elf_info(ElfHeader *elf_header, int is_32bit)
 		ehdr.ehdr64.e_phoff);
 
 	printf("Program Headers:\n");
-	printf("  Type           Offset   VirtAddr           PhysAddr           FileSiz  MemSiz   Flg Align\n");
+	printf("  Type           Offset   VirtAddr           PhysAddr           ");
+	printf("FileSiz  MemSiz   Flg Align\n");
 	}
 }
