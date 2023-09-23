@@ -453,3 +453,7 @@ GitHub repository: `holbertonschool-system_linux`
 Directory: `readelf`
 
 File: `Makefile`
+
+### Authors
+* Guenoel Andrieux [Github](https://github.com/guenoel)
+* Josè Fernàndez Armas [Github](https://github.com/crasride) - [Twitter](https://twitter.com/JosFern35900656)
