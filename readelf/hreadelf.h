@@ -193,9 +193,19 @@ typedef struct
 } SectionToSegmentMapping;
 
 
-void createSectionToSegmentMapping64(FILE *file, ElfHeader *elf_header, int is_32bit);
+
 void createSectionToSegmentMapping32(FILE *file, ElfHeader *elf_header, int is_32bit);
 void select_type_elf_file(FILE* file, ElfHeader* elf_header, int is_32bit);
+
+void print_mapping32(SectionToSegmentMapping *mapping, int num_segments);
+
+
+/* Functions 2-hreadelf_mapping64.c*/
+void createSectionToSegmentMapping64(FILE *file, ElfHeader *elf_header, int is_32bit);
+void calculateSectionsInSegment64(FILE *file, ElfHeader *elf_header, int is_32bit, Elf64_Shdr *section_headers, SectionToSegmentMapping *mapping);
+void readSectionHeaders(FILE *file, Elf64_Shdr *section_headers, ElfHeader *elf_header, int is_32bit);
+char* getSectionNameTable(FILE *file, Elf64_Shdr shstrtab_header);
+void print_mapping64(SectionToSegmentMapping *mapping, int num_segments);
 
 /* Functions 2-hreadelf_print.c*/
 
