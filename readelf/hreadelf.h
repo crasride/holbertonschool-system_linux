@@ -195,6 +195,7 @@ typedef struct
 
 void createSectionToSegmentMapping64(FILE *file, ElfHeader *elf_header, int is_32bit);
 void createSectionToSegmentMapping32(FILE *file, ElfHeader *elf_header, int is_32bit);
+void select_type_elf_file(FILE* file, ElfHeader* elf_header, int is_32bit);
 
 /* Functions 2-hreadelf_print.c*/
 
@@ -212,5 +213,8 @@ void print_program_header_info_32(Elf32_Phdr *program_header);
 void read_elf32_be_prog(Elf32_Phdr *phdr);
 void read_elf32_be_header(Elf32_Ehdr *ehdr);
 void read_elf32_be_section(Elf32_Shdr *section_header32);
+
+
+
 
 #endif /* HELF_H */

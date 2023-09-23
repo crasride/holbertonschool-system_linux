@@ -21,20 +21,15 @@ int main(int argc, char *argv[])
 		fprintf(stderr, "Uso: %s elf_filename\n", argv[0]);
 		return (1);
 	}
-
 	file = fopen(argv[1], "rb");
 	if (file == NULL)
 	{
 		perror("No se puede abrir el archivo");
 		return (1);
 	}
-
-	/* Leer el encabezado ELF principal */
 	fread(&elf_header, sizeof(ElfHeader), 1, file);
-	/* Verificar si es un archivo ELF de 32 o 64 bits */
 	if (elf_header.ehdr.ehdr32.e_ident[EI_CLASS] == ELFCLASS32)
 	{
-
 		if (elf_header.ehdr.ehdr32.e_phoff == 0)
 		{
 			printf("\nThere are no program headers in this file.\n");
@@ -45,9 +40,7 @@ int main(int argc, char *argv[])
 		{
 		}
 		else if (elf_header.ehdr.ehdr32.e_ident[EI_DATA] == ELFDATA2MSB)
-		{
 			read_elf32_be_header(&elf_header.ehdr.ehdr32);
-		}
 	}
 	else if (elf_header.ehdr.ehdr64.e_ident[EI_CLASS] == ELFCLASS64)
 	{
@@ -60,19 +53,12 @@ int main(int argc, char *argv[])
 	}
 	else
 	{
-		fprintf(stderr, "El archivo ELF tiene una clase desconocida.\n");
 		fclose(file);
 		return (1);
 	}
-	/* Imprimir información del encabezado ELF */
 	print_elf_info(&elf_header, is_32bit);
-
-	 /* Calcular el tamaño de un encabezado de programa */
 	program_header_size = is_32bit ? sizeof(Elf32_Phdr) : sizeof(Elf64_Phdr);
-
-	/* Mover el puntero de archivo al inicio de los encabezados de programa */
 	fseek(file, (is_32bit ? elf_header.ehdr.ehdr32.e_phoff : elf_header.ehdr.ehdr64.e_phoff), SEEK_SET);
-
 	/* Leer y mostrar la información de los encabezados del programa ELF */
 	for (i = 0; i < (is_32bit ? elf_header.ehdr.ehdr32.e_phnum : elf_header.ehdr.ehdr64.e_phnum); i++)
 	{
@@ -88,19 +74,11 @@ int main(int argc, char *argv[])
 			{
 				if (program_header.p_filesz <= MAX_INTERP_SIZE)
 				{
-					/* Guardo la posicion actual */
 					long current_pos = ftell(file);
-
-					/* Mover el puntero posicio del programa intérprete */
 					fseek(file, program_header.p_offset, SEEK_SET);
-
-					/* Leer el programa intérprete en la matriz interp */
 					fread(interp, program_header.p_filesz, 1, file);
 					interp[program_header.p_filesz] = '\0';
-
 					print_interpreter_info(interp);
-
-					/* Recupero la posicion guardada */
 					fseek(file, current_pos, SEEK_SET);
 				}
 				else
@@ -121,15 +99,11 @@ int main(int argc, char *argv[])
 			{
 				if (program_header.p_filesz <= MAX_INTERP_SIZE)
 				{
-					/* Guardo la posicion actual */
 					long current_pos = ftell(file);
-
 					fseek(file, program_header.p_offset, SEEK_SET);
 					fread(interp, program_header.p_filesz, 1, file);
 					interp[program_header.p_filesz] = '\0';
 					print_interpreter_info(interp);
-
-					/* Recupero la posicion guardada */
 					fseek(file, current_pos, SEEK_SET);
 				}
 				else
@@ -141,28 +115,32 @@ int main(int argc, char *argv[])
 			}
 		}
 	}
-
-	/* Section to Segment mapping cucu*/
-	if (elf_header.ehdr.ehdr32.e_ident[EI_CLASS] == ELFCLASS32)
-	{
-		is_32bit = 1;
-		if (elf_header.ehdr.ehdr32.e_ident[EI_DATA] == ELFDATA2LSB)
-		{
-			createSectionToSegmentMapping32(file, &elf_header, is_32bit);
-		}
-		else if (elf_header.ehdr.ehdr32.e_ident[EI_DATA] == ELFDATA2MSB)
-		{
-			createSectionToSegmentMapping32(file, &elf_header, is_32bit);
-		}
-	}
-	else if (elf_header.ehdr.ehdr64.e_ident[EI_CLASS] == ELFCLASS64)
-	{
-		is_32bit = 0;
-		createSectionToSegmentMapping64(file, &elf_header, is_32bit);
-	}
+	select_type_elf_file(file, &elf_header, is_32bit);
 
 	fclose(file);
 	return (0);
+}
+
+
+void select_type_elf_file(FILE *file, ElfHeader *elf_header, int is_32bit)
+{
+	/* Section to Segment mapping */
+	if (is_32bit)
+	{
+		if (elf_header->ehdr.ehdr32.e_ident[EI_DATA] == ELFDATA2LSB)
+		{
+			createSectionToSegmentMapping32(file, elf_header, is_32bit);
+		}
+		else if (elf_header->ehdr.ehdr32.e_ident[EI_DATA] == ELFDATA2MSB)
+		{
+			createSectionToSegmentMapping32(file, elf_header, is_32bit);
+		}
+	}
+	else if (elf_header->ehdr.ehdr64.e_ident[EI_CLASS] == ELFCLASS64)
+	{
+		is_32bit = 0;
+		createSectionToSegmentMapping64(file, elf_header, is_32bit);
+	}
 }
 
 
