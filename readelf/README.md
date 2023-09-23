@@ -464,10 +464,10 @@ File: `Makefile`
 [Guenoel Andrieux](https://github.com/guenoel)
 
 <p align="left">
-<a href="https://twitter.com/GuenoelAndrieux" target="blank"><img align="center" src="/images/twitter.svg" alt="guenoel" height="30" width="40" /></a>
-<a href="https://www.linkedin.com/in/guenoelandrieux/" target="blank"><img align="center" src="/images/linked-in-alt.svg" alt="guenoel" height="30" width="40" /></a>
-<a href="https://medium.com/@5020" target="blank"><img align="center" src="/images/medium.svg" alt="@guenoel" height="30" width="40" /></a>
-<a href="https://discord.gg/Guenoel#1989" target="blank"><img align="center" src="/images/discord.svg" alt="guenoel" height="30" width="40" /></a>
+<a href="https://twitter.com/GuenoelAndrieux" target="blank"><img align="center" src="../images/twitter.svg" alt="guenoel" height="30" width="40" /></a>
+<a href="https://www.linkedin.com/in/guenoelandrieux/" target="blank"><img align="center" src="../images/linked-in-alt.svg" alt="guenoel" height="30" width="40" /></a>
+<a href="https://medium.com/@5020" target="blank"><img align="center" src="../images/medium.svg" alt="@guenoel" height="30" width="40" /></a>
+<a href="https://discord.gg/Guenoel#1989" target="blank"><img align="center" src="../images/discord.svg" alt="guenoel" height="30" width="40" /></a>
 </p>
 
 
