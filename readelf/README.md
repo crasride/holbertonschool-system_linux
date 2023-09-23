@@ -455,5 +455,5 @@ Directory: `readelf`
 File: `Makefile`
 
 ### Authors
-* Guenoel Andrieux [Github](https://github.com/guenoel)
-* Josè Fernàndez Armas [Github](https://github.com/crasride) - [Twitter](https://twitter.com/JosFern35900656)
+* Guenoel Andrieux [Github](https://github.com/guenoel) - [Twitter](https://twitter.com/GuenoelAndrieux) - [Linkedin](https://www.linkedin.com/in/guenoelandrieux/)
+* Josè Fernàndez Armas [Github](https://github.com/crasride) - [Twitter](https://twitter.com/JosFern35900656) - [Linkedin](https://www.linkedin.com/in/jd-fernandez/)
