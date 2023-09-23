@@ -194,11 +194,14 @@ typedef struct
 
 
 
-void createSectionToSegmentMapping32(FILE *file, ElfHeader *elf_header, int is_32bit);
+/* Functions 2-hreadelf.c*/
 void select_type_elf_file(FILE* file, ElfHeader* elf_header, int is_32bit);
+int print_program_info(FILE *file, ElfHeader elf_header, int is_32bit);
+void check_command(int argc, char *argv[]);
 
+/* Functions 2-hreadelf_mapping32.c*/
+void createSectionToSegmentMapping32(FILE *file, ElfHeader *elf_header, int is_32bit);
 void print_mapping32(SectionToSegmentMapping *mapping, int num_segments);
-
 
 /* Functions 2-hreadelf_mapping64.c*/
 void createSectionToSegmentMapping64(FILE *file, ElfHeader *elf_header, int is_32bit);
