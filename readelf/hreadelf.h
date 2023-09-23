@@ -164,7 +164,15 @@ const char *getSectionFlags(unsigned int sh_flags);
 /* ------------------- Task 2-hreadelf.c ----------------------------------*/
 #define MAX_INTERP_SIZE 1024
 
-typedef struct
+/**
+* struct Ehdr - Represents an ELF (Executable and Linkable Format) header.
+* This structure is used to store the header of an ELF file. It can store
+* either a 32-bit ELF header (Elf32_Ehdr) or a 64-bit ELF header (Elf64_Ehdr)
+* using a union.
+*
+* @ehdr: A union containing either a 32-bit ELF header (ehdr32) or a 64-bit ELF
+*/
+typedef struct Ehdr
 {
 	union
 	{
@@ -172,7 +180,18 @@ typedef struct
 		Elf64_Ehdr ehdr64;
 	} ehdr;
 } ElfHeader;
-typedef struct
+
+/**
+* struct Phdr - Represents an ELF program header.
+* union - union the struct 32 Bits and 64 Bits
+* This structure is used to store the program header of an ELF file. It can
+* store either a 32-bit ELF program header (Elf32_Phdr) or a 64-bit ELF
+* program header (Elf64_Phdr) using a union.
+*
+* @phdr: A union containing either a 32-bit ELF program header (phdr32) or a
+* 64-bit ELF program header (phdr64).
+*/
+typedef struct Phdr
 {
 	union
 	{
@@ -186,7 +205,18 @@ typedef struct
 #define MAX_SECTIONS 100
 #define MAX_SECTION_NAME 100
 
-typedef struct
+/**
+* struct Mapping- Represents a mapping between sections and segments
+*
+* This structure is used to associate sections with specific segments.It stores
+* a segment number and an array of section names. The maximum size of section
+* names array is defined by MAX_INTERP_SIZE.
+*
+* @segment_number: An integer representing the segment number.
+* @sections:  array of characters storing section names associated the segment.
+*                  The maximum size of this array is MAX_INTERP_SIZE.
+*/
+typedef struct Mapping
 {
 	int segment_number;
 	char sections[MAX_INTERP_SIZE];
@@ -195,20 +225,35 @@ typedef struct
 
 
 /* Functions 2-hreadelf.c*/
-void select_type_elf_file(FILE* file, ElfHeader* elf_header, int is_32bit);
-int print_program_info(FILE *file, ElfHeader elf_header, int is_32bit);
-void check_command(int argc, char *argv[]);
+void select_type_elf_file(FILE *file, ElfHeader *elf_header, int is_32bit);
+int print_program_info32(FILE *file, ElfHeader elf_header);
+int print_program_info64(FILE *file, ElfHeader elf_header);
+
 
 /* Functions 2-hreadelf_mapping32.c*/
-void createSectionToSegmentMapping32(FILE *file, ElfHeader *elf_header, int is_32bit);
+void createSectionToSegmentMapping32(FILE *file, ElfHeader *elf_header,
+									int is_32bit);
 void print_mapping32(SectionToSegmentMapping *mapping, int num_segments);
 
 /* Functions 2-hreadelf_mapping64.c*/
-void createSectionToSegmentMapping64(FILE *file, ElfHeader *elf_header, int is_32bit);
-void calculateSectionsInSegment64(FILE *file, ElfHeader *elf_header, int is_32bit, Elf64_Shdr *section_headers, SectionToSegmentMapping *mapping);
-void readSectionHeaders(FILE *file, Elf64_Shdr *section_headers, ElfHeader *elf_header, int is_32bit);
-char* getSectionNameTable(FILE *file, Elf64_Shdr shstrtab_header);
+void createSectionToSegmentMapping64(FILE *file, ElfHeader *elf_header,
+									int is_32bit);
+void calculateSectionsInSegment64(FILE *file, ElfHeader *elf_header,
+									int is_32bit, Elf64_Shdr *section_headers,
+									SectionToSegmentMapping *mapping);
+void readSectionHeaders(FILE *file, Elf64_Shdr *section_headers,
+						ElfHeader *elf_header, int is_32bit);
+char *getSectionNameTable(FILE *file, Elf64_Shdr shstrtab_header);
+char *getSectionNameTable32(FILE *file, Elf32_Shdr shstrtab_header);
 void print_mapping64(SectionToSegmentMapping *mapping, int num_segments);
+void sections_selection(ElfHeader *elf_header, Elf32_Shdr *section_headers,
+						Elf32_Phdr program_header, char *shstrtab,
+						SectionToSegmentMapping *mapping, int i);
+
+void calculateSectionsInSegment32(FILE *file, ElfHeader *elf_header,
+int is_32bit, Elf32_Shdr *section_headers, SectionToSegmentMapping *mapping);
+void readSectionHeaders32(FILE *file, Elf32_Shdr *section_headers,
+							ElfHeader *elf_header, int is_32bit);
 
 /* Functions 2-hreadelf_print.c*/
 
@@ -227,7 +272,8 @@ void read_elf32_be_prog(Elf32_Phdr *phdr);
 void read_elf32_be_header(Elf32_Ehdr *ehdr);
 void read_elf32_be_section(Elf32_Shdr *section_header32);
 
-
-
+/* Functions 2-hreadelf_check.c */
+void check_command(int argc, char *argv[]);
+void check_open_file(FILE *file);
 
 #endif /* HELF_H */

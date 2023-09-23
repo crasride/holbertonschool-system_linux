@@ -15,11 +15,7 @@ int main(int argc, char *argv[])
 
 	check_command(argc, argv);
 	file = fopen(argv[1], "rb");
-	if (file == NULL)
-	{
-		perror("No se puede abrir el archivo");
-		return (1);
-	}
+	check_open_file(file);
 	fread(&elf_header, sizeof(ElfHeader), 1, file);
 	if (elf_header.ehdr.ehdr32.e_ident[EI_CLASS] == ELFCLASS32)
 	{
@@ -43,7 +39,8 @@ int main(int argc, char *argv[])
 	print_elf_info(&elf_header, is_32bit);
 	fseek(file, (is_32bit ? elf_header.ehdr.ehdr32.e_phoff
 			: elf_header.ehdr.ehdr64.e_phoff), SEEK_SET);
-	value = print_program_info(file, elf_header, is_32bit);
+	value = is_32bit ? print_program_info32(file, elf_header)
+					: print_program_info64(file, elf_header);
 	if (value != 0)
 		return (value);
 	select_type_elf_file(file, &elf_header, is_32bit);
@@ -84,63 +81,50 @@ void select_type_elf_file(FILE *file, ElfHeader *elf_header, int is_32bit)
 }
 
 
-int print_program_info(FILE *file, ElfHeader elf_header, int is_32bit)
+/**
+* print_program_info32 - Print information about program headers in
+* a 32-bit ELF file.
+* This function reads and prints information about program headers
+* in a 32-bit ELF file.
+* It iterates through the program headers, reads their contents, and extracts
+* relevant information such as the program type and interpreter details.
+*
+* @file: A pointer to the open ELF file.
+* @elf_header: An ElfHeader structure containing ELF header information.
+* Return:  Returns 0 on success, and 1 if there is an error
+* (e.g., exceeding MAX_INTERP_SIZE).
+*/
+int print_program_info32(FILE *file, ElfHeader elf_header)
 {
 	int i = 0;
 	char interp[MAX_INTERP_SIZE];
 
-	for (i = 0; i < (is_32bit ? elf_header.ehdr.ehdr32.e_phnum : elf_header.ehdr.ehdr64.e_phnum); i++)
+	for (i = 0; i < elf_header.ehdr.ehdr32.e_phnum; i++)
 	{
-		if (is_32bit)
-		{
-			Elf32_Phdr program_header;
-			fread(&program_header, sizeof(Elf32_Phdr), 1, file);
-			if (elf_header.ehdr.ehdr32.e_ident[EI_DATA] == ELFDATA2MSB)
-				read_elf32_be_prog(&program_header);
-			print_program_header_info_32(&program_header);
+		Elf32_Phdr program_header;
 
-			if (program_header.p_type == PT_INTERP)
+		fread(&program_header, sizeof(Elf32_Phdr), 1, file);
+		if (elf_header.ehdr.ehdr32.e_ident[EI_DATA] == ELFDATA2MSB)
+			read_elf32_be_prog(&program_header);
+		print_program_header_info_32(&program_header);
+
+		if (program_header.p_type == PT_INTERP)
+		{
+			if (program_header.p_filesz <= MAX_INTERP_SIZE)
 			{
-				if (program_header.p_filesz <= MAX_INTERP_SIZE)
-				{
-					long current_pos = ftell(file);
-					fseek(file, program_header.p_offset, SEEK_SET);
-					fread(interp, program_header.p_filesz, 1, file);
-					interp[program_header.p_filesz] = '\0';
-					print_interpreter_info(interp);
-					fseek(file, current_pos, SEEK_SET);
-				}
-				else
-				{
-					fprintf(stderr, "MAX_INTERP_SIZE.\n");
-					fclose(file);
-					return (1);
-				}
+				long current_pos = ftell(file);
+
+				fseek(file, program_header.p_offset, SEEK_SET);
+				fread(interp, program_header.p_filesz, 1, file);
+				interp[program_header.p_filesz] = '\0';
+				print_interpreter_info(interp);
+				fseek(file, current_pos, SEEK_SET);
 			}
-		}
-		else
-		{
-			Elf64_Phdr program_header;
-			fread(&program_header, sizeof(Elf64_Phdr), 1, file);
-			print_program_header_info_64(&program_header);
-
-			if (program_header.p_type == PT_INTERP)
+			else
 			{
-				if (program_header.p_filesz <= MAX_INTERP_SIZE)
-				{
-					long current_pos = ftell(file);
-					fseek(file, program_header.p_offset, SEEK_SET);
-					fread(interp, program_header.p_filesz, 1, file);
-					interp[program_header.p_filesz] = '\0';
-					print_interpreter_info(interp);
-					fseek(file, current_pos, SEEK_SET);
-				}
-				else
-				{
-					fprintf(stderr, "MAX_INTERP_SIZE.\n");
-					fclose(file);
-					return (1);
-				}
+				fprintf(stderr, "MAX_INTERP_SIZE.\n");
+				fclose(file);
+				return (1);
 			}
 		}
 	}
@@ -148,22 +132,50 @@ int print_program_info(FILE *file, ElfHeader elf_header, int is_32bit)
 }
 
 /**
-* check_command - Check the validity of command-line arguments.
-* This function checks if the number of command-line arguments is correct
-* (exactly 2 arguments expected).
-* If the number of arguments is not 2, it prints an error message to standard
-* error and exits the program with an error code.
+* print_program_info64 - Print info about program headers in a 64-bit ELF file.
 *
-* @argc: The number of command-line arguments.
-* @argv: An array of strings containing the command-line arguments.
+* This function reads and prints information about program headers in a
+* 64-bit ELF file.
+* It iterates through the program headers, reads their contents, and extracts
+* relevant information such as the program type and interpreter details.
+*
+* @file:  A pointer to the open ELF file.
+* @elf_header: An ElfHeader structure containing ELF header information.
+*
+* Return: Returns 0 on success, and 1 if there is an error
+* (e.g., exceeding MAX_INTERP_SIZE).
 */
-void check_command(int argc, char *argv[])
+int print_program_info64(FILE *file, ElfHeader elf_header)
 {
-	if (argc != 2)
+	int i = 0;
+	char interp[MAX_INTERP_SIZE];
+
+	for (i = 0; i < elf_header.ehdr.ehdr64.e_phnum; i++)
 	{
-		fprintf(stderr, "Uso: %s elf_filename\n", argv[0]);
-		exit (1);
+		Elf64_Phdr program_header;
+
+		fread(&program_header, sizeof(Elf64_Phdr), 1, file);
+		print_program_header_info_64(&program_header);
+
+		if (program_header.p_type == PT_INTERP)
+		{
+			if (program_header.p_filesz <= MAX_INTERP_SIZE)
+			{
+				long current_pos = ftell(file);
+
+				fseek(file, program_header.p_offset, SEEK_SET);
+				fread(interp, program_header.p_filesz, 1, file);
+				interp[program_header.p_filesz] = '\0';
+				print_interpreter_info(interp);
+				fseek(file, current_pos, SEEK_SET);
+			}
+			else
+			{
+				fprintf(stderr, "MAX_INTERP_SIZE.\n");
+				fclose(file);
+				return (1);
+			}
+		}
 	}
+	return (0);
 }
-
-
