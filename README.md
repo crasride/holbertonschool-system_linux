@@ -14,7 +14,7 @@ The list of projects contained follows :
 
 * [C - ls](./ls/)
 * [C - Static variables, getline](./getline/)
-* [C - ELF: readelf](./)
+* [C - ELF: readelf](./readelf/)
 * [Python - /proc filesystem](./proc_filesystem/)
 
 
