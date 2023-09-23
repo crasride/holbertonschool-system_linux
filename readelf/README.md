@@ -471,7 +471,7 @@ File: `Makefile`
 </p>
 
 
-* Guenoel Andrieux
+* José Fernàndez Armas
 
 <sub>_You can contact me_ 📩
 
