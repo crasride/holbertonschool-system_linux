@@ -1,39 +1,48 @@
+BITS 64
+
 global asm_strncmp
 section .text
 
 asm_strncmp:
-    push rbp
-    mov rbp, rsp
+	; Configure stack frame
+	push rbp            ; Guarda el valor de rbp en la pila
+	mov rbp, rsp        ; Establece rbp como el puntero de marco actual
+	mov rcx, 0          ; Inicializa rcx (contador) a cero
 
-    xor rax, rax  ; RAX se usará para devolver el resultado
-    xor rcx, rcx  ; RCX se usará como contador
+compare:
+	xor rax, rax        ; Limpia rax (se usará para el resultado)
+	xor rbx, rbx        ; Limpia rbx (se usará para comparar los bytes)
+	cmp ecx, edx        ; Compara el contador con la longitud n
+	je end_comparison   ; Si son iguales, finaliza la comparación
 
-.compare_loop:
-    mov al, [rdi + rcx]  ; Carga el byte de s1 en AL
-    mov bl, [rsi + rcx]  ; Carga el byte de s2 en BL
-    cmp al, bl           ; Compara los bytes
-    jne .not_equal       ; Si no son iguales, salta a .not_equal
+	mov al, byte [rdi + rcx]  ; Carga el byte de s1 en AL
+	mov bl, byte [rsi + rcx]  ; Carga el byte de s2 en BL
+	cmp al, bl           ; Compara los bytes
+	je equal_chars       ; Si son iguales, salta a la etiqueta equal
 
-    ; Si ambos bytes son iguales y no hemos llegado a n, continuamos
-    inc rcx
-    cmp rcx, rdx
-    jl .compare_loop
+	jl less_chars        ; Si no son iguales y al es menor que bl, salta a less
+	jg greater_chars     ; Si no son iguales y al es mayor que bl, salta a greater
 
-    ; Si llegamos a n o al final de una de las cadenas, son iguales
-    cmp rcx, rdx
-    je .equal
+equal_chars:
+	; The characters are the same, check if it is a null character
+	cmp al, 0            ; Comprueba si hemos llegado al final de una de las cadenas
+	je end_comparison    ; Si es así, finaliza la comparación
+	inc rcx              ; Incrementa el contador
+	jmp compare          ; Vuelve a la etiqueta compare para comparar el siguiente byte
 
-.not_equal:
-    ; Si los bytes son diferentes o uno de los punteros llega al final, determina el resultado
-    mov rax, 1   ; RAX = 1 (mayor)
-    jl .end
-    mov rax, -1  ; RAX = -1 (menor)
+less_chars:
+	; Return a negative value (s1 < s2)
+	mov rax, -1          ; Si al es menor que bl, establece el resultado en -1 (menor)
+	jmp end_comparison   ; Salta a end_comparison para finalizar la comparación
 
-.equal:
-    ; Si las cadenas son iguales, RAX ya está configurado en 0
+greater_chars:
+	; Return a positive value (s1 > s2)
+	mov rax, 1           ; Si al es mayor que bl, establece el resultado en 1 (mayor)
+	jmp end_comparison   ; Salta a end_comparison para finalizar la comparación
 
-.end:
-    mov rsp, rbp
-    pop rbp
-    ret
+end_comparison:
+	; clear stack frame
+	mov rsp, rbp         ; Restaura rsp al valor original
+	pop rbp              ; Restaura rbp desde la pila
+	ret                  ; Retorna con el resultado en rax
 
