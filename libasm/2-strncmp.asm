@@ -1,47 +1,46 @@
 section .text
 global asm_strncmp
 
-BITS 64
-
 asm_strncmp:
-    push rbp
-    mov rbp, rsp
-    push rcx
+	; Function prologue (stack frame setup)
+	push    rbp
+	mov     rbp, rsp
 
-    ; Check if n is zero
-    mov rax, rdx
-    test rax, rax
-    je equal
+	; Parameters:
+	; rdi = s1
+	; rsi = s2
+	; rdx = n
 
-.loop:
-    mov rax, rdi
-    mov rcx, rsi
-    movzx rax, byte [rax]
-    movzx rcx, byte [rcx]
-    cmp al, 0x0
-    je equal
-    cmp al, cl
-    jne not_equal
-    inc rdi
-    inc rsi
-    dec rcx
-    jnz .loop
+	; Initialize counter
+	mov     rcx, rdx
+	
+compare_loop:
+	; Load characters from s1 and s2 into AL and BL
+	lodsb
+	mov     al, [rdi]
+	mov     bl, [rsi]
+
+	; Compare AL and BL
+	cmp     al, bl
+	jne     not_equal
+
+	; Check if we've reached the end of the strings or the end of the comparison
+	test    al, al
+	jz      equal
+	loop    compare_loop
 
 equal:
-    xor rax, rax
-    jmp end
+	; Strings are equal
+	xor     rax, rax
+	jmp     end
 
 not_equal:
-    cmp al, cl
-    jl less
-    mov rax, 1
-    jmp end
-
-less:
-    mov rax, -1
-    jmp end
+	; Strings are not equal
+	sub     al, bl
+	jmp     end
 
 end:
-    pop rcx
-    pop rbp
-    ret
+	; Function epilogue (stack frame cleanup)
+	pop     rbp
+	ret
+
