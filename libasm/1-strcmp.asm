@@ -4,58 +4,58 @@ BITS 64
 
 	section .text
 	;int asm_strcmp(const char *s1, const char *s2);
-	;Compara dos cadenas y devuelve un número entero que representa el resultado
-	;de la comparación (negativo si la primera cadena es menor que la segunda,
-	;positivo si es mayor y cero si son iguales).
+	;Compares two strings and returns an integer representing the result
+	;of the comparison (negative if the first string is less than the second,
+	;positive if it is greater and zero if they are equal).
 
 
 asm_strcmp:
-	; Prólogo de la función (configurar marco de pila)
-	push rbp         ; Guarda el valor del registro de base (rbp) en la pila
-	mov rbp, rsp     ; Establece rbp igual a rsp (el puntero de pila actual)
+	; Configure stack frame
+	push rbp         ; Save the value of the base register (rbp) on the stack
+	mov rbp, rsp     ; Set rbp equal to rsp (the current stack pointer)
 
-	; Manejo de parámetros
-	mov rdi, rdi     ; rdi contiene s1 (este paso no hace nada)
-	mov rsi, rsi     ; rsi contiene s2 (este paso no hace nada)
+	; Parameter management
+	mov rdi, rdi     ; rdi contains s1 (this step does nothing)
+	mov rsi, rsi     ; rdi contains s2 (this step does nothing)
 
 	; Comparar cadenas en un bucle
 compare_loop:
-	; Cargar caracteres de s1 y s2 en los registros al y bl
-	mov al, byte [rdi]  ; Carga el byte en la dirección apuntada por rdi en al
-	mov bl, byte [rsi]  ; Carga el byte en la dirección apuntada por rsi en bl
+	; Load characters from s1 and s2 into registers al and bl
+	mov al, byte [rdi]  ; Load the byte at the address pointed to by rdi in al
+	mov bl, byte [rsi]  ; Load the byte at the address pointed to by rsi in bl
 
-	; Comparar caracteres
-	cmp al, bl      ; Compara los caracteres en al y bl
-	je equal_chars  ; Salta a equal_chars si son iguales
-	jl less_chars   ; Salta a less_chars si al es menor que bl
-	jg greater_chars ; Salta a greater_chars si al es mayor que bl
+	; Compare characters
+	cmp al, bl       ; Compare the characters in al and bl
+	je equal_chars   ; Jump to equal_chars if they are equal
+	jl less_chars    ; Jump to less_chars if al is less than bl
+	jg greater_chars ; Jump to greater_chars if al is greater than bl
 
 equal_chars:
-	; Los caracteres son iguales, verificar si es un carácter nulo
-	cmp al, 0       ; Compara el carácter en al con nulo (0)
-	je strings_equal ; Si son iguales, las cadenas son iguales
+	; The characters are the same, check if it is a null character
+	cmp al, 0        ; Compares character in al with null (0)
+	je strings_equal ; If they are equal, the chains are equal
 
-	; Moverse a los caracteres siguientes
-	inc rdi         ; Incrementa el puntero rdi para apuntar al siguiente carácter de s1
-	inc rsi         ; Incrementa el puntero rsi para apuntar al siguiente carácter de s2
-	jmp compare_loop ; Vuelve a compare_loop para continuar la comparación
+	; Move to next characters
+	inc rdi          ; Increment the rdi pointer to point to the next character of s1
+	inc rsi          ; Increment the rsi pointer to point to the next character of s2
+	jmp compare_loop ; Return to compare_loop to continue the comparison
 
 less_chars:
-	; Devolver un valor negativo (s1 < s2)
-	mov rax, -1     ; Carga -1 en rax para indicar que s1 es menor que s2
-	jmp end_comparison ; Salta a end_comparison para finalizar la comparación
+	; Return a negative value (s1 < s2)
+	mov rax, -1        ; Load -1 on rax to indicate that s1 is less than s2
+	jmp end_comparison ; Jump to end_comparison to end the comparison
 
 greater_chars:
-	; Devolver un valor positivo (s1 > s2)
-	mov rax, 1      ; Carga 1 en rax para indicar que s1 es mayor que s2
-	jmp end_comparison ; Salta a end_comparison para finalizar la comparación
+	; Return a positive value (s1 > s2)
+	mov rax, 1         ; Carga 1 en rax para indicar que s1 es mayor que s2
+	jmp end_comparison ; Jump to end_comparison to end the comparison
 
 strings_equal:
-	; Devolver 0 (s1 == s2)
-	xor rax, rax    ; Establece rax en 0 para indicar que las cadenas son iguales
+	; Return 0 (s1 == s2)
+	xor rax, rax    ; Set rax to 0 to indicate that the strings are equal
 
 end_comparison:
-	; Epílogo de la función (limpiar marco de pila)
-	pop rbp          ; Restaura el valor de rbp desde la pila
-	ret             ; Retorna de la función, devolviendo el valor en rax
+	;clear stack frame
+	pop rbp          ; Restores the rbp value from the stack
+	ret              ; Return from the function, returning the value in rax
 
