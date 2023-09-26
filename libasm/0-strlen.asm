@@ -9,7 +9,7 @@ asm_strlen:
 	xor rcx, rcx            ; Initialize rcx to 0 (length counter)
 
 .loop:
-	comp byte [rdi + rcx], 0; Compare the byte at rdi+rcx to the null terminator
+	cmp byte [rdi + rcx], 0; Compare the byte at rdi+rcx to the null terminator
 	je .done                ; If it's the null terminator,Ok
 	inc rcx                 ; Move to the next character
 	jmp .loop               ; Repeat the loop
