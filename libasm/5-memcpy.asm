@@ -4,38 +4,36 @@ BITS 64
 
 	global asm_memcpy
 	;void *asm_memcpy(void *dest, const void *src, size_t n);
-	;Descripción: Esta función copia 'n' bytes desde la dirección de origen 
-	;(src) a la dirección de destino (dest).
-	; - Entradas:
-	;   RDI: Puntero a la dirección de destino (dest).
-	;   RSI: Puntero a la dirección de origen (src).
-	;   RDX: Tamaño en bytes a copiar (n).
-	; - Salida:
-	;   RAX: Puntero a la dirección de destino (dest).
+	;Description: This function copies 'n' bytes from the source address
+	;(src) to the destination address (dest).
+	; - Tickets:
+	; RDI: Pointer to the destination address (dest).
+	; RSI: Pointer to the source address (src).
+	; RDX: Size in bytes to copy (n).
+	; - Exit:
+	; RAX: Pointer to the destination address (dest).
 
 asm_memcpy:
-    push rbp                ; Guardar el valor actual de RBP
-    mov rbp, rsp            ; Establecer RBP como el nuevo puntero de marco
-    xor rcx, rcx            ; Inicializar RCX a cero (contador)
+    push rbp                ; Save current RBP value
+    mov rbp, rsp            ; Set RBP as the new frame pointer
+    xor rcx, rcx            ; Initialize RCX to zero (counter)
 
-    ; Verificar si n (RDX) es cero y, en ese caso, retornar dest (RDI)
+    ; Check if n (RDX) is zero and, if so, return dest (RDI)
     cmp rdx, 0
     je .done
 
 .copy_loop:
-    ; Comparar el contador (RCX) con n (RDX)
+    ; Compare counter (RCX) with n (RDX)
     cmp rcx, rdx
-    je .done                ; Si RCX igual a RDX, terminar el bucle
+    je .done                ; If RCX equals RDX, end the loop
 
-    mov al, byte [rsi + rcx] ; Cargar el byte actual desde src (RSI) en AL
-    mov byte [rdi + rcx], al ; Almacenar el byte en dest (RDI)
+    mov al, byte [rsi + rcx] ; Load current byte from src (RSI) into AL
+    mov byte [rdi + rcx], al ; Store the byte in dest (RDI)
 
-    inc rcx                 ; Incrementar el contador
-    jmp .copy_loop          ; Saltar al inicio del bucle para copiar el siguiente byte
+    inc rcx                 ; Increase counter
+    jmp .copy_loop          ; Jump to start of loop to copy next byte
 
 .done:
-    mov rax, rdi            ; Retornar el puntero a la dirección de destino (dest)
-    pop rbp                 ; Restaurar el valor anterior de RBP
-    ret                     ; Retornar
-
-
+    mov rax, rdi            ; Return the pointer the destination address (dest)
+    pop rbp                 ; Restore previous RBP value
+    ret                     ; Return
