@@ -1,7 +1,6 @@
 BITS 64
 
 	global asm_strchr
-	
 
 	section .text
 	;char *asm_strchr(const char *s, int c);
