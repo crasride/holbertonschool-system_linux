@@ -3,65 +3,75 @@ BITS 64
 	global asm_strstr
 
 	section .text
+	;char *asm_strstr(const char *haystack, const char *needle);
+	;Finds the first occurrence the substring 'needle' in the string 'haystack'
+	; - Entradas:
+	;     RDI: Pointer to the main chain (haystack).
+	;     RSI: Pointer to the substring to search for (needle).
+	; - Salida:
+	;     RAX: Pointer to the start of the first occurrence of 'needle' in
+	;          'haystack' or NULL if not found.
+
 asm_strstr:
-    ;
+    ; Preparation of the function
     push rbp
     mov rbp, rsp
     push rcx
     push rbx
     push rdx
-    push r8
     push r9
+    push r8
 
-    ; Inicializar registros
+    ; Initialize records
     xor rax, rax
     xor rcx, rcx
-    xor r8, r8
     xor r9, r9
+    xor r8, r8
+
 
 .search_loop:
-    ; Copiar el índice actual en RDX
+    ; Copy current index to RDX
     mov rdx, rcx
     xor rbx, rbx
 
 .search_match:
-    ; Cargar el carácter actual de haystack en R8B
-    ; Cargar el carácter actual de needle en R9B
+    ; Load current haystack character into R8B
+    ; Load current needle character into R9B
     mov r8b, [rdi + rcx]
     mov r9b, [rsi + rbx]
 
-    ; Comprobar si hemos llegado al final de needle (carácter nulo)
+    ; Check if we have reached the end of needle (null character)
     cmp r9b, 0
     jz .found_needle
 
-    ; Comparar el carácter actual de haystack con el de needle
+    ; Compare the current character of haystack with that of needle
     cmp r8b, r9b
-    jne .search_break
+    jne .search_end
 
-    ; Incrementar índices y continuar buscando
+    ; Increase indexes and continue searching
     inc rcx
     inc rbx
     jmp .search_match
 
-.search_break:
-    ; Cargar el siguiente carácter en haystack
+.search_end:
+    ; Load next character into haystack
     mov r8b, [rdi + rcx]
 
-    ; Comprobar si es el final de haystack (carácter nulo)
+    ; Check if it is the end of haystack (null character)
     cmp r8b, 0
-    jz .search_end
+    jz .end
 
-    ; Incrementar índice en haystack y continuar buscando
+    ; Increase index in haystack and continue searching
     inc rcx
     jmp .search_loop
 
 .found_needle:
-    ; Calcular la dirección del inicio de needle en haystack
+    ; Calculate the address of the start of needle in haystack
     mov rax, rdi
     add rax, rdx
 
-.search_end:
-    ;
+.end:
+    ; Restore records and return
     pop r9
     pop r8
     pop rdx
