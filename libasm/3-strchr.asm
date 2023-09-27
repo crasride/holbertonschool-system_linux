@@ -21,8 +21,8 @@ xor rsi, rsi             ; Clear RSI to use it as an index
     mov al, byte [rdi + rsi] ; Load the next byte from the string into AL
     cmp al, dl               ; Compare the current character with c
     je .found                ; If they match, we found c
-    cmp al, 0                ;
-    je .not_found            ;
+    cmp al, 0                ; Check if we've reached the end of the string
+    je .not_found            ; If it's the end, character not found
     inc rsi                  ; Increment index
     jmp .search_loop         ; Continue searching
 
