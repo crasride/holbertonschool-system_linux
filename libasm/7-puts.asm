@@ -1,29 +1,30 @@
 global asm_puts
 
-    ; Llamar a la funcion exterior
+    ; Call the outer function
     extern asm_strlen
 
     section .text
     ; size_t asm_puts(const char *str);
 
 asm_puts:
-    push rbp              ; Guarda el valor de rbp en la pila
-    mov rbp, rsp          ; Establece rbp como el nuevo puntero de pila
-    push rdi              ; Guarda el valor de rdi en la pila
+    push rbp              ; Save the rbp value on the stack
+    mov rbp, rsp          ; Set rbp as the new stack pointer
+    push rdi              ; Save the rdi value on the stack
 
-    ; Llama a la función asm_strlen
-    call asm_strlen       ; Llama a la función asm_strlen
-    mov rdx, rax          ; Resultado de asm_strlen (longitud la cadena) a rdx
-    mov rax, 1            ; Establece valor de rax a 1 (syscall para la consola)
-    mov rdi, 1            ; Establece el descriptor de archivo (stdout) en rdi
-    mov rsi, [rsp]        ; De la cadena (puntero) desde la pila a rsi
+    ; Call the asm_strlen function
+    call asm_strlen       ; Call the asm_strlen function
+    mov rdx, rax          ; Result from asm_strlen (string length) to rdx
+    mov rax, 1            ; Set rax value to 1 (syscall to console)
+    mov rdi, 1            ; Set the file descriptor (stdout) to rdi
+    mov rsi, [rsp]        ; From string (pointer) from stack to rsi
 
-    ; Realiza la llamada al sistema para escribir en la consola
+    ; Make the system call to write to the console
     syscall
-    mov rax, rdx          ; Valor de rdx (longitud original) de vuelta a rax
-    pop rdi               ; Restaura el valor de rdi desde la pila
-    mov rsp, rbp          ; Restaura el puntero de pila original
-    pop rbp               ; Restaura el valor de rbp original
+
+    mov rax, rdx          ; Value of rdx (original length) back to rax
+    pop rdi               ; Restores the rdi value from the stack
+    mov rsp, rbp          ; Restores the original stack pointer
+    pop rbp               ; Restores the original rbp value
 
     ; Return asm_puts
     ret
