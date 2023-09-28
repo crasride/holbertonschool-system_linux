@@ -1,45 +1,47 @@
-section .text
-global asm_strcasecmp
+BITS 64
+    global asm_strcasecmp
+
+    section .text
 
 asm_strcasecmp:
-    ; Argumentos:
-    ; rdi: puntero a la primera cadena (s1)
-    ; rsi: puntero a la segunda cadena (s2)
-    xor rax, rax ; Inicializa el resultado a 0 (iguales)
+    push rbp        ; save base pointer before mov
+    mov rbp, rsp    ; move top of stack to base pointer
+    xor rbx, rbx    ;
+    xor rax, rax    ; init rax (that contain return value) to 0
 
 .loop:
-    ; Carga los caracteres de s1 y s2 en al y bl
-    mov al, byte [rdi]
-    mov bl, byte [rsi]
+;.fst_str_check:
+    mov al, byte [rdi] ; Load the byte at the address pointed to by rdi in al
+    cmp al, 'A'        ; compare letter of first string with first uppercase alphabet letter
+    jl .sec_str_check  ; if lower it's not a uppercase letter
+    cmp al, 'Z'        ; compare letter of first string with last uppercase alphabet letter
+    jg .sec_str_check  ; if higher it's not a uppercase letter
+    add al, 32         ; if not uppercase letter convert to uppercase (or int + 32 if not a letter)
 
-    ; Convierte los caracteres a minúsculas si es necesario
-    cmp al, 'A'
-    jl .check_second
-    cmp al, 'Z'
-    jg .check_second
-    add al, 32 ; Convierte a minúsculas (ASCII 'A' a 'a')
-
-.check_second:
-    cmp bl, 'A'
-    jl .compare_chars
-    cmp bl, 'Z'
-    jg .compare_chars
-    add bl, 32 ; Convierte a minúsculas (ASCII 'A' a 'a')
+.sec_str_check:
+	mov bl, byte [rsi] ; same comment as previous reference for second string
+    cmp bl, 'A'        ; 
+    jl .compare_chars  ;
+    cmp bl, 'Z'        ;
+    jg .compare_chars  ;
+    add bl, 32         ;
 
 .compare_chars:
-    ; Compara los caracteres
-    cmp al, bl
-    jne .done ; Si son diferentes, termina
+    sub bl, al         ; bl = bl - al
+    cmp bl, 0          ; result stored in bl must be 0 if equal
+    je .equal          ; if result is equal jump equal
+    jmp .end           ; else if different jump to end
 
-    ; Verifica si llegamos al final de las cadenas
-    cmp al, 0
-    je .done ; Si sí, son iguales
+.equal:
+    cmp al, 0          ; check if end of first string
+    je .end            ; if equal jump to end
+    inc rdi            ; increment byte (letter) in rsi
+    inc rsi            ; increment byte (letter) in rsi
+    jmp .loop          ; back to loop
 
-    ; Avanza a los siguientes caracteres
-    inc rdi
-    inc rsi
-    jmp .loop
+.end:
+    mov al, bl         ; copy result of sub (line 29) in al (return value registry)
 
-.done:
-    ; Devuelve el resultado en rax
-    ret
+    mov rsp, rbp       ; move base pointer to top of stack
+    pop rbp            ; free rbp pointer
+    ret                ; return value of rax
