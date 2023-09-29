@@ -16,6 +16,7 @@ The list of projects contained follows :
 * [C - Static variables, getline](./getline/)
 * [C - ELF: readelf](./readelf/)
 * [Python - /proc filesystem](./proc_filesystem/)
+* [ASM - /x86 Assembly - libASM](./libasm/)
 
 
 
