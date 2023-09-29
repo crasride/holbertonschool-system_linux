@@ -1,53 +1,47 @@
-BITS 64           ; Selecciona la arquitectura de 64 bits
-
-	global asm_strspn 
+BITS 64
+	global asm_strspn
 
 	section .text
 	;size_t asm_strspn(const char *s, const char *accept);
 
-asm_strspn:       ; Etiqueta de la función
-    push rbp       ; Guarda el valor de RBP en la pila
-    mov rbp, rsp   ; Establece RBP como puntero de pila
+asm_strspn:
+    push rbp       ; Save the RBP value on the stack
+    mov rbp, rsp   ; Set RBP as stack pointer
 
-    push rcx       ; Guarda el valor de RCX en la pila (se usará para contar la longitud)
-    push r8        ; Guarda el valor de R8 en la pila (se usará para comparar caracteres)
-    push r9        ; Guarda el valor de R9 en la pila (se usará para cargar caracteres de las cadenas)
+    push rcx       ; Save the value of RCX on the stack (it will be used to count the length)
+    push r8        ; Save the value of R8 on the stack (it will be used to compare characters)
+    push r9        ; Save the value of R9 on the stack (it will be used to load characters from strings)
 
-    xor rax, rax   ; Limpia RAX (se usará para contar la longitud)
-    xor r8, r8     ; Limpia R8 (se usará para comparar caracteres)
-    xor r9, r9     ; Limpia R9 (se usará para cargar caracteres)
+    xor rax, rax   ; Clean RAX (will be used to count length)
+    xor r8, r8     ; Clean R8 (will be used to compare characters)
+    xor r9, r9     ; Clean R9 (will be used to load characters)
 
-.loop_strspn_rdi:  ; Etiqueta del bucle exterior (recorre la cadena en RDI)
-    mov r8b, [rdi + rax] ; Carga el carácter actual de la cadena en RDI
-    test r8b, r8b         ; Comprueba si el carácter es nulo (fin de cadena)
-    jz .end                ; Si es nulo, salta a la etiqueta 'end' (fin de la función)
+.loop_strspn_rdi:
+    mov r8b, [rdi + rax] ; Load current character from string into RDI
+    test r8b, r8b         ; Checks if character is null (end of string)
+    jz .end                ; If null, jump to 'end' tag (end of function)
 
-    xor rcx, rcx   ; Limpia RCX (se usará para recorrer la cadena en RSI)
+    xor rcx, rcx   ; Clear RCX (will be used to traverse the chain in RSI)
 
-.loop_strspn_rsi:  ; Etiqueta del bucle interior (recorre la cadena en RSI)
-    mov r9b, [rsi + rcx] ; Carga el carácter actual de la cadena en RSI
-    test r9b, r9b         ; Comprueba si el carácter es nulo (fin de cadena)
-    jz .end                ; Si es nulo, salta a la etiqueta 'end'
+.loop_strspn_rsi:  ; Inner loop label (loops through chain in RSI)
+    mov r9b, [rsi + rcx] ; Load current character from string into RSI
+    test r9b, r9b         ; Checks if character is null (end of string)
+    jz .end                ; If null, jump to 'end' tag
 
-    cmp r8b, r9b    ; Compara los caracteres en R8 y R9
-    je .jump         ; Si son iguales, salta a la etiqueta 'break'
+    cmp r8b, r9b    ; Compare the characters in R8 and R9
+    je .jump         ; If they are the same, jump to the 'jump' tag
 
-    inc rcx          ; Incrementa el índice de la cadena en RSI
-    jmp .loop_strspn_rsi ; Vuelve al inicio del bucle interior
+    inc rcx          ; Increase the chain index in RSI
+    jmp .loop_strspn_rsi ; Return to the beginning of the inner loop
 
 .jump:
-    inc eax          ; Incrementa la longitud
-    jmp .loop_strspn_rdi ; Vuelve al inicio del bucle exterior
+    inc eax          ; Increase the length
+    jmp .loop_strspn_rdi ; Return to the beginning of the outer loop
 
 .end:
-    pop r9           ; Restaura el valor de R9 desde la pila
-    pop r8           ; Restaura el valor de R8 desde la pila
-    pop rcx          ; Restaura el valor de RCX desde la pila
-    mov rsp, rbp     ; Restaura el puntero de pila original
-    pop rbp          ; Restaura el valor de RBP
-    ret              ; Devuelve el resultado
-
-
-
-
-
+    pop r9           ; Restores the value of R9 from the stack
+    pop r8           ; Restores the value of R8 from the stack
+    pop rcx          ; Restores the RCX value from the stack
+    mov rsp, rbp     ; Restores the original stack pointer
+    pop rbp          ; Restores RBP value
+    ret              ; Retun
