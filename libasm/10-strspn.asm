@@ -18,14 +18,14 @@ asm_strspn:
 
 .loop_strspn_rdi:
     mov r8b, [rdi + rax] ; Load current character from string into RDI
-    test r8b, r8b         ; Checks if character is null (end of string)
+    cmp r8b, 0         ; Checks if character is null (end of string)
     jz .end                ; If null, jump to 'end' tag (end of function)
 
     xor rcx, rcx   ; Clear RCX (will be used to traverse the chain in RSI)
 
 .loop_strspn_rsi:  ; Inner loop label (loops through chain in RSI)
     mov r9b, [rsi + rcx] ; Load current character from string into RSI
-    test r9b, r9b         ; Checks if character is null (end of string)
+    cmp r9b, 0         ; Checks if character is null (end of string)
     jz .end                ; If null, jump to 'end' tag
 
     cmp r8b, r9b    ; Compare the characters in R8 and R9
