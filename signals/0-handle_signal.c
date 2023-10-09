@@ -6,8 +6,8 @@
 */
 void sigint_handler(int signum)
 {
-	(void)signum;
 	printf("Gotcha! [%d]\n", signum);
+	fflush(stdout);
 }
 
 /**
