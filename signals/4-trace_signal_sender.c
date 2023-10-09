@@ -1,12 +1,12 @@
-#include <stdio.h>
-#include <signal.h>
-#include <unistd.h>
-#include <stdlib.h>
-#include <sys/types.h>
 #include "signals.h"
 
-static volatile pid_t sender_pid;
+static pid_t sender_pid;
 
+/**
+* sigquit_handler - Signal handler for SIGQUIT.
+*
+* @signum: The received signal number (must be SIGQUIT).
+*/
 void sigquit_handler(int signum)
 {
 	if (signum == SIGQUIT)
@@ -15,6 +15,12 @@ void sigquit_handler(int signum)
 	}
 }
 
+/**
+* trace_signal_sender - Configures a signal handler for SIGQUIT that prints
+* the sender's PID when SIGQUIT is received.
+*
+* Return: 0 if the signal handler configuration was successful, -1 on failure.
+*/
 int trace_signal_sender(void)
 {
 	struct sigaction sa;
