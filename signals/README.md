@@ -135,7 +135,7 @@ Unless specified otherwise in a task, you are allowed to use the C standard libr
 - [ ] SIGTRAP
 - [ ] SIGBUS
 - [X] SIGIOT
-- [X] SIGWINCH
+- [ ] SIGWINCH
 
 
 ## Question #8
