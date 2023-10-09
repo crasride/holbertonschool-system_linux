@@ -713,7 +713,7 @@ PID 890 exists
 alex@~/0x06-signals$
 ```
 
-### 11. Blog post
+### [11. Blog post]()
 
 Write a blog post about signals
 
