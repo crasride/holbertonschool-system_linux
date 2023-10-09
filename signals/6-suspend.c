@@ -15,6 +15,14 @@ void sigint_handler(int signum)
 	}
 }
 
+void wait_for_sigint(void)
+{
+	if (!sigint_received)
+	{
+		pause();
+		wait_for_sigint();
+	}
+}
 
 /**
 * main - Displays the name of a signal based on its signal number.
@@ -32,16 +40,12 @@ int main(void)
 	if (sigaction(SIGINT, &sa, NULL) == -1)
 	{
 		perror("sigaction");
-		return (EXIT_FAILURE);
+		return EXIT_FAILURE;
 	}
 
-	while (!sigint_received)
-	{
-		/* Wait for SIGINT */
-		pause();
-	}
+	wait_for_sigint();
 
 	printf("Signal received\n");
 
-	return (EXIT_SUCCESS);
+	return EXIT_SUCCESS;
 }
