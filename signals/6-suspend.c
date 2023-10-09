@@ -15,6 +15,17 @@ void sigint_handler(int signum)
 	}
 }
 
+/**
+* wait_for_sigint - Waits until SIGINT (Interrupt) signal is received
+*
+* This function is responsible for suspending program execution
+* until the SIGINT signal is received. It works recursively,
+* checking if the SIGINT signal has been received. If the signal has not yet
+* been received, the function uses the 'pause' function to suspend
+* the current process and wait for the signal. When you finally receive
+* the SIGINT signal, the function exits the recursion and allows the
+* program continues its execution.
+*/
 void wait_for_sigint(void)
 {
 	if (!sigint_received)
@@ -40,12 +51,12 @@ int main(void)
 	if (sigaction(SIGINT, &sa, NULL) == -1)
 	{
 		perror("sigaction");
-		return EXIT_FAILURE;
+		return (EXIT_FAILURE);
 	}
 
 	wait_for_sigint();
 
 	printf("Signal received\n");
 
-	return EXIT_SUCCESS;
+	return (EXIT_SUCCESS);
 }
