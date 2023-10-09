@@ -2,13 +2,14 @@
 
 int main(int argc, char *argv[])
 {
+	int signum;
 	if (argc != 2)
 	{
 		printf("Usage: %s <signum>\n", argv[0]);
 		return EXIT_FAILURE;
 	}
 
-	int signum = atoi(argv[1]);
+	signum = atoi(argv[1]);
 
 	if (signum >= 1 && signum <= 64)
 	{
