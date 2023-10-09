@@ -7,6 +7,7 @@
 void sigint_handler(int signum)
 {
 	printf("Gotcha! [%d]\n", signum);
+	/* is used to explicitly flush the buffer of n standard output (stdout)*/
 	fflush(stdout);
 }
 
