@@ -733,4 +733,4 @@ When done, please add all urls below (blog post, tweet, etc.)
 
 Please, remember that these blogs must be written in English to further your technical ability in a variety of settings.
 
-* [Post]()
+* [Post](https://medium.com/@4990/signals-in-operating-systems-7c7b90523b61tree)
