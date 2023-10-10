@@ -6,6 +6,7 @@
 #include <stdlib.h>
 #include <string.h>
 #include <unistd.h>
+#include <sys/types.h>
 
 /* Functions for Tasks*/
 int handle_signal(void);
@@ -15,8 +16,12 @@ void print_hello(int signum);
 void set_print_hello(void);
 
 int handle_sigaction(void);
+
 void (*current_handler_sigaction(void))(int);
+
 int trace_signal_sender(void);
+void sigquit_handler(int signum);
+
 int pid_exist(pid_t pid);
 
 #endif /* SIGNALS_H */
