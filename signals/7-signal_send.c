@@ -2,13 +2,15 @@
 
 int main(int argc, char *argv[])
 {
+
+	pid_t target_pid;
 	if (argc != 2)
 	{
 		printf("Usage: %s <pid>\n", argv[0]);
 		return (EXIT_FAILURE);
 	}
 
-	pid_t target_pid = atoi(argv[1]);
+	target_pid = atoi(argv[1]);
 
 	if (target_pid == 0)
 	{
