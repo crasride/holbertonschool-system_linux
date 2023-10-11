@@ -271,7 +271,7 @@ Address of the current handler: 0x4006da
 alex@~/0x06-signals$
 ```
 
-### [2. Gotta catch them all](./
+### [2. Gotta catch them all](./2-handle_sigaction.c)
 Write a function that set a handler for the signal `SIGINT`
 
 * Prototype: `int handle_sigaction(void);`
