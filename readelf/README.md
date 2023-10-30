@@ -1,7 +1,7 @@
 <p align="center">C - ELF: readelf </p>
 
 <p align="center">
-<img width="" height="" src="../images/ELF_Executable_and_Linkable_Format.png" alt="C Logo">
+<img width="" height="" src="./images/ELF_Executable_and_Linkable_Format.png" alt="C Logo">
 </p>
 
 
