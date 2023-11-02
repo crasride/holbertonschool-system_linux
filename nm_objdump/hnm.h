@@ -29,7 +29,7 @@ typedef struct
 	unsigned char st_info;  /* Symbol type and binding */
 	unsigned char st_other; /* Symbol visibility */
 	Elf32_Half st_shndx;    /* Section index */
-} Elf32_Sym;
+} MyElf32_Sym;
 
 /* struct for 64 bits */
 typedef struct header64
@@ -50,12 +50,14 @@ typedef struct
 	Elf64_Half st_shndx;   /* Section index */
 	Elf64_Addr st_value;   /* Symbol value */
 	Elf64_Xword st_size;   /* Symbol size */
-} Elf64_Sym;
+} MyElf64_Sym;
 
 /* Funtions Task 0*/
 
 int analyze_file(const char *filename);
 int analyze_64bit_elf(Elf64_Ehdr *ehdr);
-int analyze_32bit_elf(Elf32_Ehdr *ehdr);
+/* int analyze_32bit_elf(Elf32_Ehdr *ehdr); */
+void process_symbols_32bit(Elf32_Ehdr *ehdr, void *map);
+int analyze_32bit_elf(Elf32_Ehdr *ehdr, void *map);
 
 #endif /* _HNM_ */
