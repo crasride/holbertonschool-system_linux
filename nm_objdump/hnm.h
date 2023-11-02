@@ -10,35 +10,47 @@
 #include <string.h>
 #include <ctype.h>
 
+/* struct for 32 bits */
 typedef struct header32
 {
 	Elf32_Ehdr ehdr;
 } Elf32_Header;
 
+typedef struct Shdr32
+{
+	Elf32_Shdr shdr;
+} MyElf32_Shdr;
+
+typedef struct
+{
+	Elf32_Word st_name;     /* Symbol name (index to string table) */
+	Elf32_Addr st_value;    /* Symbol value */
+	Elf32_Word st_size;     /* Symbol size */
+	unsigned char st_info;  /* Symbol type and binding */
+	unsigned char st_other; /* Symbol visibility */
+	Elf32_Half st_shndx;    /* Section index */
+} Elf32_Sym;
+
+/* struct for 64 bits */
 typedef struct header64
 {
 	Elf64_Ehdr ehdr;
 } Elf64_Header;
 
-typedef struct
+typedef struct Shdr64
 {
-	Elf64_Word st_name;		/* Symbol name (string tbl index) */
-	unsigned char st_info;	/* Symbol type and binding */
-	unsigned char st_other;	/* Symbol visibility */
-	Elf64_Section st_shndx;	/* Section index */
-	Elf64_Addr st_value;	/* Symbol value */
-	Elf64_Xword st_size;	/* Symbol size */
-} Elf64_Sym;
+	Elf64_Shdr shdr;
+} MyElf64_Shdr;
 
 typedef struct
 {
-	Elf32_Word st_name;		/* Symbol name (string tbl index) */
-	Elf32_Addr st_value;	/* Symbol value */
-	Elf32_Word st_size;		/* Symbol size */
-	unsigned char st_info;	/* Symbol type and binding */
-	unsigned char st_other;	/* Symbol visibility */
-	Elf32_Section st_shndx;	/* Section index */
-} Elf32_Sym;
+	Elf64_Word st_name;    /* Symbol name (index to string table) */
+	unsigned char st_info; /* Symbol type and binding */
+	unsigned char st_other; /* Symbol visibility */
+	Elf64_Half st_shndx;   /* Section index */
+	Elf64_Addr st_value;   /* Symbol value */
+	Elf64_Xword st_size;   /* Symbol size */
+} Elf64_Sym;
 
 /* Funtions Task 0*/
 
