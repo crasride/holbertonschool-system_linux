@@ -414,3 +414,4 @@ Your posts should have examples and at least one picture, at the top. Publish yo
 When done, please add all urls below (blog post, tweet, etc.)
 
 Please, remember that these blogs must be written in English to further your technical ability in a variety of settings.
+
