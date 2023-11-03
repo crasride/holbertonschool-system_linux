@@ -122,7 +122,7 @@ void process_symbols_32bit(Elf32_Ehdr *ehdr, void *map, const char *filename)
 	}
 }
 
-void process_symbols_64bit(Elf64_Ehdr *ehdr, void *map)
+void process_symbols_64bit(Elf64_Ehdr *ehdr, void *map, const char *filename)
 {
 	int i;
 	Elf64_Sym *symtab;
@@ -148,7 +148,7 @@ void process_symbols_64bit(Elf64_Ehdr *ehdr, void *map)
 
 	if (!symtab_section || !strtab_section)
 	{
-		fprintf(stderr, "No se encontraron secciones 64 .\n");
+		fprintf(stderr, "./hnm: %s: no symbols\n", filename);
 		return;
 	}
 
@@ -199,14 +199,14 @@ int analyze_32bit_elf(Elf32_Ehdr *ehdr, void *map, const char *filename)
 	return (0);
 }
 
-int analyze_64bit_elf(Elf64_Ehdr *ehdr, void *map)
+int analyze_64bit_elf(Elf64_Ehdr *ehdr, void *map, const char *filename)
 {
 
-	printf("64 bits, ");
+	/* printf("64 bits, "); */
 	if (ehdr->e_ident[EI_DATA] == ELFDATA2LSB)
 	{
-		printf("little-endian.\n");
-		process_symbols_64bit(ehdr, map);
+		/* printf("little-endian.\n"); */
+		process_symbols_64bit(ehdr, map, filename);
 
 	}
 	else if (ehdr->e_ident[EI_DATA] == ELFDATA2MSB)
@@ -254,7 +254,7 @@ int analyze_file(const char *filename)
 	}
 	else if (ehdr64->e_ident[EI_CLASS] == ELFCLASS64)
 	{
-		return (analyze_64bit_elf(ehdr64, map));
+		return (analyze_64bit_elf(ehdr64, map, filename));
 	}
 	else
 	{
