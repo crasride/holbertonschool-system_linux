@@ -10,6 +10,7 @@
 #include <string.h>
 #include <ctype.h>
 
+
 /* struct for 32 bits */
 typedef struct header32
 {
@@ -59,5 +60,7 @@ int analyze_64bit_elf(Elf64_Ehdr *ehdr);
 /* int analyze_32bit_elf(Elf32_Ehdr *ehdr); */
 void process_symbols_32bit(Elf32_Ehdr *ehdr, void *map);
 int analyze_32bit_elf(Elf32_Ehdr *ehdr, void *map);
+const char *get_symbol_type(uint8_t info);
+
 
 #endif /* _HNM_ */

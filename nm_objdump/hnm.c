@@ -6,48 +6,105 @@
 #include <elf.h>
 #include "hnm.h"
 
+/* char *section_name = strtab + shdr[i].sh_name; */
+
+const char *get_symbol_type(uint8_t info)
+{
+	char binding = ELF32_ST_BIND(info);
+	char type = ELF32_ST_TYPE(info);
+
+	if (binding == STB_LOCAL)
+	{
+		switch (type)
+		{
+			case STT_NOTYPE:
+				return "t";
+			case STT_FUNC:
+				return "t";
+			default:
+				return "OTHER";
+		}
+	}
+	if (binding == STB_GLOBAL)
+	{
+		switch (type)
+		{
+			case STT_NOTYPE:
+				return "U";
+			case STT_OBJECT:
+				return "D";
+			case STT_FUNC:
+				return "T";
+			default:
+				return "OTHER";
+		}
+	}
+	if (binding == STB_WEAK)
+	{
+		switch (type)
+		{
+			case STT_NOTYPE:
+				return "W";
+			case STT_OBJECT:
+				return "V";
+			case STT_FUNC:
+				return "W";
+			default:
+				return "OTHER";
+		}
+	}
+
+	return "OTHER";
+}
+
+
 void process_symbols_32bit(Elf32_Ehdr *ehdr, void *map)
 {
 	int i;
-	int j;
-	int num_syms;
-
+	Elf32_Sym *symtab;
+	char *strtab_data ;
+	int num_symbols;
 	Elf32_Shdr *shdr = (Elf32_Shdr *)((char *)map + ehdr->e_shoff);
-	char *strtab = (char *)((char *)map + shdr[ehdr->e_shstrndx].sh_offset);
-	Elf32_Sym *symtab = NULL;
-	char type;
 
-	printf("Value    Type Name\n");
+	/* busca seccion (SHT_SYMTAB) y la tabla de cadenas asociada (SHT_STRTAB) */
+	Elf32_Shdr *symtab_section = NULL;
+	Elf32_Shdr *strtab_section = NULL;
 
 	for (i = 0; i < ehdr->e_shnum; i++)
 	{
 		if (shdr[i].sh_type == SHT_SYMTAB)
 		{
-			symtab = (Elf32_Sym *)((char *)map + shdr[i].sh_offset);
-			num_syms = shdr[i].sh_size / sizeof(Elf32_Sym);
+			symtab_section = &shdr[i];
+		}
+		else if (shdr[i].sh_type == SHT_STRTAB)
+		{
+			strtab_section = &shdr[i];
+		}
+	}
 
-			for (j = 0; j < num_syms; j++)
-			{
-				Elf32_Sym *symbol = &symtab[j];
-				char *symbol_name = strtab + symbol->st_name;
-				char symbol_type = ELF32_ST_TYPE(symbol->st_info);
-				char symbol_bind = ELF32_ST_BIND(symbol->st_info);
+	if (!symtab_section || !strtab_section)
+	{
+		fprintf(stderr, "No se encontraron secciones .\n");
+		return;
+	}
 
-				if (symbol_bind == STB_GLOBAL)
-				{
-					type = (symbol_type == STT_OBJECT) ? 'B' : 'T';
-				}
-				else if (symbol_bind == STB_WEAK)
-				{
-					type = (symbol_type == STT_OBJECT) ? 'W' : 'V';
-				}
-				else
-				{
-					type = 's';
-				}
+	/* Acceso tabla de símbolos y tabla de str */
+	symtab = (Elf32_Sym *)((char *)map + symtab_section->sh_offset);
+	strtab_data = (char *)((char *)map + strtab_section->sh_offset);
 
-				printf("%08x %c %s\n", (unsigned int)symbol->st_value, type, symbol_name);
-			}
+	num_symbols = symtab_section->sh_size / sizeof(Elf32_Sym);
+
+	/* Recorre los símbolos y muestra la información */
+	for (i = 0; i < num_symbols; i++)
+	{
+		/* if (symtab[i].st_name) Filtra símbolos con un nombre no nulo */
+		if (symtab[i].st_name && symtab[i].st_value != 0) /* y la main.c */
+		{
+			char *symbol_name = strtab_data + symtab[i].st_name;
+			/* char symbol_type = ELF32_ST_TYPE(symtab[i].st_info); */
+			const char *symbol_type_str = get_symbol_type(symtab[i].st_info);
+
+			printf("%08x %s %s\n", symtab[i].st_value, symbol_type_str, symbol_name);
 		}
 	}
 }
@@ -56,10 +113,10 @@ void process_symbols_32bit(Elf32_Ehdr *ehdr, void *map)
 int analyze_32bit_elf(Elf32_Ehdr *ehdr, void *map)
 {
 
-	printf("32 bits, ");
+	/* printf("32 bits, "); */
 	if (ehdr->e_ident[EI_DATA] == ELFDATA2LSB)
 	{
-		printf("little-endian.\n");
+		/* printf("little-endian.\n"); */
 		process_symbols_32bit(ehdr, map);
 	}
 	else if (ehdr->e_ident[EI_DATA] == ELFDATA2MSB)
