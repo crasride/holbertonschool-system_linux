@@ -106,15 +106,19 @@ void process_symbols_32bit(Elf32_Ehdr *ehdr, void *map)
 	/* Recorre los símbolos y muestra la información */
 	for (i = 0; i < num_symbols; i++)
 	{
-		/* if (symtab[i].st_name) */
 		if (symtab[i].st_name && symtab[i].st_value != 0 && strcmp(strtab_data + symtab[i].st_name, "main.c") != 0)
 		{
 			char *symbol_name = strtab_data + symtab[i].st_name;
-			/* char symbol_type = ELF32_ST_TYPE(symtab[i].st_info); */
 			const char *symbol_type_str = get_symbol_type(symtab[i].st_info, symtab[i], shdr);
-			/* const char *symbol_type_str = get_symbol_type(symtab[i].st_info); */
 
-			printf("%08x %s %s\n", symtab[i].st_value, symbol_type_str, symbol_name);
+			if (symbol_type_str[0] != 'U') /* Verifica si el tipo no es "U" */
+			{
+				printf("%08x %s %s\n", symtab[i].st_value, symbol_type_str, symbol_name);
+			}
+			else
+			{
+				printf("         %s %s\n", symbol_type_str, symbol_name);
+			}
 		}
 	}
 }
