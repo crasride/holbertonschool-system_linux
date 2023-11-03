@@ -17,52 +17,64 @@ const char *get_symbol_type(uint8_t info)
 	{
 		switch (type)
 		{
-			case STT_NOTYPE:
-				return "t";
-			case STT_FUNC:
-				return "t";
-			default:
-				return "OTHER";
+		case STT_NOTYPE:
+			return "LOCAL_NOTYPE";
+		case STT_OBJECT:
+			return "LOCAL_OBJECT";
+		case STT_FUNC:
+			return "LOCAL_FUNC";
+		case STT_SECTION:
+			return "LOCAL_SECTION";
+		case STT_FILE:
+			return "LOCAL_FILE";
+		default:
+			return "OTHER";
 		}
 	}
 	if (binding == STB_GLOBAL)
 	{
 		switch (type)
 		{
-			case STT_NOTYPE:
-				return "U";
-			case STT_OBJECT:
-				return "D";
-			case STT_FUNC:
-				return "T";
-			default:
-				return "OTHER";
+		case STT_NOTYPE:
+			return "GLOBAL_NOTYPE";
+		case STT_OBJECT:
+			return "A";
+		case STT_FUNC:
+			return "GLOBAL_FUNC";
+		case STT_SECTION:
+			return "GLOBAL_SECTION";
+		case STT_FILE:
+			return "GLOBAL_FILE";
+		default:
+			return "OTHER";
 		}
 	}
 	if (binding == STB_WEAK)
 	{
 		switch (type)
 		{
-			case STT_NOTYPE:
-				return "W";
-			case STT_OBJECT:
-				return "V";
-			case STT_FUNC:
-				return "W";
-			default:
-				return "OTHER";
+		case STT_NOTYPE:
+			return "WEAK_NOTYPE";
+		case STT_OBJECT:
+			return "A";
+		case STT_FUNC:
+			return "WEAK_FUNC";
+		case STT_SECTION:
+			return "WEAK_SECTION";
+		case STT_FILE:
+			return "WEAK_FILE";
+		default:
+			return "OTHER";
 		}
 	}
-
 	return "OTHER";
 }
-
 
 void process_symbols_32bit(Elf32_Ehdr *ehdr, void *map)
 {
 	int i;
 	Elf32_Sym *symtab;
-	char *strtab_data ;
+	char *strtab_data;
 	int num_symbols;
 	Elf32_Shdr *shdr = (Elf32_Shdr *)((char *)map + ehdr->e_shoff);
 
@@ -98,7 +110,7 @@ void process_symbols_32bit(Elf32_Ehdr *ehdr, void *map)
 	for (i = 0; i < num_symbols; i++)
 	{
 		/* if (symtab[i].st_name) Filtra símbolos con un nombre no nulo */
-		if (symtab[i].st_name && symtab[i].st_value != 0) /* y la main.c */
+		if (symtab[i].st_name && symtab[i].st_value != 0 && strcmp(strtab_data + symtab[i].st_name, "main.c") != 0) /* y la main.c */
 		{
 			char *symbol_name = strtab_data + symtab[i].st_name;
 			/* char symbol_type = ELF32_ST_TYPE(symtab[i].st_info); */
@@ -108,7 +120,6 @@ void process_symbols_32bit(Elf32_Ehdr *ehdr, void *map)
 		}
 	}
 }
-
 
 int analyze_32bit_elf(Elf32_Ehdr *ehdr, void *map)
 {
@@ -181,7 +192,6 @@ int analyze_file(const char *filename)
 	if (ehdr32->e_ident[EI_CLASS] == ELFCLASS32)
 	{
 		return (analyze_32bit_elf(ehdr32, map));
-
 	}
 	else if (ehdr64->e_ident[EI_CLASS] == ELFCLASS64)
 	{
