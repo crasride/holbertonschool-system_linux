@@ -92,7 +92,7 @@ void process_symbols_32bit(Elf32_Ehdr *ehdr, void *map, const char *filename)
 
 	if (!symtab_section || !strtab_section)
 	{
-		printf("./hnm: %s: no symbols\n", filename);
+		fprintf(stderr, "./hnm: %s: no symbols\n", filename);
 		return;
 	}
 
