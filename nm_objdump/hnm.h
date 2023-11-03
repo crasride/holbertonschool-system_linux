@@ -58,10 +58,12 @@ typedef struct
 int analyze_file(const char *filename);
 int analyze_64bit_elf(Elf64_Ehdr *ehdr, void *map);
 /* int analyze_32bit_elf(Elf32_Ehdr *ehdr); */
-void process_symbols_32bit(Elf32_Ehdr *ehdr, void *map);
-int analyze_32bit_elf(Elf32_Ehdr *ehdr, void *map);
+/* void process_symbols_32bit(Elf32_Ehdr *ehdr, void *map); */
+void process_symbols_32bit(Elf32_Ehdr *ehdr, void *map, const char *filename);
+/* int analyze_32bit_elf(Elf32_Ehdr *ehdr, void *map); */
+int analyze_32bit_elf(Elf32_Ehdr *ehdr, void *map, const char *filename);
 /* const char *get_symbol_type(uint8_t info); */
-const char *get_symbol_type(uint8_t info, Elf32_Sym sym, Elf32_Shdr *shdr);
+const char *get_symbol_type_32(uint8_t info, Elf32_Sym sym, Elf32_Shdr *shdr);
 void process_symbols_64bit(Elf64_Ehdr *ehdr, void *map);
 
 #endif /* _HNM_ */

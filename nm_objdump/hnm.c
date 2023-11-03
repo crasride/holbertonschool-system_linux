@@ -6,9 +6,8 @@
 #include <elf.h>
 #include "hnm.h"
 
-/* char *section_name = strtab + shdr[i].sh_name; */
 
-const char *get_symbol_type(uint8_t info, Elf32_Sym sym, Elf32_Shdr *shdr)
+const char *get_symbol_type_32(uint8_t info, Elf32_Sym sym, Elf32_Shdr *shdr)
 {
 	if (ELF32_ST_BIND(info) == STB_GNU_UNIQUE)
 		return "u";
@@ -67,7 +66,7 @@ const char *get_symbol_type(uint8_t info, Elf32_Sym sym, Elf32_Shdr *shdr)
 	}
 }
 
-void process_symbols_32bit(Elf32_Ehdr *ehdr, void *map)
+void process_symbols_32bit(Elf32_Ehdr *ehdr, void *map, const char *filename)
 {
 	int i;
 	Elf32_Sym *symtab;
@@ -93,7 +92,7 @@ void process_symbols_32bit(Elf32_Ehdr *ehdr, void *map)
 
 	if (!symtab_section || !strtab_section)
 	{
-		fprintf(stderr, "No se encontraron secciones .\n");
+		printf("./hnm: %s: no symbols\n", filename);
 		return;
 	}
 
@@ -109,7 +108,7 @@ void process_symbols_32bit(Elf32_Ehdr *ehdr, void *map)
 		if (symtab[i].st_name && symtab[i].st_value != 0 && strcmp(strtab_data + symtab[i].st_name, "main.c") != 0)
 		{
 			char *symbol_name = strtab_data + symtab[i].st_name;
-			const char *symbol_type_str = get_symbol_type(symtab[i].st_info, symtab[i], shdr);
+			const char *symbol_type_str = get_symbol_type_32(symtab[i].st_info, symtab[i], shdr);
 
 			if (symbol_type_str[0] != 'U') /* Verifica si el tipo no es "U" */
 			{
@@ -149,7 +148,7 @@ void process_symbols_64bit(Elf64_Ehdr *ehdr, void *map)
 
 	if (!symtab_section || !strtab_section)
 	{
-		fprintf(stderr, "No se encontraron secciones .\n");
+		fprintf(stderr, "No se encontraron secciones 64 .\n");
 		return;
 	}
 
@@ -179,14 +178,14 @@ void process_symbols_64bit(Elf64_Ehdr *ehdr, void *map)
 }
 
 
-int analyze_32bit_elf(Elf32_Ehdr *ehdr, void *map)
+int analyze_32bit_elf(Elf32_Ehdr *ehdr, void *map, const char *filename)
 {
 
 	/* printf("32 bits, "); */
 	if (ehdr->e_ident[EI_DATA] == ELFDATA2LSB)
 	{
 		/* printf("little-endian.\n"); */
-		process_symbols_32bit(ehdr, map);
+		process_symbols_32bit(ehdr, map, filename);
 	}
 	else if (ehdr->e_ident[EI_DATA] == ELFDATA2MSB)
 	{
@@ -251,7 +250,7 @@ int analyze_file(const char *filename)
 	ehdr64 = (Elf64_Ehdr *)map;
 	if (ehdr32->e_ident[EI_CLASS] == ELFCLASS32)
 	{
-		return (analyze_32bit_elf(ehdr32, map));
+		return (analyze_32bit_elf(ehdr32, map, filename));
 	}
 	else if (ehdr64->e_ident[EI_CLASS] == ELFCLASS64)
 	{
