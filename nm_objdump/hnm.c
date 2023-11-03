@@ -52,7 +52,10 @@ const char *get_symbol_type(uint8_t info, Elf32_Sym sym, Elf32_Shdr *shdr)
 	}
 	else if (shdr[sym.st_shndx].sh_type == SHT_PROGBITS && shdr[sym.st_shndx].sh_flags == (SHF_ALLOC | SHF_EXECINSTR))
 	{
-		return "T";
+		if (ELF32_ST_BIND(info) == STB_GLOBAL)
+			return "T";
+		else
+			return "t";
 	}
 	else if (shdr[sym.st_shndx].sh_type == SHT_DYNAMIC)
 	{
