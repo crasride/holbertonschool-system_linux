@@ -26,29 +26,17 @@ const char *get_symbol_type_32(uint8_t info, Elf32_Sym sym, Elf32_Shdr *shdr)
 			return "W";
 	}
 	else if (sym.st_shndx == SHN_UNDEF)
-	{
 		return "U";
-	}
 	else if (sym.st_shndx == SHN_ABS)
-	{
 		return "A";
-	}
 	else if (sym.st_shndx == SHN_COMMON)
-	{
 		return "C";
-	}
 	else if (shdr[sym.st_shndx].sh_type == SHT_NOBITS && shdr[sym.st_shndx].sh_flags == (SHF_ALLOC | SHF_WRITE))
-	{
 		return "B";
-	}
 	else if (shdr[sym.st_shndx].sh_type == SHT_PROGBITS && shdr[sym.st_shndx].sh_flags == SHF_ALLOC)
-	{
 		return "R";
-	}
 	else if (shdr[sym.st_shndx].sh_type == SHT_PROGBITS && shdr[sym.st_shndx].sh_flags == (SHF_ALLOC | SHF_WRITE))
-	{
 		return "D";
-	}
 	else if (shdr[sym.st_shndx].sh_type == SHT_PROGBITS && shdr[sym.st_shndx].sh_flags == (SHF_ALLOC | SHF_EXECINSTR))
 	{
 		if (ELF32_ST_BIND(info) == STB_GLOBAL)
@@ -105,20 +93,81 @@ void process_symbols_32bit(Elf32_Ehdr *ehdr, void *map, const char *filename)
 	/* Recorre los símbolos y muestra la información */
 	for (i = 0; i < num_symbols; i++)
 	{
-		if (symtab[i].st_name && symtab[i].st_value != 0 && strcmp(strtab_data + symtab[i].st_name, "main.c") != 0)
+		/* if (symtab[i].st_name != 0 && (symtab[i].st_value != 0 || symtab[i].st_size != 0) && strcmp(strtab_data + symtab[i].st_name, "main.c") != 0) */
+		/* if ((symtab[i].st_name != 0 || (symtab[i].st_value != 0 || symtab[i].st_size != 0)) && strcmp(strtab_data + symtab[i].st_name, "main.c") != 0) */
+		if ((symtab[i].st_name != 0) && strcmp(strtab_data + symtab[i].st_name, "main.c") != 0)
 		{
-			char *symbol_name = strtab_data + symtab[i].st_name;
-			const char *symbol_type_str = get_symbol_type_32(symtab[i].st_info, symtab[i], shdr);
+				char *symbol_name = strtab_data + symtab[i].st_name;
+				const char *symbol_type_str = get_symbol_type_32(symtab[i].st_info, symtab[i], shdr);
 
-			if (symbol_type_str[0] != 'U') /* Verifica si el tipo no es "U" */
-			{
-				printf("%08x %s %s\n", symtab[i].st_value, symbol_type_str, symbol_name);
+				if (symbol_type_str[0] != 'U')
+				{
+					printf("%08x %s %s\n", symtab[i].st_value, symbol_type_str, symbol_name);
+				}
+				else
+				{
+					printf("         %s %s\n", symbol_type_str, symbol_name);
+				}
 			}
-			else
-			{
-				printf("         %s %s\n", symbol_type_str, symbol_name);
-			}
-		}
+				}
+}
+
+const char *get_symbol_type_64(uint8_t info, Elf64_Sym sym, Elf64_Shdr *shdr)
+{
+	if (ELF64_ST_BIND(info) == STB_GNU_UNIQUE)
+		return "u";
+	else if (ELF64_ST_BIND(info) == STB_WEAK && ELF64_ST_TYPE(info) == STT_OBJECT)
+	{
+		if (sym.st_shndx == SHN_UNDEF)
+			return "v";
+		else
+			return "V";
+	}
+	else if (ELF64_ST_BIND(info) == STB_WEAK)
+	{
+		if (sym.st_shndx == SHN_UNDEF)
+			return "w";
+		else
+			return "W";
+	}
+	else if (sym.st_shndx == SHN_UNDEF)
+		return "U";
+	else if (sym.st_shndx == SHN_ABS)
+		return "A";
+	else if (sym.st_shndx == SHN_COMMON)
+		return "C";
+	else if (shdr[sym.st_shndx].sh_type == SHT_NOBITS && shdr[sym.st_shndx].sh_flags == (SHF_ALLOC | SHF_WRITE))
+	{
+		if (ELF64_ST_BIND(info) == STB_GLOBAL)
+			return "B";
+		else
+			return "b";
+	}
+	else if (shdr[sym.st_shndx].sh_type == SHT_PROGBITS && shdr[sym.st_shndx].sh_flags == SHF_ALLOC)
+	{
+		if (ELF64_ST_BIND(info) == STB_GLOBAL)
+			return "R";
+		else
+			return "r";
+	}
+	else if (shdr[sym.st_shndx].sh_type == SHT_PROGBITS && shdr[sym.st_shndx].sh_flags == (SHF_ALLOC | SHF_WRITE))
+	{
+		return "D";
+	}
+	else if (shdr[sym.st_shndx].sh_type == SHT_PROGBITS && shdr[sym.st_shndx].sh_flags == (SHF_ALLOC | SHF_EXECINSTR))
+	{
+		if (ELF64_ST_BIND(info) == STB_GLOBAL)
+			return "T";
+		else
+			return "t";
+	}
+	else if (shdr[sym.st_shndx].sh_type == SHT_DYNAMIC)
+	{
+		return "d";
+	}
+	else
+	{
+		return "t";
 	}
 }
 
@@ -170,9 +219,16 @@ void process_symbols_64bit(Elf64_Ehdr *ehdr, void *map, const char *filename)
 
 		if (symtab[i].st_name)
 		{
-			/* const char *symbol_type_str = get_symbol_type(symtab[i].st_info); */
+			const char *symbol_type_str = get_symbol_type_64(symtab[i].st_info, symtab[i], shdr);
 
-			/* printf("%16.16lx %s %s\n", symtab[i].st_value, symbol_type_str, symbol_name); */
+			if (symbol_type_str[0] != 'U' && symbol_type_str[0] != 'w')
+			{
+				printf("%16.16lx %s %s\n", symtab[i].st_value, symbol_type_str, symbol_name);
+			}
+			else
+			{
+				printf("                 %s %s\n", symbol_type_str, symbol_name);
+			}
 		}
 	}
 }
