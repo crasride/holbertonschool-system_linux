@@ -64,5 +64,8 @@ int analyze_32bit_elf(Elf32_Ehdr *ehdr, void *map, const char *filename);
 void process_symbols_32bit(Elf32_Ehdr *ehdr, void *map, const char *filename);
 const char *get_symbol_type_32(uint8_t info, Elf32_Sym sym, Elf32_Shdr *shdr);
 
+void process_symbols_32bit_big_endian(Elf32_Ehdr *ehdr, void *map, const char *filename);
+uint32_t byteswap32(uint32_t value);
+uint16_t byteswap16(uint16_t value);
 
 #endif /* _HNM_ */
