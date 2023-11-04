@@ -152,7 +152,10 @@ const char *get_symbol_type_64(uint8_t info, Elf64_Sym sym, Elf64_Shdr *shdr)
 	}
 	else if (shdr[sym.st_shndx].sh_type == SHT_PROGBITS && shdr[sym.st_shndx].sh_flags == (SHF_ALLOC | SHF_WRITE))
 	{
-		return "D";
+		if (ELF64_ST_BIND(info) == STB_GLOBAL)
+			return "D";
+		else
+			return "d";
 	}
 	else if (shdr[sym.st_shndx].sh_type == SHT_PROGBITS && shdr[sym.st_shndx].sh_flags == (SHF_ALLOC | SHF_EXECINSTR))
 	{
