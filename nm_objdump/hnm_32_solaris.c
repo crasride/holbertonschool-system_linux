@@ -9,47 +9,47 @@
 void process_symbols_32bit_solaris(Elf32_Ehdr *ehdr, void *map,
 									const char *filename)
 {
-		int i;
-		Elf32_Sym *symtab;
-		char *strtab_data;
-		int num_symbols;
-		Elf32_Shdr *shdr = (Elf32_Shdr *)((char *)map + ehdr->e_shoff);
-		Elf32_Shdr *symtab_section = NULL;
-		Elf32_Shdr *strtab_section = NULL;
+		int i, num_symbols;
+	Elf32_Sym *symtab;
+	char *strtab_data;
+	Elf32_Shdr *shdr = (Elf32_Shdr *)((char *)map + ehdr->e_shoff);
+	Elf32_Shdr *symtab_section = NULL;
+	Elf32_Shdr *strtab_section = NULL;
 
-		for (i = 0; i < ehdr->e_shnum; i++)
+	for (i = 0; i < ehdr->e_shnum; i++)
+	{
+		if (shdr[i].sh_type == SHT_SYMTAB)
+			symtab_section = &shdr[i];
+		else if (shdr[i].sh_type == SHT_STRTAB)
+			strtab_section = &shdr[i];
+	}
+	if (!symtab_section || !strtab_section)
+	{
+		fprintf(stderr, "./hnm: %s: no symbols\n", filename);
+		return;
+	}
+	/* Acceso tabla de símbolos y tabla de str */
+	symtab = (Elf32_Sym *)((char *)map + symtab_section->sh_offset);
+	strtab_data = (char *)((char *)map + strtab_section->sh_offset);
+	num_symbols = symtab_section->sh_size / sizeof(Elf32_Sym);
+	/* Recorre los símbolos y muestra la información */
+	for (i = 0; i < num_symbols; i++)
+	{
+		if ((symtab[i].st_name != 0) && strcmp(strtab_data + symtab[i].st_name,
+		"main.c") != 0)
 		{
-			if (shdr[i].sh_type == SHT_SYMTAB)
-			{
-				symtab_section = &shdr[i];
-			}
-			else if (shdr[i].sh_type == SHT_STRTAB)
-			{
-				strtab_section = &shdr[i];
-			}
-		}
+			char *symbol_name = strtab_data + symtab[i].st_name;
+			const char *symbol_type_str = get_symbol_type_32(symtab[i].st_info,
+			symtab[i], shdr);
 
-		if (!symtab_section || !strtab_section)
-		{
-			fprintf(stderr, "./hnm: %s: no symbols\n", filename);
-			return;
-		}
-
-		symtab = (Elf32_Sym *)((char *)map + symtab_section->sh_offset);
-		strtab_data = (char *)((char *)map + strtab_section->sh_offset);
-		num_symbols = symtab_section->sh_size / sizeof(Elf32_Sym);
-
-		for (i = 0; i < num_symbols; i++)
-		{
-			if (symtab[i].st_name != 0)
-			{
-				char *symbol_name = strtab_data + symtab[i].st_name;
-
-				printf("%08x %s\n", symtab[i].st_value, symbol_name);
-			}
+			if (symbol_type_str[0] != 'U')
+				printf("%08x %s %s\n", symtab[i].st_value, symbol_type_str,
+						symbol_name);
+			else
+				printf("         %s %s\n", symbol_type_str, symbol_name);
 		}
 	}
-	/* &(elf->shstrtab[elf->shdr[i].sh_name]) */
+}
 
 
 int analyze_32bit_elf_solaris(Elf32_Ehdr *ehdr, void *map,
