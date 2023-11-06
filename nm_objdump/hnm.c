@@ -10,47 +10,47 @@
 const char *get_symbol_type_32(uint8_t info, Elf32_Sym sym, Elf32_Shdr *shdr)
 {
 	if (ELF32_ST_BIND(info) == STB_GNU_UNIQUE)
-		return "u";
+		return ("u");
 	else if (ELF32_ST_BIND(info) == STB_WEAK && ELF32_ST_TYPE(info) == STT_OBJECT)
 	{
 		if (sym.st_shndx == SHN_UNDEF)
-			return "v";
+			return ("v");
 		else
-			return "V";
+			return ("V");
 	}
 	else if (ELF32_ST_BIND(info) == STB_WEAK)
 	{
 		if (sym.st_shndx == SHN_UNDEF)
-			return "w";
+			return ("w");
 		else
-			return "W";
+			return ("W");
 	}
 	else if (sym.st_shndx == SHN_UNDEF)
-		return "U";
+		return ("U");
 	else if (sym.st_shndx == SHN_ABS)
-		return "A";
+		return ("A");
 	else if (sym.st_shndx == SHN_COMMON)
-		return "C";
+		return ("C");
 	else if (shdr[sym.st_shndx].sh_type == SHT_NOBITS && shdr[sym.st_shndx].sh_flags == (SHF_ALLOC | SHF_WRITE))
-		return "B";
+		return ("B");
 	else if (shdr[sym.st_shndx].sh_type == SHT_PROGBITS && shdr[sym.st_shndx].sh_flags == SHF_ALLOC)
-		return "R";
+		return ("R");
 	else if (shdr[sym.st_shndx].sh_type == SHT_PROGBITS && shdr[sym.st_shndx].sh_flags == (SHF_ALLOC | SHF_WRITE))
-		return "D";
+		return ("D");
 	else if (shdr[sym.st_shndx].sh_type == SHT_PROGBITS && shdr[sym.st_shndx].sh_flags == (SHF_ALLOC | SHF_EXECINSTR))
 	{
 		if (ELF32_ST_BIND(info) == STB_GLOBAL)
-			return "T";
+			return ("T");
 		else
-			return "t";
+			return ("t");
 	}
 	else if (shdr[sym.st_shndx].sh_type == SHT_DYNAMIC)
 	{
-		return "D";
+		return ("D");
 	}
 	else
 	{
-		return "T";
+		return ("T");
 	}
 }
 
@@ -97,80 +97,80 @@ void process_symbols_32bit(Elf32_Ehdr *ehdr, void *map, const char *filename)
 		/* if ((symtab[i].st_name != 0 || (symtab[i].st_value != 0 || symtab[i].st_size != 0)) && strcmp(strtab_data + symtab[i].st_name, "main.c") != 0) */
 		if ((symtab[i].st_name != 0) && strcmp(strtab_data + symtab[i].st_name, "main.c") != 0)
 		{
-				char *symbol_name = strtab_data + symtab[i].st_name;
-				const char *symbol_type_str = get_symbol_type_32(symtab[i].st_info, symtab[i], shdr);
+			char *symbol_name = strtab_data + symtab[i].st_name;
+			const char *symbol_type_str = get_symbol_type_32(symtab[i].st_info, symtab[i], shdr);
 
-				if (symbol_type_str[0] != 'U')
-				{
-					printf("%08x %s %s\n", symtab[i].st_value, symbol_type_str, symbol_name);
-				}
-				else
-				{
-					printf("         %s %s\n", symbol_type_str, symbol_name);
-				}
+			if (symbol_type_str[0] != 'U')
+			{
+				printf("%08x %s %s\n", symtab[i].st_value, symbol_type_str, symbol_name);
 			}
-				}
+			else
+			{
+				printf("         %s %s\n", symbol_type_str, symbol_name);
+			}
+		}
+	}
 }
 
 const char *get_symbol_type_64(uint8_t info, Elf64_Sym sym, Elf64_Shdr *shdr)
 {
 	if (ELF64_ST_BIND(info) == STB_GNU_UNIQUE)
-		return "u";
+		return ("u");
 	else if (ELF64_ST_BIND(info) == STB_WEAK && ELF64_ST_TYPE(info) == STT_OBJECT)
 	{
 		if (sym.st_shndx == SHN_UNDEF)
-			return "v";
+			return ("v");
 		else
-			return "V";
+			return ("V");
 	}
 	else if (ELF64_ST_BIND(info) == STB_WEAK)
 	{
 		if (sym.st_shndx == SHN_UNDEF)
-			return "w";
+			return ("w");
 		else
-			return "W";
+			return ("W");
 	}
 	else if (sym.st_shndx == SHN_UNDEF)
-		return "U";
+		return ("U");
 	else if (sym.st_shndx == SHN_ABS)
-		return "A";
+		return ("A");
 	else if (sym.st_shndx == SHN_COMMON)
-		return "C";
+		return ("C");
 	else if (shdr[sym.st_shndx].sh_type == SHT_NOBITS && shdr[sym.st_shndx].sh_flags == (SHF_ALLOC | SHF_WRITE))
 	{
 		if (ELF64_ST_BIND(info) == STB_GLOBAL)
-			return "B";
+			return ("B");
 		else
-			return "b";
+			return ("b");
 	}
 	else if (shdr[sym.st_shndx].sh_type == SHT_PROGBITS && shdr[sym.st_shndx].sh_flags == SHF_ALLOC)
 	{
 		if (ELF64_ST_BIND(info) == STB_GLOBAL)
-			return "R";
+			return ("R");
 		else
-			return "r";
+			return ("r");
 	}
 	else if (shdr[sym.st_shndx].sh_type == SHT_PROGBITS && shdr[sym.st_shndx].sh_flags == (SHF_ALLOC | SHF_WRITE))
 	{
 		if (ELF64_ST_BIND(info) == STB_GLOBAL)
-			return "D";
+			return ("D");
 		else
-			return "d";
+			return ("d");
 	}
 	else if (shdr[sym.st_shndx].sh_type == SHT_PROGBITS && shdr[sym.st_shndx].sh_flags == (SHF_ALLOC | SHF_EXECINSTR))
 	{
 		if (ELF64_ST_BIND(info) == STB_GLOBAL)
-			return "T";
+			return ("T");
 		else
-			return "t";
+			return ("t");
 	}
 	else if (shdr[sym.st_shndx].sh_type == SHT_DYNAMIC)
 	{
-		return "d";
+		return ("d");
 	}
 	else
 	{
-		return "t";
+		return ("t");
 	}
 }
 
@@ -189,13 +189,9 @@ void process_symbols_64bit(Elf64_Ehdr *ehdr, void *map, const char *filename)
 	for (i = 0; i < ehdr->e_shnum; i++)
 	{
 		if (shdr[i].sh_type == SHT_SYMTAB)
-		{
 			symtab_section = &shdr[i];
-		}
 		else if (shdr[i].sh_type == SHT_STRTAB)
-		{
 			strtab_section = &shdr[i];
-		}
 	}
 
 	if (!symtab_section || !strtab_section)
@@ -216,39 +212,32 @@ void process_symbols_64bit(Elf64_Ehdr *ehdr, void *map, const char *filename)
 		/* Verifica si el nombre del símbolo contiene la extensión ".c" y omite la impresión */
 		char *symbol_name = strtab_data + symtab[i].st_name;
 		if (strstr(symbol_name, ".c") != NULL)
-		{
 			continue;
-		}
 
 		if (symtab[i].st_name)
 		{
 			const char *symbol_type_str = get_symbol_type_64(symtab[i].st_info, symtab[i], shdr);
 
 			if (symbol_type_str[0] != 'U' && symbol_type_str[0] != 'w')
-			{
 				printf("%16.16lx %s %s\n", symtab[i].st_value, symbol_type_str, symbol_name);
-			}
 			else
-			{
 				printf("                 %s %s\n", symbol_type_str, symbol_name);
-			}
 		}
 	}
 }
 
-
 uint32_t byteswap32(uint32_t value)
 {
-	return ((value & 0x000000FF) << 24) |
+	return (((value & 0x000000FF) << 24) |
 		((value & 0x0000FF00) << 8) |
 		((value & 0x00FF0000) >> 8) |
-		((value & 0xFF000000) >> 24);
+		((value & 0xFF000000) >> 24));
 }
 
 uint16_t byteswap16(uint16_t value)
 {
-	return ((value & 0x00FF) << 8) |
-		((value & 0xFF00) >> 8);
+	return (((value & 0x00FF) << 8) |
+		((value & 0xFF00) >> 8));
 }
 
 void process_symbols_32bit_big_endian(Elf32_Ehdr *ehdr, void *map, const char *filename)
@@ -280,12 +269,9 @@ void process_symbols_32bit_big_endian(Elf32_Ehdr *ehdr, void *map, const char *f
 		fprintf(stderr, "./hnm: %s: no symbols\n", filename);
 		return;
 	}
-
 	/* Acceso a la tabla de símbolos y tabla de cadenas. */
-
 	symtab = (Elf32_Sym *)((char *)map + byteswap32(symtab_section->sh_offset));
 	strtab_data = (char *)((char *)map + byteswap32(strtab_section->sh_offset));
-
 	num_symbols = byteswap32(symtab_section->sh_size) / sizeof(Elf32_Sym);
 
 	/* Recorre los símbolos y muestra la información. */
@@ -353,6 +339,68 @@ int analyze_64bit_elf(Elf64_Ehdr *ehdr, void *map, const char *filename)
 	return (0);
 }
 
+void process_symbols_32bit_solaris(Elf32_Ehdr *ehdr, void *map, const char *filename)
+{
+		int i;
+		Elf32_Sym *symtab;
+		char *strtab_data;
+		int num_symbols;
+		Elf32_Shdr *shdr = (Elf32_Shdr *)((char *)map + ehdr->e_shoff);
+
+		Elf32_Shdr *symtab_section = NULL;
+		Elf32_Shdr *strtab_section = NULL;
+
+		for (i = 0; i < ehdr->e_shnum; i++)
+		{
+			if (shdr[i].sh_type == SHT_SYMTAB)
+			{
+				symtab_section = &shdr[i];
+			}
+			else if (shdr[i].sh_type == SHT_STRTAB)
+			{
+				strtab_section = &shdr[i];
+			}
+		}
+
+		if (!symtab_section || !strtab_section)
+		{
+			fprintf(stderr, "./hnm: %s: no symbols\n", filename);
+			return;
+		}
+
+		symtab = (Elf32_Sym *)((char *)map + symtab_section->sh_offset);
+		strtab_data = (char *)((char *)map + strtab_section->sh_offset);
+
+		num_symbols = symtab_section->sh_size / sizeof(Elf32_Sym);
+
+		for (i = 0; i < num_symbols; i++)
+		{
+			if (symtab[i].st_name != 0)
+			{
+				char *symbol_name = strtab_data + symtab[i].st_name;
+				printf("%08x %s\n", symtab[i].st_value, symbol_name);
+			}
+		}
+	}
+
+
+int analyze_32bit_elf_solaris(Elf32_Ehdr *ehdr, void *map, const char *filename)
+{
+	if (ehdr->e_ident[EI_DATA] == ELFDATA2LSB)
+	{
+		process_symbols_32bit_solaris(ehdr, map, filename);
+	}
+	else if (ehdr->e_ident[EI_DATA] == ELFDATA2MSB)
+	{
+		printf("big endian Solaris.\n");
+	}
+	else
+	{
+		printf("endianness unknown.\n");
+	}
+	return (0);
+}
+
 int analyze_file(const char *filename)
 {
 	int fd;
@@ -381,12 +429,13 @@ int analyze_file(const char *filename)
 	ehdr64 = (Elf64_Ehdr *)map;
 	if (ehdr32->e_ident[EI_CLASS] == ELFCLASS32)
 	{
-		return (analyze_32bit_elf(ehdr32, map, filename));
+		if (ehdr32->e_ident[EI_OSABI] == ELFOSABI_SOLARIS)
+			return (analyze_32bit_elf_solaris(ehdr32, map, filename));
+		else
+			return (analyze_32bit_elf(ehdr32, map, filename));
 	}
 	else if (ehdr64->e_ident[EI_CLASS] == ELFCLASS64)
-	{
 		return (analyze_64bit_elf(ehdr64, map, filename));
-	}
 	else
 	{
 		fprintf(stderr, "No es un archivo ELF válido.\n");

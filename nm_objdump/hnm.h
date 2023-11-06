@@ -68,4 +68,10 @@ void process_symbols_32bit_big_endian(Elf32_Ehdr *ehdr, void *map, const char *f
 uint32_t byteswap32(uint32_t value);
 uint16_t byteswap16(uint16_t value);
 
+
+void process_symbols_32bit_solaris(Elf32_Ehdr *ehdr, void *map, const char *filename);
+int analyze_32bit_elf_solaris(Elf32_Ehdr *ehdr, void *map, const char *filename);
+
+
+
 #endif /* _HNM_ */
