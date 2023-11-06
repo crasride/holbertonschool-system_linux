@@ -3,7 +3,7 @@ CC = gcc
 
 # Compiler Flags
 CFLAGS = -std=c90 -Wall -Werror -Wextra -pedantic
-FILES_0 = hnm_main.c hnm_64.c hnm_32_big_endian.c hnm_32_little_endian.c hnm_32_solaris.c
+FILES_0 = hnm_main.c hnm_64.c hnm_32_big_endian.c hnm_32_little_endian.c
 
 # Linker Flags (empty in this case)
 LDFLAGS =

@@ -34,10 +34,7 @@ int analyze_file(const char *filename)
 	ehdr64 = (Elf64_Ehdr *)map;
 	if (ehdr32->e_ident[EI_CLASS] == ELFCLASS32)
 	{
-		if (ehdr32->e_ident[EI_OSABI] == ELFOSABI_SOLARIS)
-			analyze_32bit_elf_solaris(ehdr32, map, filename);
-		else
-			analyze_32bit_elf(ehdr32, map, filename);
+		analyze_32bit_elf(ehdr32, map, filename);
 	}
 	else if (ehdr64->e_ident[EI_CLASS] == ELFCLASS64)
 		analyze_64bit_elf(ehdr64, map, filename);
