@@ -19,47 +19,32 @@ const char *get_symbol_type_32(uint8_t info, Elf32_Sym sym, Elf32_Shdr *shdr)
 {
 	if (ELF32_ST_BIND(info) == STB_GNU_UNIQUE)
 		return ("u");
-	else if (ELF32_ST_BIND(info) == STB_WEAK && ELF32_ST_TYPE(info) == STT_OBJECT)
-	{
-		if (sym.st_shndx == SHN_UNDEF)
-			return ("v");
-		else
-			return ("V");
-	}
-	else if (ELF32_ST_BIND(info) == STB_WEAK)
-	{
-		if (sym.st_shndx == SHN_UNDEF)
-			return ("w");
-		else
-			return ("W");
-	}
+	if (ELF32_ST_BIND(info) == STB_WEAK && ELF32_ST_TYPE(info) == STT_OBJECT)
+		return ((sym.st_shndx == SHN_UNDEF) ? "v" : "V");
+	if (ELF32_ST_BIND(info) == STB_WEAK)
+		return ((sym.st_shndx == SHN_UNDEF) ? "w" : "W");
 	else if (sym.st_shndx == SHN_UNDEF)
 		return ("U");
 	else if (sym.st_shndx == SHN_ABS)
 		return ("A");
 	else if (sym.st_shndx == SHN_COMMON)
 		return ("C");
-	else if (shdr[sym.st_shndx].sh_type == SHT_NOBITS && shdr[sym.st_shndx].sh_flags == (SHF_ALLOC | SHF_WRITE))
+	else if (shdr[sym.st_shndx].sh_type == SHT_NOBITS &&
+			shdr[sym.st_shndx].sh_flags == (SHF_ALLOC | SHF_WRITE))
 		return ("B");
-	else if (shdr[sym.st_shndx].sh_type == SHT_PROGBITS && shdr[sym.st_shndx].sh_flags == SHF_ALLOC)
+	else if (shdr[sym.st_shndx].sh_type == SHT_PROGBITS &&
+			shdr[sym.st_shndx].sh_flags == SHF_ALLOC)
 		return ("R");
-	else if (shdr[sym.st_shndx].sh_type == SHT_PROGBITS && shdr[sym.st_shndx].sh_flags == (SHF_ALLOC | SHF_WRITE))
+	else if (shdr[sym.st_shndx].sh_type == SHT_PROGBITS &&
+			shdr[sym.st_shndx].sh_flags == (SHF_ALLOC | SHF_WRITE))
 		return ("D");
-	else if (shdr[sym.st_shndx].sh_type == SHT_PROGBITS && shdr[sym.st_shndx].sh_flags == (SHF_ALLOC | SHF_EXECINSTR))
-	{
-		if (ELF32_ST_BIND(info) == STB_GLOBAL)
-			return ("T");
-		else
-			return ("t");
-	}
+	if (shdr[sym.st_shndx].sh_type == SHT_PROGBITS &&
+		shdr[sym.st_shndx].sh_flags == (SHF_ALLOC | SHF_EXECINSTR))
+		return ((ELF32_ST_BIND(info) == STB_GLOBAL) ? "T" : "t");
 	else if (shdr[sym.st_shndx].sh_type == SHT_DYNAMIC)
-	{
 		return ("D");
-	}
 	else
-	{
 		return ("T");
-	}
 }
 
 void process_symbols_32bit(Elf32_Ehdr *ehdr, void *map, const char *filename)
