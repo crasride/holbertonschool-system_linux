@@ -24,7 +24,6 @@ int analyze_file(const char *filename)
 
 	file_size = lseek(fd, 0, SEEK_END);
 	lseek(fd, 0, SEEK_SET);
-
 	map = mmap(0, file_size, PROT_READ, MAP_PRIVATE, fd, 0);
 	if (map == MAP_FAILED)
 	{
@@ -36,13 +35,12 @@ int analyze_file(const char *filename)
 	if (ehdr32->e_ident[EI_CLASS] == ELFCLASS32)
 	{
 		if (ehdr32->e_ident[EI_OSABI] == ELFOSABI_SOLARIS)
-			return (analyze_32bit_elf_solaris(ehdr32, map, filename));
+			analyze_32bit_elf_solaris(ehdr32, map, filename);
 		else
-			return (analyze_32bit_elf(ehdr32, map, filename));
+			analyze_32bit_elf(ehdr32, map, filename);
 	}
 	else if (ehdr64->e_ident[EI_CLASS] == ELFCLASS64)
-		return (analyze_64bit_elf(ehdr64, map, filename));
-
+		analyze_64bit_elf(ehdr64, map, filename);
 	else
 	{
 		fprintf(stderr, "No es un archivo ELF válido.\n");
