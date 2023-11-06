@@ -6,7 +6,19 @@
 #include <elf.h>
 #include "hnm.h"
 
-
+/**
+* get_symbol_type_64 - Get the type of a symbol in a 64-bit ELF file.
+*
+* This function takes the symbol information, the symbol itself, and an array
+* of ELF section headers,
+* and determines the type of the symbol. It returns a string representation of
+* the symbol's type.
+*
+* @info: Information about the symbol.
+* @sym: The symbol to analyze.
+* @shdr: An array of ELF section headers.
+* Return: A string representing the symbol's type.
+*/
 const char *get_symbol_type_64(uint8_t info, Elf64_Sym sym, Elf64_Shdr *shdr)
 {
 	if (ELF64_ST_BIND(info) == STB_GNU_UNIQUE)
@@ -39,6 +51,18 @@ const char *get_symbol_type_64(uint8_t info, Elf64_Sym sym, Elf64_Shdr *shdr)
 		return ("t");
 }
 
+/**
+* process_symbols_64bit - DEisplay symbol information from a 64-bit ELF file.
+*
+* This function takes an ELF header, a memory map of the file, and the filename
+* and extracts and displays
+* symbol information from the ELF file. It locates the symbol table and string
+* table sections, then iterates
+*
+* @ehdr: Pointer to the ELF header.
+* @map: Pointer to the memory-mapped ELF file.
+* @filename: The name of the ELF file.
+*/
 void process_symbols_64bit(Elf64_Ehdr *ehdr, void *map, const char *filename)
 {
 	int i, num_symbols;
@@ -83,6 +107,19 @@ void process_symbols_64bit(Elf64_Ehdr *ehdr, void *map, const char *filename)
 	}
 }
 
+/**
+* analyze_64bit_elf - Analyze and process a 64-bit ELF file.
+*
+* This function analyzes a 32-bit ELF header and its endianness, and then
+* processes the symbols in the ELF file.
+* Depending on the endianness of the file, it calls the appropriate function
+* to process and display symbol information.
+*
+* @ehdr: Pointer to the ELF header.
+* @map: Pointer to the memory-mapped ELF file.
+* @filename: The name of the ELF file.
+* Return: 0 on success.
+*/
 int analyze_64bit_elf(Elf64_Ehdr *ehdr, void *map, const char *filename)
 {
 	if (ehdr->e_ident[EI_DATA] == ELFDATA2LSB)

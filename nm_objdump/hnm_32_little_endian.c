@@ -7,6 +7,19 @@
 #include "hnm.h"
 
 
+/**
+* get_symbol_type_32 - Get the type of a symbol in a 32-bit ELF file.
+*
+* This function takes the symbol information, the symbol itself, and an array
+* of ELF section headers,
+* and determines the type of the symbol. It returns a string representation of
+* the symbol's type.
+*
+* @info: Information about the symbol.
+* @sym: The symbol to analyze.
+* @shdr: An array of ELF section headers.
+* Return: A string representing the symbol's type.
+*/
 const char *get_symbol_type_32(uint8_t info, Elf32_Sym sym, Elf32_Shdr *shdr)
 {
 	if (ELF32_ST_BIND(info) == STB_GNU_UNIQUE)
@@ -39,6 +52,20 @@ const char *get_symbol_type_32(uint8_t info, Elf32_Sym sym, Elf32_Shdr *shdr)
 		return ("T");
 }
 
+/**
+* process_symbols_32bit - DEisplay symbol information from a 32-bit ELF file.
+*
+* This function takes an ELF header, a memory map of the file, and the filename
+* and extracts and displays
+* symbol information from the ELF file. It locates the symbol table and string
+* table sections, then iterates
+* through the symbols, excluding those with the name "main.c," and prints their
+* type, name, and value if available.
+*
+* @ehdr: Pointer to the ELF header.
+* @map: Pointer to the memory-mapped ELF file.
+* @filename: The name of the ELF file.
+*/
 void process_symbols_32bit(Elf32_Ehdr *ehdr, void *map, const char *filename)
 {
 	int i, num_symbols;
@@ -83,13 +110,23 @@ void process_symbols_32bit(Elf32_Ehdr *ehdr, void *map, const char *filename)
 	}
 }
 
+/**
+* analyze_32bit_elf - Analyze and process a 32-bit ELF file.
+*
+* This function analyzes a 32-bit ELF header and its endianness, and then
+* processes the symbols in the ELF file.
+* Depending on the endianness of the file, it calls the appropriate function
+* to process and display symbol information.
+*
+* @ehdr: Pointer to the ELF header.
+* @map: Pointer to the memory-mapped ELF file.
+* @filename: The name of the ELF file.
+* Return: 0 on success.
+*/
 int analyze_32bit_elf(Elf32_Ehdr *ehdr, void *map, const char *filename)
 {
-
-	/* printf("32 bits, "); */
 	if (ehdr->e_ident[EI_DATA] == ELFDATA2LSB)
 	{
-		/* printf("little-endian.\n"); */
 		process_symbols_32bit(ehdr, map, filename);
 	}
 	else if (ehdr->e_ident[EI_DATA] == ELFDATA2MSB)

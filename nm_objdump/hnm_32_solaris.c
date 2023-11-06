@@ -6,7 +6,19 @@
 #include <elf.h>
 #include "hnm.h"
 
-
+/**
+* get_symb_type_32_s - Get the type of a symbol in a 32-bit ELF file.(Solaris)
+*
+* This function takes the symbol information, the symbol itself, and an array
+* of ELF section headers,
+* and determines the type of the symbol. It returns a string representation of
+* the symbol's type.
+*
+* @info: Information about the symbol.
+* @sym: The symbol to analyze.
+* @shdr: An array of ELF section headers.
+* Return: A string representing the symbol's type.
+*/
 const char *get_symb_type_32_s(uint8_t info, Elf32_Sym sym, Elf32_Shdr *shdr)
 {
 	if (ELF32_ST_BIND(info) == STB_GNU_UNIQUE)
@@ -84,7 +96,19 @@ void process_symbols_32bit_solaris(Elf32_Ehdr *ehdr, void *map,
 	}
 }
 
-
+/**
+* analyze_32bit_elf - Analyze and process a 32-bit ELF file. (solaris)
+*
+* This function analyzes a 32-bit ELF header and its endianness, and then
+* processes the symbols in the ELF file.
+* Depending on the endianness of the file, it calls the appropriate function
+* to process and display symbol information.
+*
+* @ehdr: Pointer to the ELF header.
+* @map: Pointer to the memory-mapped ELF file.
+* @filename: The name of the ELF file.
+* Return: 0 on success.
+*/
 int analyze_32bit_elf_solaris(Elf32_Ehdr *ehdr, void *map,
 								const char *filename)
 {

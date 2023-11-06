@@ -6,7 +6,17 @@
 #include <elf.h>
 #include "hnm.h"
 
-
+/**
+* analyze_file - Analyze an ELF file specified by filename.
+*
+* This function opens the file, maps it into memory, and analyzes it as either
+* a 32-bit or 64-bit ELF file
+* based on the ELF class. It then calls the appropriate analysis function for
+* the ELF type.
+*
+* @filename: The name of the ELF file to analyze.
+* Return: 0 on success, 1 on failure.
+*/
 int analyze_file(const char *filename)
 {
 	int fd;
@@ -51,18 +61,29 @@ int analyze_file(const char *filename)
 	return (0);
 }
 
+/**
+* main - Entry point for the hnm program.
+*
+* This function processes command-line arguments to analyze one or more ELF
+* files using the analyze_file function.
+*
+* @argc: The number of command-line arguments.
+* @argv: An array of strings representing the command-line arguments.
+* Return: 0 on success, 1 on failure.
+*/
 int main(int argc, char *argv[])
 {
 	int i;
-
+	/* Check if there are at least 2 command-line arguments (incl Prog name)*/
 	if (argc < 2)
 	{
 		fprintf(stderr, "hnm: %s [objfile...]\n", argv[0]);
 		return (1);
 	}
-
+	/*Iterate through command-line arguments starting the second argument*/
 	for (i = 1; i < argc; i++)
 	{
+		/* Call analyze_ function analyze the ELF file specified by argv[i]*/
 		if (analyze_file(argv[i]) != 0)
 		{
 			return (1);

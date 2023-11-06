@@ -6,6 +6,16 @@
 #include <elf.h>
 #include "hnm.h"
 
+/**
+* byteswap32 - Swap the bytes of a 32-bit unsigned integer to change endianness
+*
+* This function reorders  bytes of a 32-bit unsigned integer from little-endian
+* format big-endian format or vice versa.It is commonly used for data conversio
+* between systems with different byte orderings.
+*
+* @value: The 32-bit unsigned integer whose bytes will be swapped.
+* Return: The 32-bit unsigned integer with its bytes swapped.
+*/
 uint32_t byteswap32(uint32_t value)
 {
 	return (((value & 0x000000FF) << 24) |
@@ -14,12 +24,36 @@ uint32_t byteswap32(uint32_t value)
 		((value & 0xFF000000) >> 24));
 }
 
+/**
+* byteswap16 - Swap the bytes of a 16-bit unsigned integer to change endianness
+*
+* This function reorders the bytes of 6-bit unsigned integer from little-endian
+* format big-endian format or vice versa.It is commonly used for data conversio
+* between systems with different byte orderings.
+*
+* @value: The 16-bit unsigned integer whose bytes will be swapped.
+* Return: The 16-bit unsigned integer with its bytes swapped.
+*/
 uint16_t byteswap16(uint16_t value)
 {
 	return (((value & 0x00FF) << 8) |
 		((value & 0xFF00) >> 8));
 }
 
+/**
+* process_symbols_32bit_big_endian - Process and display symbol information
+* from a 32-bit big-endian ELF file.
+*
+* This function takes an ELF header, a memory map of the file, and the filename
+* and extracts and displays
+* symbol information from the ELF file. It locates the symbol table and string
+* table sections, then iterates
+* through the symbols, printing their type, name, and value if available.
+*
+* @ehdr: Pointer to the ELF header.
+* @map: Pointer to the memory-mapped ELF file.
+* @filename: The name of the ELF file.
+*/
 void process_symbols_32bit_big_endian(Elf32_Ehdr *ehdr, void *map,
 										const char *filename)
 {
