@@ -34,7 +34,7 @@ const char *get_symb_type_32_s(uint8_t info, Elf32_Sym sym, Elf32_Shdr *shdr)
 		shdr[sym.st_shndx].sh_flags == (SHF_ALLOC | SHF_EXECINSTR))
 		return ((ELF32_ST_BIND(info) == STB_GLOBAL) ? "T" : "t");
 	else if (shdr[sym.st_shndx].sh_type == SHT_DYNAMIC)
-		return ("d");
+		return ("D");
 	else
 		return ("T");
 }
@@ -74,7 +74,7 @@ void process_symbols_32bit_solaris(Elf32_Ehdr *ehdr, void *map,
 			const char *symbol_type_str = get_symb_type_32_s(symtab[i].st_info,
 			symtab[i], shdr);
 
-			if (symtab[i].st_value == 0)
+			if (symtab[i].st_value == 0 && symbol_type_str[0] == 'A')
 				continue;
 			if (symbol_type_str[0] != 'U' && symbol_type_str[0] != 'w')
 				printf("%08x %s %s\n", symtab[i].st_value, symbol_type_str, symbol_name);
