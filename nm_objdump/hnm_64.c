@@ -11,70 +11,39 @@ const char *get_symbol_type_64(uint8_t info, Elf64_Sym sym, Elf64_Shdr *shdr)
 {
 	if (ELF64_ST_BIND(info) == STB_GNU_UNIQUE)
 		return ("u");
-	else if (ELF64_ST_BIND(info) == STB_WEAK && ELF64_ST_TYPE(info) == STT_OBJECT)
-	{
-		if (sym.st_shndx == SHN_UNDEF)
-			return ("v");
-		else
-			return ("V");
-	}
-	else if (ELF64_ST_BIND(info) == STB_WEAK)
-	{
-		if (sym.st_shndx == SHN_UNDEF)
-			return ("w");
-		else
-			return ("W");
-	}
+	if (ELF64_ST_BIND(info) == STB_WEAK && ELF64_ST_TYPE(info) == STT_OBJECT)
+		return ((sym.st_shndx == SHN_UNDEF) ? "v" : "V");
+	if (ELF64_ST_BIND(info) == STB_WEAK)
+		return ((sym.st_shndx == SHN_UNDEF) ? "w" : "W");
 	else if (sym.st_shndx == SHN_UNDEF)
 		return ("U");
 	else if (sym.st_shndx == SHN_ABS)
 		return ("A");
 	else if (sym.st_shndx == SHN_COMMON)
 		return ("C");
-	else if (shdr[sym.st_shndx].sh_type == SHT_NOBITS && shdr[sym.st_shndx].sh_flags == (SHF_ALLOC | SHF_WRITE))
-	{
-		if (ELF64_ST_BIND(info) == STB_GLOBAL)
-			return ("B");
-		else
-			return ("b");
-	}
-	else if (shdr[sym.st_shndx].sh_type == SHT_PROGBITS && shdr[sym.st_shndx].sh_flags == SHF_ALLOC)
-	{
-		if (ELF64_ST_BIND(info) == STB_GLOBAL)
-			return ("R");
-		else
-			return ("r");
-	}
-	else if (shdr[sym.st_shndx].sh_type == SHT_PROGBITS && shdr[sym.st_shndx].sh_flags == (SHF_ALLOC | SHF_WRITE))
-	{
-		if (ELF64_ST_BIND(info) == STB_GLOBAL)
-			return ("D");
-		else
-			return ("d");
-	}
-	else if (shdr[sym.st_shndx].sh_type == SHT_PROGBITS && shdr[sym.st_shndx].sh_flags == (SHF_ALLOC | SHF_EXECINSTR))
-	{
-		if (ELF64_ST_BIND(info) == STB_GLOBAL)
-			return ("T");
-		else
-			return ("t");
-	}
+	else if (shdr[sym.st_shndx].sh_type == SHT_NOBITS &&
+			shdr[sym.st_shndx].sh_flags == (SHF_ALLOC | SHF_WRITE))
+		return ((ELF64_ST_BIND(info) == STB_GLOBAL) ? "B" : "b");
+	else if (shdr[sym.st_shndx].sh_type == SHT_PROGBITS &&
+			shdr[sym.st_shndx].sh_flags == SHF_ALLOC)
+		return ((ELF64_ST_BIND(info) == STB_GLOBAL) ? "R" : "r");
+	else if (shdr[sym.st_shndx].sh_type == SHT_PROGBITS &&
+			shdr[sym.st_shndx].sh_flags == (SHF_ALLOC | SHF_WRITE))
+	return ((ELF64_ST_BIND(info) == STB_GLOBAL) ? "D" : "d");
+	else if (shdr[sym.st_shndx].sh_type == SHT_PROGBITS &&
+			shdr[sym.st_shndx].sh_flags == (SHF_ALLOC | SHF_EXECINSTR))
+	return ((ELF64_ST_BIND(info) == STB_GLOBAL) ? "T" : "t");
 	else if (shdr[sym.st_shndx].sh_type == SHT_DYNAMIC)
-	{
 		return ("d");
-	}
 	else
-	{
 		return ("t");
-	}
 }
 
 void process_symbols_64bit(Elf64_Ehdr *ehdr, void *map, const char *filename)
 {
-	int i;
+	int i, num_symbols;
 	Elf64_Sym *symtab;
 	char *strtab_data;
-	int num_symbols;
 	Elf64_Shdr *shdr = (Elf64_Shdr *)((char *)map + ehdr->e_shoff);
 
 	/* busca seccion (SHT_SYMTAB) y la tabla de cadenas asociada (SHT_STRTAB) */
