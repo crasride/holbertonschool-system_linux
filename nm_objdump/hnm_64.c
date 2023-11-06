@@ -45,8 +45,6 @@ void process_symbols_64bit(Elf64_Ehdr *ehdr, void *map, const char *filename)
 	Elf64_Sym *symtab;
 	char *strtab_data;
 	Elf64_Shdr *shdr = (Elf64_Shdr *)((char *)map + ehdr->e_shoff);
-
-	/* busca seccion (SHT_SYMTAB) y la tabla de cadenas asociada (SHT_STRTAB) */
 	Elf64_Shdr *symtab_section = NULL;
 	Elf64_Shdr *strtab_section = NULL;
 
@@ -63,27 +61,22 @@ void process_symbols_64bit(Elf64_Ehdr *ehdr, void *map, const char *filename)
 		fprintf(stderr, "./hnm: %s: no symbols\n", filename);
 		return;
 	}
-
-	/* Acceso tabla de símbolos y tabla de str */
 	symtab = (Elf64_Sym *)((char *)map + symtab_section->sh_offset);
 	strtab_data = (char *)((char *)map + strtab_section->sh_offset);
-
 	num_symbols = symtab_section->sh_size / sizeof(Elf64_Sym);
-
-	/* Recorre los símbolos y muestra la información */
 	for (i = 0; i < num_symbols; i++)
 	{
-		/* Verifica si el nombre del símbolo contiene la extensión ".c" y omite la impresión */
 		char *symbol_name = strtab_data + symtab[i].st_name;
+
 		if (strstr(symbol_name, ".c") != NULL)
 			continue;
-
 		if (symtab[i].st_name)
 		{
-			const char *symbol_type_str = get_symbol_type_64(symtab[i].st_info, symtab[i], shdr);
-
+			const char *symbol_type_str = get_symbol_type_64(symtab[i].st_info,
+			symtab[i], shdr);
 			if (symbol_type_str[0] != 'U' && symbol_type_str[0] != 'w')
-				printf("%16.16lx %s %s\n", symtab[i].st_value, symbol_type_str, symbol_name);
+				printf("%16.16lx %s %s\n", symtab[i].st_value, symbol_type_str,
+				symbol_name);
 			else
 				printf("                 %s %s\n", symbol_type_str, symbol_name);
 		}
