@@ -74,4 +74,7 @@ void process_symbols_32bit_solaris(Elf32_Ehdr *ehdr, void *map,
 int analyze_32bit_elf_solaris(Elf32_Ehdr *ehdr, void *map,
 								const char *filename);
 
+const char *get_symb_type_32_s(uint8_t info, Elf32_Sym sym,
+								Elf32_Shdr *shdr);
+
 #endif /* _HNM_ */
