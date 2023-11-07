@@ -2,7 +2,7 @@
 
 <p align="center">
 	<img width="200" height="400" src="../images/nm.png" alt="nm">
-	<img width="200" height="400" src="../images/objdump.png" alt="objdump">
+	<img width="300" height="400" src="../images/objdump.png" alt="objdump">
 </p>
 
 ## Resources
