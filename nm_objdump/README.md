@@ -1,11 +1,15 @@
 <h1 align="center">C - ELF: nm/objdump</h1>
 
-<p align="center">
-	<img width="200" height="400" src="../images/nm.png" alt="nm">
-	<img width="300" height="400" src="../images/objdump.png" alt="objdump">
-</p>
-
-## Resources
+<div align="center">
+    <div style="display: inline-block; text-align: center;">
+        <p>nm</p>
+        <img width="200" height="400" src="../images/nm.png" alt="nm">
+    </div>
+    <div style="display: inline-block; text-align: center;">
+        <p>objdump</p>
+        <img width="300" height="400" src="../images/objdump.png" alt="objdump">
+    </div>
+</div>s
 
 ### Read or watch:
 
