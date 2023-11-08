@@ -86,7 +86,7 @@ int analyze_file(const char *filename);
 void print_elf_header(Elf64_Ehdr *ehdr, const char *filename);
 int analyze_64bit_elf(Elf64_Ehdr *ehdr, const char *filename);
 
-int analyze_32bit_elf(Elf32_Ehdr *ehdr);
+int analyze_32bit_elf(Elf64_Ehdr *ehdr, const char *filename);
 
 void print_flag(int *flag_printed, unsigned long flags, unsigned long flag,
 				const char *flag_name);

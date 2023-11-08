@@ -7,9 +7,6 @@
 #include "hobjdump.h"
 
 
-
-#include <stdio.h>
-
 void print_flag(int *flag_printed, unsigned long flags, unsigned long flag,
 				const char *flag_name)
 {
@@ -30,11 +27,17 @@ void print_elf_header(Elf64_Ehdr *ehdr, const char *filename)
 
 	if (formatted_filename[0] == '.' && formatted_filename[1] == '/')
 		formatted_filename += 2;
-	printf("%s:     file format elf64-x86-64\n", formatted_filename);
 
 	if (ehdr->e_machine == EM_X86_64)
+	{
+		printf("%s:     file format elf64-x86-64\n", formatted_filename);
 		printf("architecture: i386:x86-64");
-
+	}
+	else
+	{
+		printf("%s:     file format elf32-i386\n", formatted_filename);
+		printf("architecture: i386");
+	}
 	if (ehdr->e_type == ET_EXEC)
 		flags_interp |= EXEC_P;
 	if (ehdr->e_type == ET_REL)
@@ -63,7 +66,6 @@ int analyze_64bit_elf(Elf64_Ehdr *ehdr, const char *filename)
 	if (ehdr->e_ident[EI_DATA] == ELFDATA2LSB)
 	{
 		print_elf_header(ehdr, filename);
-
 	}
 	else if (ehdr->e_ident[EI_DATA] == ELFDATA2MSB)
 	{
@@ -105,7 +107,7 @@ int analyze_file(const char *filename)
 
 	if (ehdr32->e_ident[EI_CLASS] == ELFCLASS32)
 	{
-
+		analyze_32bit_elf(ehdr64, filename);
 	}
 	else if (ehdr64->e_ident[EI_CLASS] == ELFCLASS64)
 
@@ -142,10 +144,11 @@ int main(int argc, char *argv[])
 	return (0);
 }
 
-int analyze_32bit_elf(Elf32_Ehdr *ehdr)
+int analyze_32bit_elf(Elf64_Ehdr *ehdr, const char *filename)
 {
 	if (ehdr->e_ident[EI_DATA] == ELFDATA2LSB)
 	{
+		print_elf_header(ehdr, filename);
 	}
 	else if (ehdr->e_ident[EI_DATA] == ELFDATA2MSB)
 	{
