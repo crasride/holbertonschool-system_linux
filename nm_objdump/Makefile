@@ -4,20 +4,23 @@ CC = gcc
 # Compiler Flags
 CFLAGS = -std=c90 -Wall -Werror -Wextra -pedantic
 FILES_0 = hnm_main.c hnm_64.c hnm_32_big_endian.c hnm_32_little_endian.c hnm_32_solaris.c
+FILES_1 = hobjdump.c
 
 # Linker Flags (empty in this case)
 LDFLAGS =
 
 # Default Target: Build the hnm executable
-all: hnm
+all: hnm hobjdump
 
 # Rule to build hnm
 hnm: $(FILES_0)
 	$(CC) $(CFLAGS) $(LDFLAGS) $^ -o $@
+hobjdump: $(FILES_1)
+	$(CC) $(CFLAGS) $(LDFLAGS) $^ -o $@
 
 # Target to clean generated files
 clean:
-	rm -rf hnm
+	rm -rf hnm hobjdump
 
 # Declaration of phony targets
 .PHONY: all clean
