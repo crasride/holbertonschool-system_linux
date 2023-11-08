@@ -19,7 +19,7 @@ void print_flag(int *flag_printed, unsigned long flags, unsigned long flag,
 	}
 }
 
-void print_elf_header(Elf64_Ehdr *ehdr, const char *filename)
+void print_elf_header_32(Elf32_Ehdr *ehdr, const char *filename)
 {
 	const char *formatted_filename = filename;
 	int flag_printed = 0;
@@ -28,16 +28,9 @@ void print_elf_header(Elf64_Ehdr *ehdr, const char *filename)
 	if (formatted_filename[0] == '.' && formatted_filename[1] == '/')
 		formatted_filename += 2;
 
-	if (ehdr->e_machine == EM_X86_64)
-	{
-		printf("%s:     file format elf64-x86-64\n", formatted_filename);
-		printf("architecture: i386:x86-64");
-	}
-	else
-	{
-		printf("%s:     file format elf32-i386\n", formatted_filename);
-		printf("architecture: i386");
-	}
+	printf("%s:     file format elf32-i386\n", formatted_filename);
+	printf("architecture: i386");
+
 	if (ehdr->e_type == ET_EXEC)
 		flags_interp |= EXEC_P;
 	if (ehdr->e_type == ET_REL)
@@ -57,7 +50,44 @@ void print_elf_header(Elf64_Ehdr *ehdr, const char *filename)
 	print_flag(&flag_printed, flags_interp, D_PAGED, "D_PAGED");
 
 	printf("\n");
-	printf("start address 0x%016lx\n", (unsigned long)ehdr->e_entry);
+
+	printf("start address 0x%08lx\n", (unsigned long)ehdr->e_entry);
+}
+
+
+void print_elf_header_64(Elf64_Ehdr *ehdr, const char *filename)
+{
+	const char *formatted_filename = filename;
+	int flag_printed = 0;
+	unsigned long flags_interp = 0;
+
+	if (formatted_filename[0] == '.' && formatted_filename[1] == '/')
+		formatted_filename += 2;
+
+	printf("%s:     file format elf64-x86-64\n", formatted_filename);
+	printf("architecture: i386:x86-64");
+
+	if (ehdr->e_type == ET_EXEC)
+		flags_interp |= EXEC_P;
+	if (ehdr->e_type == ET_REL)
+		flags_interp |= HAS_RELOC;
+	if (ehdr->e_type == ET_DYN)
+		flags_interp |= DYNAMIC;
+
+	flags_interp |= (ehdr->e_shnum > 0) ? HAS_SYMS : 0;
+	flags_interp |= (ehdr->e_phnum > 0) ? D_PAGED : 0;
+
+	printf(" flags 0x%08lx:\n", flags_interp);
+
+	print_flag(&flag_printed, flags_interp, EXEC_P, "EXEC_P");
+	print_flag(&flag_printed, flags_interp, HAS_RELOC, "HAS_RELOC");
+	print_flag(&flag_printed, flags_interp, HAS_SYMS, "HAS_SYMS");
+	print_flag(&flag_printed, flags_interp, DYNAMIC, "DYNAMIC");
+	print_flag(&flag_printed, flags_interp, D_PAGED, "D_PAGED");
+
+	printf("\n");
+
+	printf("start address 0x%08lx\n", (unsigned long)ehdr->e_entry);
 }
 
 
@@ -65,7 +95,7 @@ int analyze_64bit_elf(Elf64_Ehdr *ehdr, const char *filename)
 {
 	if (ehdr->e_ident[EI_DATA] == ELFDATA2LSB)
 	{
-		print_elf_header(ehdr, filename);
+		print_elf_header_64(ehdr, filename);
 	}
 	else if (ehdr->e_ident[EI_DATA] == ELFDATA2MSB)
 	{
@@ -107,7 +137,7 @@ int analyze_file(const char *filename)
 
 	if (ehdr32->e_ident[EI_CLASS] == ELFCLASS32)
 	{
-		analyze_32bit_elf(ehdr64, filename);
+		analyze_32bit_elf(ehdr32, filename);
 	}
 	else if (ehdr64->e_ident[EI_CLASS] == ELFCLASS64)
 
@@ -144,11 +174,11 @@ int main(int argc, char *argv[])
 	return (0);
 }
 
-int analyze_32bit_elf(Elf64_Ehdr *ehdr, const char *filename)
+int analyze_32bit_elf(Elf32_Ehdr *ehdr, const char *filename)
 {
 	if (ehdr->e_ident[EI_DATA] == ELFDATA2LSB)
 	{
-		print_elf_header(ehdr, filename);
+		print_elf_header_32(ehdr, filename);
 	}
 	else if (ehdr->e_ident[EI_DATA] == ELFDATA2MSB)
 	{
