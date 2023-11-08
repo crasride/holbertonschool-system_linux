@@ -87,7 +87,7 @@ void print_elf_header_64(Elf64_Ehdr *ehdr, const char *filename)
 
 	printf("\n");
 
-	printf("start address 0x%08lx\n", (unsigned long)ehdr->e_entry);
+	printf("start address 0x%016lx\n", (unsigned long)ehdr->e_entry);
 }
 
 
