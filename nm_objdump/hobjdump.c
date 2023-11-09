@@ -340,6 +340,7 @@ void print_sections_64(Elf64_Ehdr *ehdr, int is_big_endian, void *map)
 			strcmp(section_name, ".rel.text") == 0 ||
 			strcmp(section_name, ".rel.data") == 0 ||
 			strcmp(section_name, ".rela.eh_frame") == 0 ||
+			strncmp(section_name, ".rela.", 6) == 0 ||
 			strcmp(section_name, ".strtab") == 0)
 			{
 			continue;
