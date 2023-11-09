@@ -98,11 +98,17 @@ int analyze_32bit_elf(Elf32_Ehdr *ehdr, const char *filename, void *map);
 void print_elf_header_32(Elf32_Ehdr *ehdr, const char *filename, void *map);
 void print_sections_32(Elf32_Ehdr *ehdr, int is_big_endian, void *map);
 void print_section_contents_32(Elf32_Shdr *shdr, char *map, int is_big_endian);
+void print_hex_ascii_block_32(const Elf32_Shdr *shdr,
+								const unsigned char *data, size_t offset,
+								size_t size, int is_big_endian);
 
 /* 64bit */
 void print_elf_header_64(Elf64_Ehdr *ehdr, const char *filename, void *map);
 int analyze_64bit_elf(Elf64_Ehdr *ehdr, const char *filename, void *map);
 void print_sections_64(Elf64_Ehdr *ehdr, int is_big_endian, void *map);
 void print_section_contents_64(Elf64_Shdr *shdr, char *map, int is_big_endian);
+void print_hex_ascii_block(Elf64_Shdr *shdr, const unsigned char *data,
+							size_t offset, size_t size, int is_big_endian);
+
 
 #endif /* _HOBJDUMP_ */
