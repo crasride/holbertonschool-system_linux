@@ -52,7 +52,8 @@ void print_elf_header_32(Elf32_Ehdr *ehdr, const char *filename)
 		formatted_filename += 2;
 
 	is_big_endian = (ehdr->e_ident[EI_DATA] == ELFDATA2MSB);
-	printf("%s:     file format %s\n", formatted_filename, (is_big_endian) ? "elf32-big" : "elf32-i386");
+	printf("%s:     file format %s\n", formatted_filename,
+			 (is_big_endian) ? "elf32-big" : "elf32-i386");
 	printf("architecture: %s,", (is_big_endian) ? "UNKNOWN!" : "i386");
 
 	if (my_be16toh(ehdr->e_type, is_big_endian) == ET_EXEC)
@@ -72,7 +73,8 @@ void print_elf_header_32(Elf32_Ehdr *ehdr, const char *filename)
 	print_flag(&flag_printed, flags_interp, DYNAMIC, "DYNAMIC");
 	print_flag(&flag_printed, flags_interp, D_PAGED, "D_PAGED");
 	printf("\n");
-	printf("start address 0x%08lx\n", (unsigned long)(my_be32toh(ehdr->e_entry, is_big_endian)));
+	printf("start address 0x%08lx\n",
+	(unsigned long)(my_be32toh(ehdr->e_entry, is_big_endian)));
 }
 
 
