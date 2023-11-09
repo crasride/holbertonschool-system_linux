@@ -54,7 +54,7 @@ void print_section_contents(Elf32_Shdr *shdr, char *map, int is_big_endian)
 
 	for (i = 0; i < section_size; i += 16)
 	{
-		printf(" %07x", (int)(my_be32toh(shdr->sh_addr, is_big_endian) + i));
+		printf(" %04x", (int)(my_be32toh(shdr->sh_addr, is_big_endian) + i));
 		for (j = 0; j < 16; j++)
 		{
 			if (i + j < section_size)
@@ -323,7 +323,6 @@ int analyze_64bit_elf(Elf64_Ehdr *ehdr, const char *filename, void *map)
 
 	return (0);
 }
-
 
 	/* printf("e_ident[EI_MAG0]: 0x%02x\n", ehdr->e_ident[EI_MAG0]);
 	printf("e_ident[EI_MAG1]: 0x%02x\n", ehdr->e_ident[EI_MAG1]);

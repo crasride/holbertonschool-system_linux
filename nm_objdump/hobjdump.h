@@ -102,5 +102,4 @@ void print_sections_32(Elf32_Ehdr *ehdr, int is_big_endian, void *map);
 void print_sections_64(Elf64_Ehdr *ehdr, int is_big_endian, void *map);
 void print_section_contents(Elf32_Shdr *shdr, char *map, int is_big_endian);
 
-
 #endif /* _HOBJDUMP_ */
