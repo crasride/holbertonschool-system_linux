@@ -16,6 +16,7 @@
 #define EXEC_P 0x02
 #define HAS_RELOC 0x01
 #define DYNAMIC 0x40
+#define HAS_DEBUG 0x08
 
 
 

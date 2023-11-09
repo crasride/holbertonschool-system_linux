@@ -54,7 +54,7 @@ void print_section_contents(Elf32_Shdr *shdr, char *map, int is_big_endian)
 
 	for (i = 0; i < section_size; i += 16)
 	{
-		printf(" %07x", (int)(my_be32toh(shdr->sh_addr, is_big_endian) + i));
+		printf(" %04x", (int)(my_be32toh(shdr->sh_addr, is_big_endian) + i));
 		for (j = 0; j < 16; j++)
 		{
 			if (i + j < section_size)
@@ -117,6 +117,7 @@ void print_sections_32(Elf32_Ehdr *ehdr, int is_big_endian, void *map)
 		if (strcmp(section_name, ".bss") == 0 ||
 			strcmp(section_name, ".shstrtab") == 0 ||
 			strcmp(section_name, ".symtab") == 0 ||
+			strcmp(section_name, ".tm_clone_table") == 0 || /* SOLARIS */
 			strcmp(section_name, ".strtab") == 0)
 			{
 			continue;
@@ -150,6 +151,8 @@ void print_elf_header_32(Elf32_Ehdr *ehdr, const char *filename, void *map)
 		flags_interp |= HAS_RELOC;
 	if (my_be16toh(ehdr->e_type, is_big_endian) == ET_DYN)
 		flags_interp |= DYNAMIC;
+	if (my_be16toh(ehdr->e_type, is_big_endian) == ET_CORE)
+		flags_interp |= HAS_DEBUG; /* SOLARIS */
 
 	flags_interp |= (ehdr->e_shnum > 0) ? HAS_SYMS : 0;
 	flags_interp |= (ehdr->e_phnum > 0) ? D_PAGED : 0;
