@@ -54,7 +54,7 @@ void print_section_contents(Elf32_Shdr *shdr, char *map, int is_big_endian)
 
 	for (i = 0; i < section_size; i += 16)
 	{
-		printf(" %04x", (int)(my_be32toh(shdr->sh_addr, is_big_endian) + i));
+		printf(" %x", (int)(my_be32toh(shdr->sh_addr, is_big_endian) + i));
 		for (j = 0; j < 16; j++)
 		{
 			if (i + j < section_size)
@@ -118,6 +118,8 @@ void print_sections_32(Elf32_Ehdr *ehdr, int is_big_endian, void *map)
 			strcmp(section_name, ".shstrtab") == 0 ||
 			strcmp(section_name, ".symtab") == 0 ||
 			strcmp(section_name, ".tm_clone_table") == 0 || /* SOLARIS */
+			strcmp(section_name, ".rel.text") == 0 ||
+			strcmp(section_name, ".rel.data") == 0 ||
 			strcmp(section_name, ".strtab") == 0)
 			{
 			continue;
