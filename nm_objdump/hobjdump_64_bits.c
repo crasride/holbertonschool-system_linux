@@ -7,36 +7,30 @@
 #include "hobjdump.h"
 
 
-void print_section_contents_64(Elf64_Shdr *shdr, char *map, int is_big_endian)
+void print_hex_data(const Elf64_Shdr *shdr, const unsigned char *data, size_t offset, size_t size, int is_big_endian)
 {
-	size_t section_size;
 	size_t i, j;
-	unsigned char *section_data;
 
-	section_data = (unsigned char *)(map + my_be32toh(shdr->sh_offset,
-	is_big_endian));
-	section_size = my_be32toh(shdr->sh_size, is_big_endian);
-
-	for (i = 0; i < section_size; i += 16)
+	for (i = 0; i < size; i += 16)
 	{
 		if (my_be32toh(shdr->sh_addr, is_big_endian) == 0xf510)
 		{
-			printf(" %05x", (int)(my_be32toh(shdr->sh_addr, is_big_endian) + i));
+			printf(" %05x", (int)(my_be32toh(shdr->sh_addr, is_big_endian) + offset + i));
 		}
 		else
 		{
-			printf(" %04x", (int)(my_be32toh(shdr->sh_addr, is_big_endian) + i));
+			printf(" %04x", (int)(my_be32toh(shdr->sh_addr, is_big_endian) + offset + i));
 		}
 
 		for (j = 0; j < 16; j++)
 		{
-			if (i + j < section_size)
+			if (i + j < size)
 			{
 				if (j % 4 == 0)
 				{
 					printf(" "); /* espacio entre bloques */
 				}
-				printf("%02x", section_data[i + j]);
+				printf("%02x", data[offset + i + j]);
 			}
 			else
 			{
@@ -47,26 +41,49 @@ void print_section_contents_64(Elf64_Shdr *shdr, char *map, int is_big_endian)
 				printf("  ");
 			}
 		}
+		printf("\n");
+	}
+}
+
+void print_ascii_data(const unsigned char *data, size_t offset, size_t size)
+{
+	size_t i, j;
+
+	for (i = 0; i < size; i += 16)
+	{
 		printf("  ");
 		for (j = 0; j < 16; j++)
 		{
-			if (i + j < section_size)
+			if (i + j < size)
 			{
-				char c = section_data[i + j];
+				char c = data[offset + i + j];
 
 				if (c >= 32 && c <= 126)
 				{
 					printf("%c", c);
-				}
-				else
+				} else
+				{
 					printf(".");
+				}
 			}
 			else
+			{
 				printf(" ");
+			}
 		}
 		printf("\n");
 	}
 }
+
+void print_section_contents_64(Elf64_Shdr *shdr, char *map, int is_big_endian)
+{
+	unsigned char *section_data = (unsigned char *)(map + my_be32toh(shdr->sh_offset, is_big_endian));
+	size_t section_size = my_be32toh(shdr->sh_size, is_big_endian);
+
+	print_hex_data(shdr, section_data, 0, section_size, is_big_endian);
+	print_ascii_data(section_data, 0, section_size);
+}
+
 
 void print_sections_64(Elf64_Ehdr *ehdr, int is_big_endian, void *map)
 {
