@@ -271,7 +271,7 @@ void print_section_contents_64(Elf64_Shdr *shdr, char *map, int is_big_endian)
 	for (i = 0; i < section_size; i += 16)
 	{
 		/* printf(" %04x", (int)(my_be32toh(shdr->sh_addr, is_big_endian) + i)); */
-		char *format = (strcmp(".eh_frame", (const char *)section_data) == 0) ? " %05x" : " %04x";
+		char *format = (strcmp(".eh_frame", (const char *)section_data) == 0) ? " %04x" : " %05x";
 		printf(format, (int)(my_be32toh(shdr->sh_addr, is_big_endian) + i));
 
 		for (j = 0; j < 16; j++)
