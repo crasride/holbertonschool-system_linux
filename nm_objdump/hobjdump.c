@@ -67,6 +67,10 @@ void print_section_contents(Elf32_Shdr *shdr, char *map, int is_big_endian)
 			}
 			else
 			{
+				if (j % 4 == 0)
+				{
+					printf(" ");/* espacio entre bloques */
+				}
 				printf("  ");
 			}
 		}
@@ -106,7 +110,7 @@ void print_sections_32(Elf32_Ehdr *ehdr, int is_big_endian, void *map)
 
 	for (i = 1; i < my_be16toh(ehdr->e_shnum, is_big_endian); i++)
 	{
-		printf("\nContents of section %s:", string_table + my_be32toh(shdr[i].sh_name, is_big_endian));
+		printf("Contents of section %s:", string_table + my_be32toh(shdr[i].sh_name, is_big_endian));
 		print_section_contents(&shdr[i], map, is_big_endian);
 	}
 
