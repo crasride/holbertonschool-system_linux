@@ -255,34 +255,6 @@ int main(int argc, char *argv[])
 }
 
 
-void print_sections_64(Elf64_Ehdr *ehdr, int is_big_endian, void *map)
-{
-	int i;
-	Elf64_Shdr *shdr = (Elf64_Shdr *)((char *)map + my_be32toh(ehdr->e_shoff, is_big_endian));
-	char *string_table = (char *)map + my_be32toh(shdr[my_be16toh(ehdr->e_shstrndx, is_big_endian)].sh_offset, is_big_endian);
-
-	for (i = 1; i < my_be16toh(ehdr->e_shnum, is_big_endian); i++)
-	{
-
-		char *section_name = string_table + my_be32toh(shdr[i].sh_name, is_big_endian);
-
-		/* Evita estas secciones */
-		if (strcmp(section_name, ".bss") == 0 ||
-			strcmp(section_name, ".shstrtab") == 0 ||
-			strcmp(section_name, ".symtab") == 0 ||
-			strcmp(section_name, ".tm_clone_table") == 0 ||/* solaris */
-			strcmp(section_name, ".rel.text") == 0 ||
-			strcmp(section_name, ".rel.data") == 0 ||
-
-			strcmp(section_name, ".strtab") == 0)
-			{
-			continue;
-			}
-
-		printf("Contents of section %s:\n", section_name);
-		print_section_contents_64(&shdr[i], map, is_big_endian);
-	}
-}
 
 
 void print_section_contents_64(Elf64_Shdr *shdr, char *map, int is_big_endian)
@@ -342,6 +314,37 @@ void print_section_contents_64(Elf64_Shdr *shdr, char *map, int is_big_endian)
 			}
 		}
 		printf("\n");
+	}
+}
+
+
+void print_sections_64(Elf64_Ehdr *ehdr, int is_big_endian, void *map)
+{
+	int i;
+	Elf64_Shdr *shdr = (Elf64_Shdr *)((char *)map + my_be32toh(ehdr->e_shoff, is_big_endian));
+	char *string_table = (char *)map + my_be32toh(shdr[my_be16toh(ehdr->e_shstrndx, is_big_endian)].sh_offset, is_big_endian);
+
+	for (i = 1; i < my_be16toh(ehdr->e_shnum, is_big_endian); i++)
+	{
+
+		char *section_name = string_table + my_be32toh(shdr[i].sh_name, is_big_endian);
+
+		/* Evita estas secciones */
+		if (strcmp(section_name, ".bss") == 0 ||
+			strcmp(section_name, ".shstrtab") == 0 ||
+			strcmp(section_name, ".symtab") == 0 ||
+			strcmp(section_name, ".tm_clone_table") == 0 ||/* solaris */
+			strcmp(section_name, ".rel.text") == 0 ||
+			strcmp(section_name, ".rel.data") == 0 ||
+			strcmp(section_name, ".text") == 0 ||
+			strcmp(section_name, ".data") == 0 ||
+			strcmp(section_name, ".strtab") == 0)
+			{
+			continue;
+			}
+
+		printf("Contents of section %s:\n", section_name);
+		print_section_contents_64(&shdr[i], map, is_big_endian);
 	}
 }
 
