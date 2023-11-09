@@ -254,6 +254,9 @@ int main(int argc, char *argv[])
 	return (0);
 }
 
+
+
+
 void print_section_contents_64(Elf64_Shdr *shdr, char *map, int is_big_endian)
 {
 	size_t section_size;
@@ -333,8 +336,7 @@ void print_sections_64(Elf64_Ehdr *ehdr, int is_big_endian, void *map)
 			strcmp(section_name, ".tm_clone_table") == 0 ||/* solaris */
 			strcmp(section_name, ".rel.text") == 0 ||
 			strcmp(section_name, ".rel.data") == 0 ||
-			strcmp(section_name, ".text") == 0 ||
-			strcmp(section_name, ".data") == 0 ||
+
 			strcmp(section_name, ".strtab") == 0)
 			{
 			continue;
