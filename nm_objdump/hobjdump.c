@@ -110,10 +110,22 @@ void print_sections_32(Elf32_Ehdr *ehdr, int is_big_endian, void *map)
 
 	for (i = 1; i < my_be16toh(ehdr->e_shnum, is_big_endian); i++)
 	{
-		printf("Contents of section %s:\n", string_table + my_be32toh(shdr[i].sh_name, is_big_endian));
+		char *section_name = string_table + my_be32toh(shdr[i].sh_name, is_big_endian);
+
+		/* Evita estas secciones */
+		if (strcmp(section_name, ".bss") == 0 ||
+			strcmp(section_name, ".shstrtab") == 0 ||
+			strcmp(section_name, ".symtab") == 0 ||
+			strcmp(section_name, ".strtab") == 0)
+			{
+			continue;
+			}
+
+		printf("Contents of section %s:\n", section_name);
 		print_section_contents(&shdr[i], map, is_big_endian);
 	}
 }
+
 
 
 void print_elf_header_32(Elf32_Ehdr *ehdr, const char *filename, void *map)
