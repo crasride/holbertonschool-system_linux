@@ -85,21 +85,24 @@ typedef struct Shdr64
 
 int analyze_file(const char *filename);
 
-void print_elf_header_64(Elf64_Ehdr *ehdr, const char *filename, void *map);
-int analyze_64bit_elf(Elf64_Ehdr *ehdr, const char *filename, void *map);
 
-/* int analyze_32bit_elf(Elf32_Ehdr *ehdr, const char *filename); */
-int analyze_32bit_elf(Elf32_Ehdr *ehdr, const char *filename, void *map);
-void print_elf_header_32(Elf32_Ehdr *ehdr, const char *filename, void *map);
 
+/* utils */
 void print_flag(int *flag_printed, unsigned long flags, unsigned long flag,
 				const char *flag_name);
-
 uint16_t my_be16toh(uint16_t value, int is_big_endian);
 uint32_t my_be32toh(uint32_t value, int is_big_endian);
 
+/* 32bit */
+int analyze_32bit_elf(Elf32_Ehdr *ehdr, const char *filename, void *map);
+void print_elf_header_32(Elf32_Ehdr *ehdr, const char *filename, void *map);
 void print_sections_32(Elf32_Ehdr *ehdr, int is_big_endian, void *map);
+void print_section_contents_32(Elf32_Shdr *shdr, char *map, int is_big_endian);
+
+/* 64bit */
+void print_elf_header_64(Elf64_Ehdr *ehdr, const char *filename, void *map);
+int analyze_64bit_elf(Elf64_Ehdr *ehdr, const char *filename, void *map);
 void print_sections_64(Elf64_Ehdr *ehdr, int is_big_endian, void *map);
-void print_section_contents(Elf32_Shdr *shdr, char *map, int is_big_endian);
+void print_section_contents_64(Elf64_Shdr *shdr, char *map, int is_big_endian);
 
 #endif /* _HOBJDUMP_ */
