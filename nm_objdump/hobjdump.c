@@ -266,13 +266,16 @@ void print_section_contents_64(Elf64_Shdr *shdr, char *map, int is_big_endian)
 	section_data = (unsigned char *)(map + my_be32toh(shdr->sh_offset, is_big_endian));
 	section_size = my_be32toh(shdr->sh_size, is_big_endian);
 
-	/* printf("%s\n", (char *)(map + my_be32toh(shdr->sh_name, is_big_endian))); */
-
 	for (i = 0; i < section_size; i += 16)
 	{
-		/* printf(" %04x", (int)(my_be32toh(shdr->sh_addr, is_big_endian) + i)); */
-		char *format = (strcmp(".eh_frame", (const char *)section_data) == 0) ? " %05x" : " %04x";
-		printf(format, (int)(my_be32toh(shdr->sh_addr, is_big_endian) + i));
+		if (my_be32toh(shdr->sh_addr, is_big_endian) == 0xf510)
+		{
+			printf(" %05x", (int)(my_be32toh(shdr->sh_addr, is_big_endian) + i));
+		}
+		else
+		{
+			printf(" %04x", (int)(my_be32toh(shdr->sh_addr, is_big_endian) + i));
+		}
 
 		for (j = 0; j < 16; j++)
 		{
@@ -280,7 +283,7 @@ void print_section_contents_64(Elf64_Shdr *shdr, char *map, int is_big_endian)
 			{
 				if (j % 4 == 0)
 				{
-					printf(" ");/* espacio entre bloques */
+					printf(" "); /* espacio entre bloques */
 				}
 				printf("%02x", section_data[i + j]);
 			}
@@ -288,7 +291,7 @@ void print_section_contents_64(Elf64_Shdr *shdr, char *map, int is_big_endian)
 			{
 				if (j % 4 == 0)
 				{
-					printf(" ");/* espacio entre bloques */
+					printf(" "); /* espacio entre bloques */
 				}
 				printf("  ");
 			}
@@ -319,6 +322,8 @@ void print_section_contents_64(Elf64_Shdr *shdr, char *map, int is_big_endian)
 		printf("\n");
 	}
 }
+
+
 
 
 void print_sections_64(Elf64_Ehdr *ehdr, int is_big_endian, void *map)
