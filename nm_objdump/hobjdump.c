@@ -339,6 +339,7 @@ void print_sections_64(Elf64_Ehdr *ehdr, int is_big_endian, void *map)
 			strcmp(section_name, ".tm_clone_table") == 0 ||/* solaris */
 			strcmp(section_name, ".rel.text") == 0 ||
 			strcmp(section_name, ".rel.data") == 0 ||
+			strcmp(section_name, ".rela.eh_frame") == 0 ||
 			strcmp(section_name, ".strtab") == 0)
 			{
 			continue;
