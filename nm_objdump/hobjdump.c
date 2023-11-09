@@ -254,9 +254,6 @@ int main(int argc, char *argv[])
 	return (0);
 }
 
-
-
-
 void print_section_contents_64(Elf64_Shdr *shdr, char *map, int is_big_endian)
 {
 	size_t section_size;
@@ -270,7 +267,7 @@ void print_section_contents_64(Elf64_Shdr *shdr, char *map, int is_big_endian)
 
 	for (i = 0; i < section_size; i += 16)
 	{
-		printf("%04x", (int)(my_be32toh(shdr->sh_addr, is_big_endian) + i));
+		printf(" %04x", (int)(my_be32toh(shdr->sh_addr, is_big_endian) + i));
 		for (j = 0; j < 16; j++)
 		{
 			if (i + j < section_size)
