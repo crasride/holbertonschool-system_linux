@@ -17,6 +17,8 @@
 #define HAS_RELOC 0x01
 #define DYNAMIC 0x40
 
+
+
 /**
 * struct header32 - Represents a 32-bit ELF header.
 * Structure represents a 32-bit ELF (Executable and Linkable Format) header.
@@ -83,17 +85,21 @@ typedef struct Shdr64
 
 int analyze_file(const char *filename);
 
-void print_elf_header_64(Elf64_Ehdr *ehdr, const char *filename);
-void print_elf_header_32(Elf32_Ehdr *ehdr, const char *filename);
-int analyze_64bit_elf(Elf64_Ehdr *ehdr, const char *filename);
+void print_elf_header_64(Elf64_Ehdr *ehdr, const char *filename, void *map);
+int analyze_64bit_elf(Elf64_Ehdr *ehdr, const char *filename, void *map);
 
-int analyze_32bit_elf(Elf32_Ehdr *ehdr, const char *filename);
+/* int analyze_32bit_elf(Elf32_Ehdr *ehdr, const char *filename); */
+int analyze_32bit_elf(Elf32_Ehdr *ehdr, const char *filename, void *map);
+void print_elf_header_32(Elf32_Ehdr *ehdr, const char *filename, void *map);
 
 void print_flag(int *flag_printed, unsigned long flags, unsigned long flag,
 				const char *flag_name);
 
 uint16_t my_be16toh(uint16_t value, int is_big_endian);
 uint32_t my_be32toh(uint32_t value, int is_big_endian);
+
+void print_sections_32(Elf32_Ehdr *ehdr, int is_big_endian, void *map);
+void print_sections_64(Elf64_Ehdr *ehdr, int is_big_endian, void *map);
 
 
 

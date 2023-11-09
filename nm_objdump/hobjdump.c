@@ -7,6 +7,7 @@
 #include "hobjdump.h"
 
 
+
 void print_flag(int *flag_printed, unsigned long flags, unsigned long flag,
 				const char *flag_name)
 {
@@ -40,7 +41,21 @@ uint16_t my_be16toh(uint16_t value, int is_big_endian)
 }
 
 
-void print_elf_header_32(Elf32_Ehdr *ehdr, const char *filename)
+void print_sections_32(Elf32_Ehdr *ehdr, int is_big_endian, void *map)
+{
+	int i;
+	Elf32_Shdr *shdr = (Elf32_Shdr *)((char *)map + my_be32toh(ehdr->e_shoff, is_big_endian));
+	char *string_table = (char *)map + my_be32toh(shdr[my_be16toh(ehdr->e_shstrndx, is_big_endian)].sh_offset, is_big_endian);
+
+	for (i = 1; i < my_be16toh(ehdr->e_shnum, is_big_endian); i++)
+	{
+		printf("\nContents of section %s:", string_table + my_be32toh(shdr[i].sh_name, is_big_endian));
+	}
+	printf("\n");
+}
+
+
+void print_elf_header_32(Elf32_Ehdr *ehdr, const char *filename, void *map)
 {
 	const char *formatted_filename = filename;
 	int flag_printed = 0;
@@ -74,59 +89,24 @@ void print_elf_header_32(Elf32_Ehdr *ehdr, const char *filename)
 	printf("\n");
 	printf("start address 0x%08lx\n",
 	(unsigned long)(my_be32toh(ehdr->e_entry, is_big_endian)));
+
+	print_sections_32(ehdr, is_big_endian, map);
 }
 
-
-void print_elf_header_64(Elf64_Ehdr *ehdr, const char *filename)
-{
-	const char *formatted_filename = filename;
-	int flag_printed = 0;
-	unsigned long flags_interp = 0;
-
-	if (formatted_filename[0] == '.' && formatted_filename[1] == '/')
-		formatted_filename += 2;
-
-	printf("%s:     file format elf64-x86-64\n", formatted_filename);
-	printf("architecture: i386:x86-64");
-
-	if (ehdr->e_type == ET_EXEC)
-		flags_interp |= EXEC_P;
-	if (ehdr->e_type == ET_REL)
-		flags_interp |= HAS_RELOC;
-	if (ehdr->e_type == ET_DYN)
-		flags_interp |= DYNAMIC;
-
-	flags_interp |= (ehdr->e_shnum > 0) ? HAS_SYMS : 0;
-	flags_interp |= (ehdr->e_phnum > 0) ? D_PAGED : 0;
-
-	printf(" flags 0x%08lx:\n", flags_interp);
-
-	print_flag(&flag_printed, flags_interp, EXEC_P, "EXEC_P");
-	print_flag(&flag_printed, flags_interp, HAS_RELOC, "HAS_RELOC");
-	print_flag(&flag_printed, flags_interp, HAS_SYMS, "HAS_SYMS");
-	print_flag(&flag_printed, flags_interp, DYNAMIC, "DYNAMIC");
-	print_flag(&flag_printed, flags_interp, D_PAGED, "D_PAGED");
-
-	printf("\n");
-
-	printf("start address 0x%016lx\n", (unsigned long)ehdr->e_entry);
-}
-
-int analyze_64bit_elf(Elf64_Ehdr *ehdr, const char *filename)
+int analyze_32bit_elf(Elf32_Ehdr *ehdr, const char *filename, void *map)
 {
 	if (ehdr->e_ident[EI_DATA] == ELFDATA2LSB)
 	{
-		print_elf_header_64(ehdr, filename);
+		print_elf_header_32(ehdr, filename, map);
 	}
 	else if (ehdr->e_ident[EI_DATA] == ELFDATA2MSB)
 	{
-		printf("big-endian64.\n");
+		print_elf_header_32(ehdr, filename, map);
 	}
 	else
 	{
 		printf("endianness unknown.\n");
 	}
-
 	return (0);
 }
 
@@ -158,10 +138,10 @@ int analyze_file(const char *filename)
 
 	if (ehdr32->e_ident[EI_CLASS] == ELFCLASS32)
 	{
-		analyze_32bit_elf(ehdr32, filename);
+		analyze_32bit_elf(ehdr32, filename, map);
 	}
 	else if (ehdr64->e_ident[EI_CLASS] == ELFCLASS64)
-		analyze_64bit_elf(ehdr64, filename);
+		analyze_64bit_elf(ehdr64, filename, map);
 	else
 	{
 		fprintf(stderr, "No es un archivo ELF válido.\n");
@@ -195,20 +175,74 @@ int main(int argc, char *argv[])
 	return (0);
 }
 
-int analyze_32bit_elf(Elf32_Ehdr *ehdr, const char *filename)
+
+void print_sections_64(Elf64_Ehdr *ehdr, int is_big_endian, void *map)
+{
+	int i;
+	Elf64_Shdr *shdr = (Elf64_Shdr *)((char *)map + my_be32toh(ehdr->e_shoff, is_big_endian));
+	char *string_table = (char *)map + my_be32toh(shdr[my_be16toh(ehdr->e_shstrndx, is_big_endian)].sh_offset, is_big_endian);
+
+	for (i = 1; i < my_be16toh(ehdr->e_shnum, is_big_endian); i++)
+	{
+		printf("\nContents of section %s:", string_table + my_be32toh(shdr[i].sh_name, is_big_endian));
+	}
+	printf("\n");
+}
+
+void print_elf_header_64(Elf64_Ehdr *ehdr, const char *filename, void *map)
+{
+	const char *formatted_filename = filename;
+	int flag_printed = 0;
+	unsigned long flags_interp = 0;
+	int is_big_endian = 0;
+
+	if (formatted_filename[0] == '.' && formatted_filename[1] == '/')
+		formatted_filename += 2;
+
+	is_big_endian = (ehdr->e_ident[EI_DATA] == ELFDATA2MSB);
+	printf("%s:     file format elf64-x86-64\n", formatted_filename);
+	printf("architecture: i386:x86-64");
+
+	if (my_be16toh(ehdr->e_type, is_big_endian) == ET_EXEC)
+		flags_interp |= EXEC_P;
+	if (my_be16toh(ehdr->e_type, is_big_endian) == ET_REL)
+		flags_interp |= HAS_RELOC;
+	if (my_be16toh(ehdr->e_type, is_big_endian) == ET_DYN)
+		flags_interp |= DYNAMIC;
+
+	flags_interp |= (ehdr->e_shnum > 0) ? HAS_SYMS : 0;
+	flags_interp |= (ehdr->e_phnum > 0) ? D_PAGED : 0;
+
+	printf(" flags 0x%08lx:\n", flags_interp);
+
+	print_flag(&flag_printed, flags_interp, EXEC_P, "EXEC_P");
+	print_flag(&flag_printed, flags_interp, HAS_RELOC, "HAS_RELOC");
+	print_flag(&flag_printed, flags_interp, HAS_SYMS, "HAS_SYMS");
+	print_flag(&flag_printed, flags_interp, DYNAMIC, "DYNAMIC");
+	print_flag(&flag_printed, flags_interp, D_PAGED, "D_PAGED");
+
+	printf("\n");
+
+	printf("start address 0x%016lx\n", (unsigned long)ehdr->e_entry);
+
+	print_sections_64(ehdr, is_big_endian, map);
+}
+
+int analyze_64bit_elf(Elf64_Ehdr *ehdr, const char *filename, void *map)
 {
 	if (ehdr->e_ident[EI_DATA] == ELFDATA2LSB)
 	{
-		print_elf_header_32(ehdr, filename);
+		print_elf_header_64(ehdr, filename, map);
 	}
 	else if (ehdr->e_ident[EI_DATA] == ELFDATA2MSB)
 	{
-		print_elf_header_32(ehdr, filename);
+		print_elf_header_64(ehdr, filename, map);
 	}
 	else
 	{
 		printf("endianness unknown.\n");
 	}
+
 	return (0);
 }
 
