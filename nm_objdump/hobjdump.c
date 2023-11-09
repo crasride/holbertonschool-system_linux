@@ -50,11 +50,11 @@ void print_section_contents(Elf32_Shdr *shdr, char *map, int is_big_endian)
 	section_data = (unsigned char *)(map + my_be32toh(shdr->sh_offset, is_big_endian));
 	section_size = my_be32toh(shdr->sh_size, is_big_endian);
 
-	printf("%s\n", (char *)(map + my_be32toh(shdr->sh_name, is_big_endian)));
+	/* printf("%s\n", (char *)(map + my_be32toh(shdr->sh_name, is_big_endian))); */
 
 	for (i = 0; i < section_size; i += 16)
 	{
-		printf(" %07x ", (int)(my_be32toh(shdr->sh_addr, is_big_endian) + i));
+		printf(" %07x", (int)(my_be32toh(shdr->sh_addr, is_big_endian) + i));
 		for (j = 0; j < 16; j++)
 		{
 			if (i + j < section_size)
@@ -110,10 +110,9 @@ void print_sections_32(Elf32_Ehdr *ehdr, int is_big_endian, void *map)
 
 	for (i = 1; i < my_be16toh(ehdr->e_shnum, is_big_endian); i++)
 	{
-		printf("Contents of section %s:", string_table + my_be32toh(shdr[i].sh_name, is_big_endian));
+		printf("Contents of section %s:\n", string_table + my_be32toh(shdr[i].sh_name, is_big_endian));
 		print_section_contents(&shdr[i], map, is_big_endian);
 	}
-
 }
 
 
@@ -151,7 +150,7 @@ void print_elf_header_32(Elf32_Ehdr *ehdr, const char *filename, void *map)
 	printf("\n");
 	printf("start address 0x%08lx\n",
 	(unsigned long)(my_be32toh(ehdr->e_entry, is_big_endian)));
-
+	printf("\n");
 	print_sections_32(ehdr, is_big_endian, map);
 }
 
@@ -246,7 +245,7 @@ void print_sections_64(Elf64_Ehdr *ehdr, int is_big_endian, void *map)
 
 	for (i = 1; i < my_be16toh(ehdr->e_shnum, is_big_endian); i++)
 	{
-		printf("\nContents of section %s:", string_table + my_be32toh(shdr[i].sh_name, is_big_endian));
+		printf("Contents of section %s:", string_table + my_be32toh(shdr[i].sh_name, is_big_endian));
 	}
 	printf("\n");
 }
