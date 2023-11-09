@@ -19,7 +19,6 @@ void print_flag(int *flag_printed, unsigned long flags, unsigned long flag,
 	}
 }
 
-
 uint32_t my_be32toh(uint32_t value, int is_big_endian)
 {
 	if (is_big_endian)
@@ -53,7 +52,7 @@ void print_elf_header_32(Elf32_Ehdr *ehdr, const char *filename)
 
 	is_big_endian = (ehdr->e_ident[EI_DATA] == ELFDATA2MSB);
 	printf("%s:     file format %s\n", formatted_filename,
-			 (is_big_endian) ? "elf32-big" : "elf32-i386");
+			(is_big_endian) ? "elf32-big" : "elf32-i386");
 	printf("architecture: %s,", (is_big_endian) ? "UNKNOWN!" : "i386");
 
 	if (my_be16toh(ehdr->e_type, is_big_endian) == ET_EXEC)
