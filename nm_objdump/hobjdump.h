@@ -92,6 +92,9 @@ int analyze_32bit_elf(Elf32_Ehdr *ehdr, const char *filename);
 void print_flag(int *flag_printed, unsigned long flags, unsigned long flag,
 				const char *flag_name);
 
+uint16_t my_be16toh(uint16_t value, int is_big_endian);
+uint32_t my_be32toh(uint32_t value, int is_big_endian);
+
 
 
 #endif /* _HOBJDUMP_ */
