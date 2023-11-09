@@ -119,6 +119,7 @@ void print_sections_32(Elf32_Ehdr *ehdr, int is_big_endian, void *map)
 			strcmp(section_name, ".symtab") == 0 ||
 			strcmp(section_name, ".tm_clone_table") == 0 ||/* solaris */
 			strcmp(section_name, ".rel.text") == 0 ||
+			strcmp(section_name, ".rel.data") == 0 ||
 			strcmp(section_name, ".strtab") == 0)
 			{
 			continue;
