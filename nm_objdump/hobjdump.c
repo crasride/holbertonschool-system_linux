@@ -110,6 +110,7 @@ void print_sections_32(Elf32_Ehdr *ehdr, int is_big_endian, void *map)
 
 	for (i = 1; i < my_be16toh(ehdr->e_shnum, is_big_endian); i++)
 	{
+
 		char *section_name = string_table + my_be32toh(shdr[i].sh_name, is_big_endian);
 
 		/* Evita estas secciones */
@@ -170,10 +171,12 @@ int analyze_32bit_elf(Elf32_Ehdr *ehdr, const char *filename, void *map)
 {
 	if (ehdr->e_ident[EI_DATA] == ELFDATA2LSB)
 	{
+		printf("\n");
 		print_elf_header_32(ehdr, filename, map);
 	}
 	else if (ehdr->e_ident[EI_DATA] == ELFDATA2MSB)
 	{
+		printf("\n");
 		print_elf_header_32(ehdr, filename, map);
 	}
 	else
@@ -305,10 +308,12 @@ int analyze_64bit_elf(Elf64_Ehdr *ehdr, const char *filename, void *map)
 {
 	if (ehdr->e_ident[EI_DATA] == ELFDATA2LSB)
 	{
+		printf("\n");
 		print_elf_header_64(ehdr, filename, map);
 	}
 	else if (ehdr->e_ident[EI_DATA] == ELFDATA2MSB)
 	{
+		printf("\n");
 		print_elf_header_64(ehdr, filename, map);
 	}
 	else
