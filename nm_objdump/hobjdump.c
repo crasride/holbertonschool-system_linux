@@ -358,7 +358,7 @@ void print_elf_header_64(Elf64_Ehdr *ehdr, const char *filename, void *map)
 
 	is_big_endian = (ehdr->e_ident[EI_DATA] == ELFDATA2MSB);
 	printf("%s:     file format elf64-x86-64\n", formatted_filename);
-	printf("architecture: i386:x86-64");
+	printf("architecture: i386:x86-64,");
 
 	if (my_be16toh(ehdr->e_type, is_big_endian) == ET_EXEC)
 		flags_interp |= EXEC_P;
