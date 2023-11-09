@@ -47,9 +47,7 @@ void print_section_contents_64(Elf64_Shdr *shdr, char *map, int is_big_endian)
 				printf("  ");
 			}
 		}
-
 		printf("  ");
-
 		for (j = 0; j < 16; j++)
 		{
 			if (i + j < section_size)
@@ -61,14 +59,10 @@ void print_section_contents_64(Elf64_Shdr *shdr, char *map, int is_big_endian)
 					printf("%c", c);
 				}
 				else
-				{
 					printf(".");
-				}
 			}
 			else
-			{
 				printf(" ");
-			}
 		}
 		printf("\n");
 	}
