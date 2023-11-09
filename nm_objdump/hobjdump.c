@@ -270,7 +270,7 @@ void print_section_contents_64(Elf64_Shdr *shdr, char *map, int is_big_endian)
 	{
 		if (my_be32toh(shdr->sh_addr, is_big_endian) == 0xf510)
 		{
-			printf(" %05x", (int)(my_be32toh(shdr->sh_addr, is_big_endian) + i));
+			printf(" %06x", (int)(my_be32toh(shdr->sh_addr, is_big_endian) + i));
 		}
 		else
 		{
