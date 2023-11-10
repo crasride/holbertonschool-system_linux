@@ -7,6 +7,19 @@
 #include "hobjdump.h"
 
 
+/**
+* print_hex_ascii_block - Print a block of data in hexadecimal and ASCII format
+*
+* This function prints a block of data in both hexadecimal and ASCII format.
+* It prints the memory address, hexadecimal values, and corresponding ASCII
+* characters for each line.
+*
+* @shdr: A pointer to the ELF section header structure.
+* @data: A pointer to the data to be printed.
+* @offset: The offset within the data.
+* @size: The size of the data to be printed.
+* @is_big_endian: A flag indicating whether the ELF file is big-endian.
+*/
 void print_hex_ascii_block(Elf64_Shdr *shdr, const unsigned char *data,
 							size_t offset, size_t size, int is_big_endian)
 {
@@ -52,7 +65,16 @@ void print_hex_ascii_block(Elf64_Shdr *shdr, const unsigned char *data,
 	}
 }
 
-
+/**
+* print_section_contents_64 - Print contents of a 64-bit ELF section.
+*
+* This function prints the contents of a 64-bit ELF section in both hexadecimal
+* and ASCII format.
+*
+* @shdr: A pointer to the 64-bit ELF section header structure.
+* @map: A pointer to the memory-mapped ELF file.
+* @is_big_endian: A flag indicating whether the ELF file is big-endian.
+*/
 void print_section_contents_64(Elf64_Shdr *shdr, char *map, int is_big_endian)
 {
 	unsigned char *section_data = (unsigned char *)(map +
@@ -63,6 +85,18 @@ void print_section_contents_64(Elf64_Shdr *shdr, char *map, int is_big_endian)
 }
 
 
+
+/**
+* print_sections_64 - Print contents of sections from a 64-bit ELF file.
+*
+* This function prints the contents of sections from a 64-bit ELF file,
+* excluding specific sections. It iterates through the section headers and
+* prints the contents of each section.
+*
+* @ehdr: A pointer to the 64-bit ELF header structure.
+* @is_big_endian: A flag indicating whether the ELF file is big-endian.
+* @map: A pointer to the memory-mapped ELF file.
+*/
 void print_sections_64(Elf64_Ehdr *ehdr, int is_big_endian, void *map)
 {
 	int i;
@@ -105,6 +139,16 @@ void print_sections_64(Elf64_Ehdr *ehdr, int is_big_endian, void *map)
 	}
 }
 
+/**
+* print_elf_header_64 - Print information from a 64-bit ELF header.
+*
+* This function prints various information from a 64-bit ELF header, including
+* file format, architecture, flags, and start address.
+*
+* @ehdr: A pointer to the 64-bit ELF header structure.
+* @filename: The name of the ELF file.
+* @map: A pointer to the memory-mapped ELF file.
+*/
 void print_elf_header_64(Elf64_Ehdr *ehdr, const char *filename, void *map)
 {
 	const char *formatted_filename = filename;
@@ -144,6 +188,20 @@ void print_elf_header_64(Elf64_Ehdr *ehdr, const char *filename, void *map)
 	print_sections_64(ehdr, is_big_endian, map);
 }
 
+
+/**
+* analyze_64bit_elf - Analyze and process a 32-bit ELF file.
+*
+* This function analyzes a 32-bit ELF header and its endianness, and then
+* processes the symbols in the ELF file.
+* Depending on the endianness of the file, it calls the appropriate function
+* to process and display symbol information.
+*
+* @ehdr: Pointer to the ELF header.
+* @map: Pointer to the memory-mapped ELF file.
+* @filename: The name of the ELF file.
+* Return: 0 on success.
+*/
 int analyze_64bit_elf(Elf64_Ehdr *ehdr, const char *filename, void *map)
 {
 	if (ehdr->e_ident[EI_DATA] == ELFDATA2LSB)

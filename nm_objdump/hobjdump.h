@@ -18,7 +18,6 @@
 #define DYNAMIC 0x40
 
 
-
 /**
 * struct header32 - Represents a 32-bit ELF header.
 * Structure represents a 32-bit ELF (Executable and Linkable Format) header.
