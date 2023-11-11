@@ -394,7 +394,7 @@ alex@~/nm_objdump$
 * Directory: `nm_objdump`
 * File: `Makefile`
 
-### [2. Blog post]()
+### [2. Blog post](https://www.linkedin.com/posts/jd-fernandez_the-mysterious-world-of-elf-files-activity-7129042236008194048-fiBM?utm_source=share&utm_medium=member_desktop)
 
 Write a blog post about the `ELF` format
 
