@@ -72,6 +72,8 @@ void print_python_bytes(PyObject *p)
 	Py_ssize_t size, i;
 	char *byteString;
 
+	printf("[.] bytes object info\n");
+
 	/* Disable output buffering to ensure immediate printing */
 	setbuf(stdout, NULL);
 	puts("[.] bytes object info");
