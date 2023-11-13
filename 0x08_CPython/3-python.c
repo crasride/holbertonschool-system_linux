@@ -15,11 +15,11 @@ void print_python_float(PyObject *p);
 */
 void print_python_list(PyObject *p)
 {
-	printf("[*] Python list info\n");
+
 	/* Check if the object is a valid List object */
 	if (!PyList_Check(p))
 	{
-		printf("  [ERROR] Invalid List Object\n");
+		printf("  [ERROR] Invalid Float Object\n");
 		return;
 	}
 
@@ -72,8 +72,6 @@ void print_python_bytes(PyObject *p)
 	Py_ssize_t size, i;
 	char *byteString;
 
-	printf("[.] bytes object info\n");
-
 	/* Disable output buffering to ensure immediate printing */
 	setbuf(stdout, NULL);
 	puts("[.] bytes object info");
@@ -123,12 +121,9 @@ void print_python_float(PyObject *p)
 	/* Buffer to hold the formatted string representation of the float */
 	char str[40];
 
-	/* Print the header for float object information */
-	printf("[.] float object info\n");
-
 	if (!PyFloat_Check(floatObj))
 	{
-		printf("  [ERROR] Invalid Float Object\n");
+		printf("  [ERROR] Invalid List Object\n");
 		fflush(stdout);
 		return;
 	}
