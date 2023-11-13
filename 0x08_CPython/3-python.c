@@ -18,7 +18,7 @@ void print_python_list(PyObject *p)
 	/* Check if the object is a valid List object */
 	if (!PyList_Check(p))
 	{
-		fprintf(stderr, "  [ERROR] Invalid List Object\n");
+		fprintf("  [ERROR] Invalid List Object\n");
 		return;
 	}
 
