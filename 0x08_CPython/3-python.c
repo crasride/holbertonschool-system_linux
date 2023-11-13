@@ -15,6 +15,7 @@ void print_python_float(PyObject *p);
 */
 void print_python_list(PyObject *p)
 {
+	printf("[*] Python list info\n");
 	/* Check if the object is a valid List object */
 	if (!PyList_Check(p))
 	{
