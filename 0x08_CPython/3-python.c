@@ -26,7 +26,13 @@ void print_python_list(PyObject *p)
 	PyObject *item;
 
 	/* Get size and allocation of the List object */
-	size = PyList_Size(p);
+	size = PyObject_Length(p);
+	if (size == -1)
+	{
+		fprintf(stderr, "  [ERROR] Failed to get list size\n");
+		return;
+	}
+
 	alloc = ((PyListObject *)p)->allocated;
 
 	/* Print information about the Python List */
@@ -51,6 +57,7 @@ void print_python_list(PyObject *p)
 		}
 	}
 }
+
 
 /**
 * print_python_bytes - Print information about a Python Bytes object.
