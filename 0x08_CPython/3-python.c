@@ -15,7 +15,6 @@ void print_python_float(PyObject *p);
 */
 void print_python_list(PyObject *p)
 {
-	printf("[*] Python list info\n");
 	/* Check if the object is a valid List object */
 	if (!PyList_Check(p))
 	{
@@ -37,7 +36,7 @@ void print_python_list(PyObject *p)
 	alloc = ((PyListObject *)p)->allocated;
 
 	/* Print information about the Python List */
-	/* printf("[*] Python list info\n"); */
+	printf("[*] Python list info\n");
 	printf("[*] Size of the Python List = %zd\n", size);
 	printf("[*] Allocated = %zd\n", alloc);
 
