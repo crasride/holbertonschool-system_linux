@@ -58,7 +58,6 @@ void print_python_list(PyObject *p)
 	}
 }
 
-
 /**
 * print_python_bytes - Print information about a Python Bytes object.
 *
@@ -69,53 +68,78 @@ void print_python_list(PyObject *p)
 */
 void print_python_bytes(PyObject *p)
 {
-	/* pointer to store byte string */
-	char *byte_string = NULL;
-	/* Variable to store the size of the byte string */
-	Py_ssize_t byte_size;
+	Py_ssize_t size, i;
+	char *byteString;
 
-	printf("[.] bytes object info\n");
+	/* Disable output buffering to ensure immediate printing */
+	setbuf(stdout, NULL);
+	puts("[.] bytes object info");
 
 	/* Check the object is a valid Bytes object */
 	if (!PyBytes_Check(p))
 	{
-		printf("  [ERROR] Invalid Bytes Object\n");
+		puts("  [ERROR] Invalid Bytes Object");
 		return;
 	}
 
-	/* Retrieve byte string and its size */
-	PyBytes_AsStringAndSize(p, &byte_string, &byte_size);
-	printf("  size: %zd\n", byte_size);
-	printf("  trying string: %s\n", byte_string);
-	printf("  first %zd bytes:", byte_size <= 10 ? byte_size + 1 : 10);
+	/* Get size of the Bytes object and the pointer to the byte content */
+	size = PyBytes_Size(p);
+	byteString = ((PyBytesObject *)p)->ob_sval;
 
-	/* Iterate through the bytes to print in hexadecimal */
-	for (int i = 0; i <= byte_size && i < 10; i++)
+	/* Print size of the Bytes object and the byte string*/
+	printf("  size: %li\n", size);
+	printf("  trying string: %s\n", byteString);
+	/* Print the first 10 bytes in hexadecimal format */
+	printf("  first %li bytes:", size < 10 ? size + 1 : 10);
+
+	for (i = 0; i <= size && i < 10; ++i)
 	{
-		printf(" %02hhx", byte_string[i]);
+		printf(" %02hhx", byteString[i]);
 	}
-	printf("\n");
+
+	putchar('\n');
 }
 
 
-
-void print_python_float(PyObject *float_obj)
+/**
+* print_python_float - Print information about a Python Float object.
+*
+* This function prints information about a Python Float object, including its
+* value formatted as a string.
+*
+* @p: A pointer to the Python Float object.
+*/
+void print_python_float(PyObject *p)
 {
-		PyFloatObject *float_struct = (PyFloatObject *)float_obj;
-		double float_value = float_struct->ob_fval;
+	/* Cast the PyObject to a PyFloatObject */
+	PyFloatObject *floatObj = (PyFloatObject *)p;
 
-		printf("[.] float object info\n");
+	/* Get the floating-point value from the PyFloatObject */
+	double val = floatObj->ob_fval;
 
-		if (!PyFloat_Check(float_struct))
-		{
-			printf("  [ERROR] Invalid Float Object\n");
-			fflush(stdout);
-			return;
-		}
+	/* Buffer to hold the formatted string representation of the float */
+	char str[40];
 
-		printf("  value: %.16g\n", float_value);
+	/* Print the header for float object information */
+	printf("[.] float object info\n");
+
+	if (!PyFloat_Check(floatObj))
+	{
+		printf("  [ERROR] Invalid Float Object\n");
+		fflush(stdout);
+		return;
 	}
-
-
-
-
+	/* Format float value as a string with up to 16 significant digits */
+	sprintf(str, "%.16g", val);
+	/* Check the formatted string contains a decimal point */
+	if (strchr(str, '.') != NULL)
+	{
+		/* Print the value with the full precision */
+		printf("  value: %s\n", str);
+	}
+	else
+	{
+		/* print the value with one decimal place */
+		printf("  value: %.1f\n", val);
+	}
+}
