@@ -25,7 +25,12 @@ void print_python_bytes(PyObject *p)
 
 	for (i = 0; i < (char_size < 10 ? char_size : 10); i++)
 	{
-		printf("%02x ", str[i]);
+		printf("%02x", str[i]);
+
+		if (i < char_size - 1)
+		{
+			printf(" ");
+		}
 	}
 
 	printf("\n");
