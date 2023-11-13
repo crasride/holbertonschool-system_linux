@@ -1,7 +1,6 @@
 #include <Python.h>
 #include <stdio.h>
 
-
 void print_python_bytes(PyObject *p)
 {
 	if (!PyBytes_Check(p))
@@ -10,17 +9,16 @@ void print_python_bytes(PyObject *p)
 		return;
 	}
 
-	Py_ssize_t byte_size, i;
+	Py_ssize_t i;
 	unsigned char *str;
 
-	byte_size = PyBytes_Size(p);
+	Py_ssize_t byte_size = strlen(PyBytes_AsString(p));
 
 	str = (unsigned char *)PyBytes_AsString(p);
 
 	printf("[.] bytes object info\n");
 	printf("  size: %zd\n", byte_size + 1);
 	printf("  trying string: %s\n", str);
-
 	printf("  first %zd bytes: ", byte_size < 9 ? byte_size + 1 : 10);
 
 	for (i = 0; i < (byte_size < 9 ? byte_size + 1 : 10); i++)
@@ -31,9 +29,9 @@ void print_python_bytes(PyObject *p)
 			printf(" ");
 		}
 	}
-
 	printf("\n");
 }
+
 
 
 
@@ -62,7 +60,7 @@ void print_python_list(PyObject *p)
 	/* Iterate through the elements of the List */
 	for (i = 0; i < size; i++)
 	{
-		item = PyList_GetItem(p, i);
+		item = PyList_GET_ITEM(p, i);
 		/* Print type and index of each element */
 		printf("Element %zd: %s\n", i, item->ob_type->tp_name);
 		/* If the element is Bytes object, call print_python_bytes function */
