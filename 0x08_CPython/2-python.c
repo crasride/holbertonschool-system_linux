@@ -4,45 +4,33 @@
 
 void print_python_bytes(PyObject *p)
 {
-	/* Check if the object is a valid Bytes object */
 	if (!PyBytes_Check(p))
 	{
 		fprintf(stderr, "[ERROR] Invalid Bytes Object\n");
 		return;
 	}
 
-	Py_ssize_t size, i;
+	Py_ssize_t char_size, i;
 	unsigned char *str;
 
-	/* Get size of the Bytes object */
-	size = PyObject_Size(p);
-	/* Get string representation of the Bytes object */
+	char_size = PyObject_Size(p);
+
 	str = (unsigned char *)PyBytes_AsString(p);
 
-	/* Print information about the Bytes object */
 	printf("[.] bytes object info\n");
-	printf("  size: %zd\n", size);
+	printf("  size: %zd\n", char_size);
 	printf("  trying string: %s\n", str);
 
-	/* Print the first n bytes of the Bytes object in hexadecimal */
-	printf("  first %zd bytes: ", size + 1);
-	for (i = 0; i <= size; i++) /* Incluir el byte nulo */
+	printf("  first %zd bytes: ", char_size < 10 ? char_size : 10);
+
+	for (i = 0; i < (char_size < 10 ? char_size : 10); i++)
 	{
-		if (i > 0)
-		{
-			printf(" ");
-		}
-		if (i < size)
-		{
-			printf("%02x", str[i]);
-		}
-		else
-		{
-			printf("00");
-		}
+		printf("%02x ", str[i]);
 	}
+
 	printf("\n");
 }
+
 
 
 void print_python_list(PyObject *p)
@@ -79,6 +67,3 @@ void print_python_list(PyObject *p)
 		}
 	}
 }
-
-
-
