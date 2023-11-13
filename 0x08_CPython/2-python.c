@@ -24,11 +24,22 @@ void print_python_bytes(PyObject *p)
 	printf("  size: %zd\n", size);
 	printf("  trying string: %s\n", str);
 
-	/* Print the first 10 bytes of the Bytes object in hexadecimal */
+	/* Print the first n bytes of the Bytes object in hexadecimal */
 	printf("  first %zd bytes: ", size + 1);
-	for (i = 0; i <= size; i++)
+	for (i = 0; i <= size; i++)  // Incluir el byte nulo
 	{
-		printf("%02x ", str[i]);
+		if (i > 0)
+		{
+			printf(" ");
+		}
+		if (i < size)
+		{
+			printf("%02x", str[i]);
+		}
+		else
+		{
+			printf("00");
+		}
 	}
 	printf("\n");
 }
