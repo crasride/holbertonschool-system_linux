@@ -33,6 +33,12 @@ void print_python_bytes(PyObject *p)
 		}
 	}
 
+	/* Imprimir valor nulo si es necesario */
+	if (char_size < 10)
+	{
+			printf(" 00");
+	}
+
 	printf("\n");
 }
 
