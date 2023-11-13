@@ -25,8 +25,8 @@ void print_python_bytes(PyObject *p)
 	printf("  trying string: %s\n", str);
 
 	/* Print the first 10 bytes of the Bytes object in hexadecimal */
-	printf("  first %zd bytes: ", size);
-	for (i = 0; i < size && i < 10; i++)
+	printf("  first %zd bytes: ", size + 1);
+	for (i = 0; i <= size; i++)
 	{
 		printf("%02x ", str[i]);
 	}
