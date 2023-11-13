@@ -10,37 +10,31 @@ void print_python_bytes(PyObject *p)
 		return;
 	}
 
-	Py_ssize_t char_size, i;
+	Py_ssize_t byte_size, i;
 	unsigned char *str;
 
-	char_size = PyObject_Size(p);
+	byte_size = PyBytes_Size(p);
 
 	str = (unsigned char *)PyBytes_AsString(p);
 
 	printf("[.] bytes object info\n");
-	printf("  size: %zd\n", char_size);
+	printf("  size: %zd\n", byte_size + 1);
 	printf("  trying string: %s\n", str);
 
-	printf("  first %zd bytes: ", char_size < 10 ? char_size : 10);
+	printf("  first %zd bytes: ", byte_size < 9 ? byte_size + 1 : 10);
 
-	for (i = 0; i < (char_size < 10 ? char_size : 10); i++)
+	for (i = 0; i < (byte_size < 9 ? byte_size + 1 : 10); i++)
 	{
 		printf("%02x", str[i]);
-
-		if (i < char_size - 1)
+		if (i < byte_size)
 		{
 			printf(" ");
 		}
 	}
 
-	/* Imprimir valor nulo si es necesario */
-	if (char_size < 10)
-	{
-			printf(" 00");
-	}
-
 	printf("\n");
 }
+
 
 
 
