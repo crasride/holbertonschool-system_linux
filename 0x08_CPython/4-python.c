@@ -9,11 +9,11 @@ void print_python_string(PyObject *p)
 
 	/* Disable output buffering to ensure immediate printing */
 	setbuf(stdout, NULL);
-
+	printf("[.] string object info\n");
 	/* Check if the object is a valid string */
 	if (!PyUnicode_Check(p))
 	{
-		puts("[ERROR] Invalid String Object");
+		puts("  [ERROR] Invalid String Object");
 		return;
 	}
 
@@ -22,7 +22,7 @@ void print_python_string(PyObject *p)
 	wide_str = PyUnicode_AsWideCharString(p, NULL);
 
 	/* Print type, size, value, and address of the string */
-	printf("[.] string object info\n");
+
 	printf("  type: %s\n", PyUnicode_IS_COMPACT_ASCII(p) ?
 			"compact ascii" : "compact unicode object");
 	printf("  length: %li\n", size);
