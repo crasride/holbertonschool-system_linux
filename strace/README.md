@@ -94,7 +94,7 @@ Please note that you are completely allowed to use your own data structure(s) an
 
 - [ ] `strace`
 
-- [ ] `ptrace`
+- [x] `ptrace`
 
 - [ ] `ktrace`
 
