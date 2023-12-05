@@ -1,18 +1,27 @@
+
 #include "strace.h"
 
+/**
+* main - Entry point
+* @argc: The number of arguments
+* @argv: The arguments
+*
+* Return: 0 on success, otherwise 1
+*/
 int main(int argc, char **argv)
 {
 	pid_t child_pid;
 	int status, syscall_number, print_next_syscall;
 	struct user_regs_struct user_registers;
 
-	setbuf(stdout, 0);
+	/* Create a child process */
 	child_pid = fork();
 
 	if (child_pid < 0)
 		exit(EXIT_FAILURE);
 	else if (child_pid == 0)
 	{
+		/* Child process */
 		ptrace(PTRACE_TRACEME, 0, 0, 0);
 		raise(SIGSTOP);
 		argv[argc] = NULL;
@@ -20,24 +29,28 @@ int main(int argc, char **argv)
 	}
 	else
 	{
+		/* Parent process */
 		wait(&status);
 		ptrace(PTRACE_SYSCALL, child_pid, 0, 0);
 
+		/* Main tracing loop */
 		for (print_next_syscall = 0; !WIFEXITED(status); print_next_syscall ^= 1)
 		{
 			wait(&status);
 			ptrace(PTRACE_GETREGS, child_pid, 0, &user_registers);
 
+			/* Print the system call number every other time */
 			if (print_next_syscall)
 			{
 				syscall_number = user_registers.orig_rax;
 				printf("%d\n", syscall_number);
 			}
 
+			/* Continue the execution of the child process */
 			ptrace(PTRACE_SYSCALL, child_pid, 0, 0);
 		}
 	}
 
-	return (0);
+	return 0;
 }
 
