@@ -14,6 +14,9 @@ int main(int argc, char **argv)
 	int status, syscall_number, print_next_syscall;
 	struct user_regs_struct user_registers;
 
+	/* Disable buffering on stdout */
+	setvbuf(stdout, NULL, _IONBF, 0);
+
 	/* Create a child process */
 	child_pid = fork();
 
