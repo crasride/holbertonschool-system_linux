@@ -26,6 +26,7 @@ int main(int argc, char **argv)
 	{
 		/* Child process */
 		ptrace(PTRACE_TRACEME, 0, 0, 0);
+		/* Stop the child process to allow the parent to detect it */
 		raise(SIGSTOP);
 		argv[argc] = NULL;
 		execvp(argv[1], argv + 1);
@@ -34,17 +35,18 @@ int main(int argc, char **argv)
 	{
 		/* Parent process */
 		wait(&status);
+		/* Wait for the child to stop on its first instruction */
 		ptrace(PTRACE_SYSCALL, child_pid, 0, 0);
-
 		/* Main tracing loop */
 		for (print_next_syscall = 0; !WIFEXITED(status); print_next_syscall ^= 1)
 		{
 			wait(&status);
+			/* Get the registers of the child process */
 			ptrace(PTRACE_GETREGS, child_pid, 0, &user_registers);
-
 			/* Print the system call number every other time */
 			if (print_next_syscall)
 			{
+				/* Get the system call number */
 				syscall_number = user_registers.orig_rax;
 				printf("%d\n", syscall_number);
 			}
@@ -53,7 +55,6 @@ int main(int argc, char **argv)
 			ptrace(PTRACE_SYSCALL, child_pid, 0, 0);
 		}
 	}
-
-	return 0;
+	return (0);
 }
 
