@@ -36,7 +36,7 @@ static void trace_parent(pid_t pid)
 
 		if (ptrace(PTRACE_GETREGS, pid, 0, &user_regs) == 0 && (alternator % 2 == 0))
 		{
-			printf("%s", syscalls_64[user_regs.orig_rax].name);
+			printf("%s", syscalls_64_n[user_regs.orig_rax].name);
 			if (user_regs.orig_rax != 1)
 				printf("\n");
 		}
