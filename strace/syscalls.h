@@ -133,7 +133,7 @@ typedef struct syscall_s
 	type_t const params[MAX_PARAMS];
 } syscall_t;
 
-static syscall_t const syscalls_64_n[] = {
+static syscall_t const syscalls_64[] = {
 	{"read", 0, SSIZE_T, 3, {INT, VOID_P, SIZE_T, -1, -1, -1}},
 	{"write", 1, SSIZE_T, 3, {INT, VOID_P, SIZE_T, -1, -1, -1}},
 	{"open", 2, INT, 2, {CHAR_P, INT, -1, -1, -1, -1}},
