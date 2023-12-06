@@ -1,72 +1,54 @@
 #include "strace.h"
+#include "syscalls.h"
 
-static void error(const char *error_msg);
-static void trace_child(pid_t pid, char **argv, char **envp);
-static void trace_parent(pid_t pid);
+/**
+ * main - executes an trace a given command in argv[1]
+ * @argc: argument count
+ * @argv: argument vector
+ * @envp: env string array
+ * Return: 0 success, 1 on failure
+ */
 
-static void error(const char *error_msg)
+int main(int argc, char *argv[], char *envp[])
 {
-	fprintf(stderr, "ERROR: %s\n", error_msg);
-	exit(EXIT_FAILURE);
-}
-
-static void trace_child(pid_t pid, char **argv, char **envp)
-{
-	if (ptrace(PTRACE_TRACEME, pid, 0, 0) == -1)
-		error("ptrace");
-
-	execve(argv[1], &argv[1], envp);
-	perror("execve");
-	exit(EXIT_FAILURE);
-}
-
-static void trace_parent(pid_t pid)
-{
-	int status;
-	struct user_regs_struct user_regs;
-	size_t alternator = 0;
-
-	puts("execve");
-
-	while (!WIFEXITED(status))
-	{
-		alternator++;
-		ptrace(PTRACE_SYSCALL, pid, 0, 0);
-		wait(&status);
-
-		if (ptrace(PTRACE_GETREGS, pid, 0, &user_regs) == 0 && (alternator % 2 == 0))
-		{
-			printf("%s", syscalls_64_n[user_regs.orig_rax].name);
-			if (user_regs.orig_rax != 1)
-				printf("\n");
-		}
-
-		if (user_regs.orig_rax == 1 && alternator % 2 == 1)
-			printf("\n");
-
-		fflush(stdout);
-	}
-}
-
-int main(int argc, char **argv, char **envp)
-{
-	pid_t pid;
+	pid_t child;
+	int retval = 0, flag = 0;
+	struct user_regs_struct regs;
 
 	if (argc < 2)
-		error("No input programme provided");
-
-	pid = fork();
-	if (pid == -1)
-		error("Fork failed");
-	else if (pid > 0)
+		return (fprintf(stderr, "Bad usage dude\n"), -1);
+	/* disable buffering */
+	setbuf(stdout, NULL);
+	/* create child process */
+	child = fork();
+	if (child == 0)
 	{
-		trace_parent(pid);
-		ptrace(PTRACE_DETACH, pid, NULL, NULL);
+		ptrace(PTRACE_TRACEME, 0, 0, 0);
+		raise(SIGSTOP);
+		execve(argv[1], argv + 1, envp);
 	}
-	else if (pid == 0)
+	else
 	{
-		trace_child(pid, argv, envp);
+		/* parent process */
+		wait(&retval);
+		if (WIFEXITED(retval))
+			return (0);
+		/* move on child process */
+		ptrace(PTRACE_SYSCALL, child, 0, 0);
+		while (wait(&retval) && !WIFEXITED(retval))
+		{
+			if (flag)
+				printf("\n"), flag = 0;
+			memset(&regs, 0, sizeof(regs));
+			ptrace(PTRACE_GETREGS, child, 0, &regs);
+			if (WSTOPSIG(retval) == SIGTRAP && (long)regs.rax == -38)
+			{
+				printf("%s", (char *)syscalls_64[(unsigned long)regs.orig_rax].name);
+				flag = 1;
+			}
+			ptrace(PTRACE_SYSCALL, child, 0, 0);
+		}
+		printf("\n");
 	}
-
-	return (EXIT_SUCCESS);
+	return (0);
 }
