@@ -1,5 +1,6 @@
 #include "strace.h"
 
+#define ENOSYS_ERROR -38
 
 void print_syscall_params(struct user_regs_struct regs, int syscall_number);
 
