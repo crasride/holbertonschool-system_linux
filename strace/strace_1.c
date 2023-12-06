@@ -1,89 +1,86 @@
 #include "strace.h"
 
-int trace_and_print_syscalls(const char *command)
+/**
+* print_syscall_name - print the name of the system call
+* @regs: structure containing the registers
+*/
+void print_syscall_name(struct user_regs_struct regs)
 {
-	pid_t child_pid;
-	int status, print_next_syscall = 0;
-	struct user_regs_struct user_registers;
+	printf("%s", (char *)syscalls_64[(unsigned long)regs.orig_rax].name);
+}
 
-	if (command == NULL)
+/**
+* trace_child - trace the child process
+* @child: PID of the child process
+*/
+void trace_child(pid_t child)
+{
+	int retval, flag = 0;
+	struct user_regs_struct regs;
+
+	while (wait(&retval) && !WIFEXITED(retval))
 	{
-		fprintf(stderr, "Usage: %s command\n", __FILE__);
-		return (-1);
-	}
-
-	/* Disable buffering on stdout */
-	setvbuf(stdout, NULL, _IONBF, 0);
-
-	/* Create a child process */
-	child_pid = fork();
-
-	if (child_pid == -1)
-	{
-		perror("fork");
-		return (-1);
-	}
-	else if (child_pid == 0)
-	{
-		/* Child process */
-		if (ptrace(PTRACE_TRACEME, 0, 0, 0) == -1)
+		if (flag)
+			printf("\n"), flag = 0;
+		memset(&regs, 0, sizeof(regs));
+		ptrace(PTRACE_GETREGS, child, 0, &regs);
+		if (WSTOPSIG(retval) == SIGTRAP && (long)regs.rax == -38)
 		{
-			perror("ptrace");
-			return -1;
+			print_syscall_name(regs);
+			flag = 1;
 		}
+		ptrace(PTRACE_SYSCALL, child, 0, 0);
+	}
+	printf("\n");
+}
+
+/**
+* execute_traced_command - execute a traced command
+* @argv: argument vector
+* @envp: env string array
+* Return: 0 success, 1 on failure
+*/
+int execute_traced_command(char *argv[], char *envp[])
+{
+	pid_t child;
+	int retval = 0;
+
+	/* create child process */
+	child = fork();
+	if (child == 0)
+	{
+		ptrace(PTRACE_TRACEME, 0, 0, 0);
 		raise(SIGSTOP);
-		execlp(command, command, NULL);
-		perror("execlp");
-		return (-1);
+		execve(argv[0], argv, envp);
 	}
 	else
 	{
-		/* Parent process */
-		waitpid(child_pid, &status, 0);
-
-		while (WIFSTOPPED(status)) {
-			/* Get the registers of the child process */
-			ptrace(PTRACE_GETREGS, child_pid, 0, &user_registers);
-
-			/* Check if the child has stopped due to a system call */
-			if (WSTOPSIG(status) == SIGTRAP && user_registers.orig_rax < sizeof(syscalls_64) / sizeof(syscalls_64[0]))
-			{
-				if (print_next_syscall)
-				{
-					/* Get the system call number and print its name */
-					int syscall_number = user_registers.orig_rax;
-					printf("%s\n", syscalls_64[syscall_number].name);
-				}
-				print_next_syscall = !print_next_syscall;
-
-				/* Continue the execution of the child process */
-				ptrace(PTRACE_SYSCALL, child_pid, 0, 0);
-				waitpid(child_pid, &status, 0);
-			}
-			else
-			{
-				/* Continue the execution of the child process */
-				ptrace(PTRACE_SYSCALL, child_pid, 0, 0);
-				waitpid(child_pid, &status, 0);
-			}
-		}
-		return (0);
+		/* parent process */
+		wait(&retval);
+		if (WIFEXITED(retval))
+			return (0);
+		/* move on child process */
+		ptrace(PTRACE_SYSCALL, child, 0, 0);
+		trace_child(child);
 	}
+	return (0);
 }
 
-int main(int argc, char *argv[])
+/**
+ * main - executes a traced command given in argv[1]
+ * @argc: argument count
+ * @argv: argument vector
+ * @envp: env string array
+ * Return: 0 success, 1 on failure
+ */
+int main(int argc, char *argv[], char *envp[])
 {
 	if (argc < 2)
-	{
-		fprintf(stderr, "Usage: %s command\n", argv[0]);
-		return (EXIT_FAILURE);
-	}
+		return (fprintf(stderr, "Bad usage dude\n"), 1);
 
-	if (trace_and_print_syscalls(argv[1]) == -1)
-	{
-		fprintf(stderr, "Failed to trace syscalls\n");
-		return (EXIT_FAILURE);
-	}
+	/* disable buffering */
+	setbuf(stdout, NULL);
 
-	return (EXIT_SUCCESS);
+	return (execute_traced_command(argv + 1, envp));
 }
+
