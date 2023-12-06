@@ -51,7 +51,6 @@ static void trace_parent(pid_t pid)
 int main(int argc, char **argv, char **envp)
 {
 	pid_t pid;
-	int child_status = EXIT_FAILURE;
 
 	if (argc < 2)
 		error("No input programme provided");
