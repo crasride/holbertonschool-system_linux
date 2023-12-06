@@ -67,12 +67,12 @@ int execute_traced_command(char *argv[], char *envp[])
 }
 
 /**
- * main - executes a traced command given in argv[1]
- * @argc: argument count
- * @argv: argument vector
- * @envp: env string array
- * Return: 0 success, 1 on failure
- */
+* main - executes a traced command given in argv[1]
+* @argc: argument count
+* @argv: argument vector
+* @envp: env string array
+* Return: 0 success, 1 on failure
+*/
 int main(int argc, char *argv[], char *envp[])
 {
 	if (argc < 2)
