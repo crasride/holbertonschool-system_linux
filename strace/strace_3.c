@@ -29,25 +29,26 @@ int main(int argc, char **argv)
 
 void print_syscall_params(struct user_regs_struct regs, int syscall_number)
 {
-	size_t i;
-	unsigned long params[6];
+    size_t i;
+    unsigned long params[6];
 
-	params[0] = regs.rdi;
-	params[1] = regs.rsi;
-	params[2] = regs.rdx;
-	params[3] = regs.r10;
-	params[4] = regs.r8;
-	params[5] = regs.r9;
+    params[0] = regs.rdi;
+    params[1] = regs.rsi;
+    params[2] = regs.rdx;
+    params[3] = regs.r10;
+    params[4] = regs.r8;
+    params[5] = regs.r9;
 
-	printf("(");
-	for (i = 0; i < syscalls_64[syscall_number].nb_params; ++i)
-	{
-		if (i > 0)
-			printf(", ");
-		printf("0x%lx", params[i]);
-	}
-	printf(")");
+    printf("(");
+    for (i = 0; i < syscalls_64[syscall_number].nb_params; ++i)
+    {
+        if (i > 0)
+            printf(", ");
+        printf("%s%lx", i == 0 ? "" : " ", params[i]);
+    }
+    printf(")");
 }
+
 
 
 pid_t createTracedProcess(char **argv)
