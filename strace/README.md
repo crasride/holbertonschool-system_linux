@@ -1,5 +1,9 @@
 <h1 align="center">C - Strace</h1>
 
+<p align="center">
+<img width="" height="" src="../images/system_calls.png">
+</p>
+
 ### Concepts
 For this project, we expect you to look at these concepts:
 
