@@ -2,7 +2,7 @@
 CC = gcc
 
 # Compiler Flags
-CFLAGS = -Wall -Werror -Wextra -pedantic
+CFLAGS = -std=c90 -Wall -Werror -Wextra -pedantic
 FILES_0 = strace_0.c
 FILES_1 = strace_1.c
 
