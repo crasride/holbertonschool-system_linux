@@ -9,25 +9,44 @@
 void print_params(struct user_regs_struct *regs)
 {
 	size_t i;
-	unsigned long params[6];
+	unsigned long param;
 	syscall_t syscall = syscalls_64[regs->orig_rax];
 
 	if (!regs)
 		return;
-
-	params[0] = (unsigned long)regs->rdi;
-	params[1] = (unsigned long)regs->rsi;
-	params[2] = (unsigned long)regs->rdx;
-	params[3] = (unsigned long)regs->r10;
-	params[4] = (unsigned long)regs->r8;
-	params[5] = (unsigned long)regs->r9;
 
 	for (i = 0; i < syscall.nb_params; i++)
 	{
 		if (syscall.params[i] == VOID)
 			continue;
 
-		printf("%#lx%s", params[i], (i < syscall.nb_params - 1) ? ", " : "");
+		switch (i)
+		{
+		case 0:
+			param = (unsigned long)regs->rdi;
+			break;
+		case 1:
+			param = (unsigned long)regs->rsi;
+			break;
+		case 2:
+			param = (unsigned long)regs->rdx;
+			break;
+		case 3:
+			param = (unsigned long)regs->r10;
+			break;
+		case 4:
+			param = (unsigned long)regs->r8;
+			break;
+		case 5:
+			param = (unsigned long)regs->r9;
+			break;
+		default:
+			return;
+		}
+		if (syscall.params[i] == VARARGS)
+			printf("...");
+		else
+			printf("%#lx%s", param, (i < syscall.nb_params - 1) ? ", " : "");
 	}
 }
 
