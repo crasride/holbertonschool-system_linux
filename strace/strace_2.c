@@ -54,8 +54,10 @@ void traceSyscalls(pid_t child_pid)
 			printf("%s", syscalls_64[syscall_number].name);
 		}
 
-		if (print_syscall_name && (long)user_registers.rax != ENOSYS_ERROR && call_count)
-			printf(" = %s%lx\n", user_registers.rax ? "0x" : "", (long)user_registers.rax);
+		if (print_syscall_name && (long)user_registers.rax != ENOSYS_ERROR
+									&& call_count)
+			printf(" = %s%lx\n", user_registers.rax ? "0x" : "",
+					(long)user_registers.rax);
 
 		ptrace(PTRACE_SYSCALL, child_pid, 0, 0);
 		waitpid(child_pid, &status, 0);
