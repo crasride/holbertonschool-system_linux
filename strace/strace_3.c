@@ -116,6 +116,6 @@ int main(int argc, char **argv)
 	child_pid = createTracedProcess(argv + 1);
 	traceSyscalls(child_pid);
 
-	printf(")= ?\n");
+	printf(") = ?\n");
 	return (EXIT_SUCCESS);
 }
