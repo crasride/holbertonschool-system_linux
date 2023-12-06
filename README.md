@@ -18,6 +18,7 @@ The list of projects contained follows :
 * [C - ELF: nm/objdump](./nm_objdump/)
 * [C - Signals](./signals)
 * [C - CPython](./0x08_CPython)
+* [C - Strace](./strace)
 * [Python - /proc filesystem](./proc_filesystem/)
 * [ASM - /x86 Assembly - libASM](./libasm/)
 
