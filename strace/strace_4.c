@@ -23,8 +23,7 @@ static void print_execve_params(char **argv)
 	{
 		env_count++;
 	}
-
-	printf(", [*%s/*], [/* %ld vars */]", argv[0], env_count);
+	printf(", [\"%s\"], [/* %ld vars */]", argv[0], env_count);
 }
 
 
