@@ -2,6 +2,22 @@
 
 #define ENOSYS_ERROR -38
 
+
+static void print_execve_params(char **argv)
+{
+	size_t i;
+
+	printf("\"%s\"", argv[0]);
+
+	for (i = 1; argv[i] != NULL; i++)
+	{
+		printf(", \"%s\"", argv[i]);
+	}
+
+	/* Imprime el entorno (ignoramos el entorno por ahora) */
+	printf(", [/* %ld vars */]", i);
+}
+
 /**
 * print_params - prints the parameters of a syscall
 * @regs: struct containing the registers of the process
@@ -43,23 +59,12 @@ void print_params(struct user_regs_struct *regs)
 		default:
 			return;
 		}
-
 		if (syscall.params[i] == VARARGS)
-		{
 			printf("...");
-		}
-		else if (syscall.params[i] == CHAR_PP)
-		{
-			char *str = (char *)param;
-			printf("\"%s\"", str);
-		}
 		else
-		{
 			printf("%#lx%s", param, (i < syscall.nb_params - 1) ? ", " : "");
-		}
 	}
 }
-
 
 
 /**
@@ -95,7 +100,7 @@ pid_t createTracedProcess(char **argv)
 * traceSyscalls - traces the syscalls of a process
 * @child_pid: PID of the process to be traced
 */
-void traceSyscalls(pid_t child_pid)
+void traceSyscalls(pid_t child_pid, char **argv)
 {
 	int status, syscall_number, print_syscall_name, call_count = 0;
 	struct user_regs_struct user_registers;
@@ -110,15 +115,26 @@ void traceSyscalls(pid_t child_pid)
 		if (!print_syscall_name && call_count)
 		{
 			syscall_number = user_registers.orig_rax;
-			printf("%s(", syscalls_64[syscall_number].name);
-			print_params(&user_registers);
+
+			/* Verifica si es la llamada al sistema execve */
+			if (syscall_number == __NR_execve)
+			{
+				printf("execve(");
+				print_execve_params(argv);
+			}
+			else
+			{
+				/* Si no es execve, usa la función print_params original */
+				printf("%s(", syscalls_64[syscall_number].name);
+				print_params(&user_registers);
+			}
 		}
 
 		if (print_syscall_name && (long)user_registers.rax != ENOSYS_ERROR
 			&& call_count)
 		{
 			printf(") = %s%lx\n", user_registers.rax ? "0x" : "",
-					(long)user_registers.rax);
+				(long)user_registers.rax);
 		}
 
 		ptrace(PTRACE_SYSCALL, child_pid, 0, 0);
@@ -126,6 +142,7 @@ void traceSyscalls(pid_t child_pid)
 		call_count = 1;
 	}
 }
+
 
 
 /**
@@ -148,7 +165,7 @@ int main(int argc, char **argv)
 	}
 
 	child_pid = createTracedProcess(argv + 1);
-	traceSyscalls(child_pid);
+	traceSyscalls(child_pid, argv + 1);
 
 	printf(") = ?\n");
 	return (EXIT_SUCCESS);
