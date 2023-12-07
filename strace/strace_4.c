@@ -5,13 +5,22 @@
 
 static void print_execve_params(char **argv)
 {
-	size_t i;
+	size_t i = 1;
+	size_t env_count;
 
 	printf("\"%s\"", argv[0]);
 
-	for (i = 1; argv[i] != NULL; i++)
+	for (; argv[i] != NULL; i++)
 	{
 		printf(", \"%s\"", argv[i]);
+	}
+
+	env_count = 0;
+
+	while (argv[i] != NULL)
+	{
+		env_count++;
+		i++;
 	}
 
 	/* Imprime el entorno (ignoramos el entorno por ahora) */
@@ -142,8 +151,6 @@ void traceSyscalls(pid_t child_pid, char **argv)
 		call_count = 1;
 	}
 }
-
-
 
 /**
 * main - entry point
