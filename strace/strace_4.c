@@ -24,7 +24,7 @@ static void print_execve_params(char **argv)
 	}
 
 	/* Imprime el entorno (ignoramos el entorno por ahora) */
-	printf(", [/* %ld vars */]", i);
+	printf(", [/* %ld vars */]", env_count);
 }
 
 /**
