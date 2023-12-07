@@ -7,13 +7,14 @@ FILES_0 = strace_0.c
 FILES_1 = strace_1.c
 FILES_2 = strace_2.c
 FILES_3 = strace_3.c
+FILES_4 = strace_4.c
 
 
 # Linker Flags (empty in this case)
 LDFLAGS =
 
 # Default Target: Build the executable
-all: strace_0 strace_1 strace_2 strace_3
+all: strace_0 strace_1 strace_2 strace_3 strace_4
 
 # Rule to build the executable
 strace_0: strace_0.c
@@ -28,8 +29,12 @@ strace_2: strace_2.c
 strace_3: strace_3.c
 	$(CC) $(CFLAGS) $(LDFLAGS) -o $@ $<
 
+strace_4: strace_4.c
+	$(CC) $(CFLAGS) $(LDFLAGS) -o $@ $<
+
 # Target to clean generated files
 clean:
-	rm -f strace_0 strace_1 strace_2 strace_3
+	rm -f strace_0 strace_1 strace_2 strace_3 strace_4
+
 # Declaration of phony targets
 .PHONY: all clean
