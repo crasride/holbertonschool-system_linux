@@ -2,11 +2,10 @@
 
 #define ENOSYS_ERROR -38
 
-void print_params(struct user_regs_struct *regs);
-void print_execve_params(pid_t child_pid, struct user_regs_struct *regs);
-pid_t createTracedProcess(char **argv);
-void traceSyscalls(pid_t child_pid);
-
+/**
+* print_params - prints the parameters of a syscall
+* @regs: struct containing the registers of the process
+*/
 void print_params(struct user_regs_struct *regs)
 {
 	size_t i;
@@ -46,34 +45,29 @@ void print_params(struct user_regs_struct *regs)
 		}
 
 		if (syscall.params[i] == VARARGS)
+		{
 			printf("...");
+		}
+		else if (syscall.params[i] == CHAR_PP)
+		{
+			char *str = (char *)param;
+			printf("\"%s\"", str);
+		}
 		else
+		{
 			printf("%#lx%s", param, (i < syscall.nb_params - 1) ? ", " : "");
+		}
 	}
 }
 
-void print_execve_params(pid_t child_pid, struct user_regs_struct *regs)
-{
-	size_t i;
-	char *param;
 
-	if (!regs)
-		return;
 
-	printf("\"%s\", [", (char *)regs->rdi);
-
-	for (i = 0; i < regs->rsi; i++)
-	{
-		if (i > 0)
-			printf(", ");
-
-		param = (char *)ptrace(PTRACE_PEEKDATA, child_pid, regs->rdx + i * sizeof(char *), 0);
-		printf("\"%s\"", param);
-	}
-
-	printf("], [/* %lu vars */]", (unsigned long)regs->rdx);
-}
-
+/**
+* createTracedProcess - creates a traced process
+* @argv: arguments to be passed to the process
+*
+* Return: PID of the created process
+*/
 pid_t createTracedProcess(char **argv)
 {
 	pid_t child_pid;
@@ -97,6 +91,10 @@ pid_t createTracedProcess(char **argv)
 	return (child_pid);
 }
 
+/**
+* traceSyscalls - traces the syscalls of a process
+* @child_pid: PID of the process to be traced
+*/
 void traceSyscalls(pid_t child_pid)
 {
 	int status, syscall_number, print_syscall_name, call_count = 0;
@@ -106,27 +104,21 @@ void traceSyscalls(pid_t child_pid)
 	ptrace(PTRACE_SYSCALL, child_pid, 0, 0);
 
 	for (print_syscall_name = 0; !WIFEXITED(status); print_syscall_name ^= 1)
-		{
-			ptrace(PTRACE_GETREGS, child_pid, 0, &user_registers);
+	{
+		ptrace(PTRACE_GETREGS, child_pid, 0, &user_registers);
 
-			if (!print_syscall_name && call_count)
-			{
-				syscall_number = user_registers.orig_rax;
-				if (syscall_number == __NR_execve)
-				{
-					printf("execve(");
-					print_execve_params(child_pid, &user_registers);
-				}
-				else
-				{
-					printf("%s(", syscalls_64[syscall_number].name);
-					print_params(&user_registers);
-				}
-			}
-
-		if (print_syscall_name && (long)user_registers.rax != ENOSYS_ERROR && call_count)
+		if (!print_syscall_name && call_count)
 		{
-			printf(") = %s%lx\n", user_registers.rax ? "0x" : "", (long)user_registers.rax);
+			syscall_number = user_registers.orig_rax;
+			printf("%s(", syscalls_64[syscall_number].name);
+			print_params(&user_registers);
+		}
+
+		if (print_syscall_name && (long)user_registers.rax != ENOSYS_ERROR
+			&& call_count)
+		{
+			printf(") = %s%lx\n", user_registers.rax ? "0x" : "",
+					(long)user_registers.rax);
 		}
 
 		ptrace(PTRACE_SYSCALL, child_pid, 0, 0);
@@ -135,6 +127,14 @@ void traceSyscalls(pid_t child_pid)
 	}
 }
 
+
+/**
+* main - entry point
+* @argc: number of arguments
+* @argv: arguments
+*
+* Return: EXIT_SUCCESS or EXIT_FAILURE
+*/
 int main(int argc, char **argv)
 {
 	pid_t child_pid;
