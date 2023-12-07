@@ -17,6 +17,7 @@
 #include <limits.h>
 #include <errno.h>
 
+extern char **environ;
 #define ENOSYS_ERROR -38
 #define CHAR_PTR 6
 

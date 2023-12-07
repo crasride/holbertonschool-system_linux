@@ -1,12 +1,14 @@
 #include "strace.h"
 
+
+
 #define ENOSYS_ERROR -38
 
 
 static void print_execve_params(char **argv)
 {
 	size_t i = 1;
-	size_t env_count;
+	size_t env_count = 0;
 
 	printf("\"%s\"", argv[0]);
 
@@ -17,15 +19,14 @@ static void print_execve_params(char **argv)
 
 	env_count = 0;
 
-	while (argv[i] != NULL)
+	while (environ && environ[env_count] != NULL)
 	{
 		env_count++;
-		i++;
 	}
 
-	/* Imprime el entorno (ignoramos el entorno por ahora) */
 	printf(", [/* %ld vars */]", env_count);
 }
+
 
 /**
 * print_params - prints the parameters of a syscall
