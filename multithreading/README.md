@@ -4,7 +4,7 @@
 
 For this project, we expect you to look at this concept:
 
-* [EYNTK - Multithreading](./R_EYNTK%20-%20Multithreading.md)
+* [EYNTK - Multithreading](./README_EYNTK_Multithreading.md)
 
 
 
