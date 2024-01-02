@@ -36,6 +36,7 @@ static void accumulate_color(const img_t *img, const kernel_t *kernel,
 void blur_portion(const blur_portion_t *portion)
 {
 	size_t dest_row, dest_col;
+	size_t img_blur_index = 0;
 
 	if (!portion || !portion->img || !portion->img_blur || !portion->kernel)
 		return;
@@ -49,7 +50,7 @@ void blur_portion(const blur_portion_t *portion)
 							portion->x + dest_col, portion->y + dest_row,
 							&sum_r, &sum_g, &sum_b);
 
-			size_t img_blur_index = (portion->y + dest_row) * portion->img_blur->w + (portion->x + dest_col);
+			img_blur_index = (portion->y + dest_row) * portion->img_blur->w + (portion->x + dest_col);
 			portion->img_blur->pixels[img_blur_index].r = (uint8_t)(sum_r);
 			portion->img_blur->pixels[img_blur_index].g = (uint8_t)(sum_g);
 			portion->img_blur->pixels[img_blur_index].b = (uint8_t)(sum_b);
