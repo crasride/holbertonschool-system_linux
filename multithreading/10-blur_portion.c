@@ -1,4 +1,5 @@
 #include "multithreading.h"
+#include <sys/types.h>
 
 static void accumulate_color(blur_portion_t const *portion, size_t dest_row,
 							size_t dest_col, float *sum_r, float *sum_g,
@@ -34,7 +35,7 @@ void blur_portion(blur_portion_t const *portion)
 {
 	size_t dest_row, dest_col;
 	float sum_r, sum_g, sum_b;
-	size_t img_blur_index;
+	size_t img_blur_index = 0;
 
 	for (dest_row = 0; dest_row < portion->h; dest_row++)
 	{
@@ -53,6 +54,9 @@ void blur_portion(blur_portion_t const *portion)
 		}
 	}
 }
+
+
+
 
 
 
