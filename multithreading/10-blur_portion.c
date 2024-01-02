@@ -1,8 +1,4 @@
 #include "multithreading.h"
-#include <sys/types.h>
-
-void apply_convolution(const img_t *img, img_t *blur_img,
-						const kernel_t *kernel, size_t x, size_t y);
 
 /**
 * blur_portion - Blurs a portion of an image using a kernel matrix
