@@ -57,4 +57,3 @@ void blur_portion(blur_portion_t const *portion)
 
 
 
-
