@@ -38,6 +38,7 @@ void blur_portion(blur_portion_t const *portion)
 {
 	size_t x = 0, y = 0;
 
+	/* Check if the portion is valid */
 	if (!portion || !portion->img || !portion->img_blur || !portion->kernel)
 		return;
 
