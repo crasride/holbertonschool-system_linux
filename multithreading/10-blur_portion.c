@@ -9,7 +9,20 @@ void blur_portion(blur_portion_t const *portion)
 	size_t x = 0, y = 0;
 
 	if (!portion || !portion->img || !portion->img_blur || !portion->kernel)
+	{
+		fprintf(stderr, "Error: At least one of the structures is null.\n");
 		return;
+	}
+
+	/* Check if the slice dimensions are valid */
+	if (portion->x >= portion->img->w || portion->y >= portion->img->h ||
+		portion->w > portion->img->w || portion->h > portion->img->h ||
+		portion->x + portion->w > portion->img->w || portion->y + portion->h >
+		portion->img->h)
+	{
+		fprintf(stderr, "Error: Invalid portion dimensions.\n");
+		return;
+	}
 
 	for (y = portion->y; y < portion->y + portion->h; y++)
 		for (x = portion->x; x < portion->x + portion->w; x++)
