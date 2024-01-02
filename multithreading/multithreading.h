@@ -77,4 +77,7 @@ void *thread_entry(void *arg);
 /*Functions task 1 */
 int tprintf(char const *format, ...);
 
+/*Functions task 2 */
+void blur_portion(blur_portion_t const *portion);
+
 #endif /* MULTITHREADING_H */
