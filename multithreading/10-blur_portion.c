@@ -9,13 +9,6 @@ void perform_bluring(const img_t *img, img_t *new_img, const kernel_t *kernel,
 	size_t pos_i = 0, radius = 0, i = 0, j;
 	ssize_t pos_x = 0, pos_y = 0;
 
-	/* radius of kernel is the distance from the center of the kernel */
-	/* to the edge of the kernel */
-	/* radius is calculated by dividing size of kernel by 2 */
-	/* because we got a 'symetric' kernel => distance from center to any edge */
-	/* is same in all directions */
-	/* the LARGER the RADIUS , the BLURER the img will be (it will blur more) */
-
 	radius = kernel->size / 2;
 	/* loop over the kernel */
 	for (pos_y = (ssize_t)y - radius; i < kernel->size; i++, pos_y++)
@@ -40,7 +33,6 @@ void perform_bluring(const img_t *img, img_t *new_img, const kernel_t *kernel,
 	new_img->pixels[pos_i].b = (uint8_t)(total_b / divider);
 }
 
-
 /**
  * blur_portion - blurs a portion of an image using a GAUSSIAN BLUR
  *
@@ -61,4 +53,3 @@ void blur_portion(blur_portion_t const *portion)
 		for (x = portion->x; x < portion->x + portion->w; x++)
 			perform_bluring(portion->img, portion->img_blur, portion->kernel, x, y);
 }
-
