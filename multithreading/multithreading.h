@@ -3,6 +3,9 @@
 
 #include <stddef.h>
 #include <stdint.h>
+#include <stdio.h>
+#include <stdlib.h>
+#include <pthread.h>
 
 /**
 * struct pixel_s - RGB pixel
@@ -66,5 +69,7 @@ typedef struct blur_portion_s
 	kernel_t const *kernel;
 } blur_portion_t;
 
+/*Functions task 0 */
+void *thread_entry(void *arg);
 
 #endif /* MULTITHREADING_H */
