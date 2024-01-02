@@ -6,6 +6,8 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <pthread.h>
+/* task 1 va_list*/
+#include <stdarg.h>
 
 /**
 * struct pixel_s - RGB pixel
@@ -71,5 +73,8 @@ typedef struct blur_portion_s
 
 /*Functions task 0 */
 void *thread_entry(void *arg);
+
+/*Functions task 1 */
+int tprintf(char const *format, ...);
 
 #endif /* MULTITHREADING_H */
