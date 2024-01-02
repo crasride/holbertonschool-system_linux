@@ -1,55 +1,82 @@
 #include "multithreading.h"
-#include <sys/types.h>
 
 /**
- * blur_portion - blurs a portion of an image using a GAUSSIAN BLUR
- *
- * @portion: pointer to data struct blur_portion_t
- */
-
-void blur_portion(blur_portion_t const *portion)
+* accumulate_color - Acumula los componentes de color ponderados
+*
+* @portion: Puntero a la estructura blur_portion_t
+* @dest_row: Índice de fila en la imagen de destino
+* @dest_col: Índice de columna en la imagen de destino
+* @sum_red: Suma acumulativa de los componentes de color rojo
+* @sum_green: Suma acumulativa de los componentes de color verde
+* @sum_blue: Suma acumulativa de los componentes de color azul
+*/
+static void accumulate_color(blur_portion_t const *portion, size_t dest_row,
+							size_t dest_col, float *sum_red, float *sum_green,
+							float *sum_blue)
 {
-	size_t x = 0, y = 0;
+	size_t kernel_half_size = portion->kernel->size / 2;
+	size_t kernel_row, kernel_col, img_row, img_col;
 
-	/* sanity checks */
-	if (!portion || !portion->img || !portion->img_blur || !portion->kernel)
-		return;
+	*sum_red = 0.0;
+	*sum_green = 0.0;
+	*sum_blue = 0.0;
 
-	/* let's loop over all the pixels in given portion */
-
-	for (y = portion->y; y < portion->y + portion->h; y++)
-		for (x = portion->x; x < portion->x + portion->w; x++)
-			perform_bluring(portion->img, portion->img_blur, portion->kernel, x, y);
-}
-
-void perform_bluring(const img_t *img, img_t *new_img, const kernel_t *kernel,
-					 size_t x, size_t y)
-{
-	float divider = 0, total_r = 0, total_g = 0, total_b = 0;
-	size_t pos_i = 0, radius = 0, i = 0, j;
-	ssize_t pos_x = 0, pos_y = 0;
-
-
-	radius = kernel->size / 2;
-	/* loop over the kernel */
-	for (pos_y = (ssize_t)y - radius; i < kernel->size; i++, pos_y++)
-		for (j = 0, pos_x = (ssize_t)x - radius; j < kernel->size; j++, pos_x++)
+	for (kernel_row = 0; kernel_row < portion->kernel->size; kernel_row++)
+	{
+		for (kernel_col = 0; kernel_col < portion->kernel->size; kernel_col++)
 		{
-			if (pos_x >= 0 && (size_t)pos_x < img->w &&
-				pos_y >= 0 && (size_t)pos_y < img->h)
+			img_row = portion->y + dest_row - kernel_half_size + kernel_row;
+			img_col = portion->x + dest_col - kernel_half_size + kernel_col;
+
+			/* Make sure the ratios are within limits. */
+			if (img_col < portion->img->w && img_row < portion->img->h)
 			{
-				/* Add current pixel to the average */
-				divider += kernel->matrix[i][j];
-				pos_i = (pos_y * img->w) + pos_x;
-				total_r += img->pixels[pos_i].r * kernel->matrix[i][j];
-				total_g += img->pixels[pos_i].g * kernel->matrix[i][j];
-				total_b += img->pixels[pos_i].b * kernel->matrix[i][j];
+				float kernel_value = portion->kernel->matrix[kernel_row][kernel_col];
+				*sum_red += kernel_value * portion->img->pixels[img_row *
+				portion->img->w + img_col].r;
+				*sum_green += kernel_value * portion->img->pixels[img_row *
+				portion->img->w + img_col].g;
+				*sum_blue += kernel_value * portion->img->pixels[img_row *
+				portion->img->w + img_col].b;
 			}
 		}
-
-	/* set the new value of rgb levers in the new_img*/
-	pos_i = (y * new_img->w) + x;
-	new_img->pixels[pos_i].r = (uint8_t)(total_r / divider);
-	new_img->pixels[pos_i].g = (uint8_t)(total_g / divider);
-	new_img->pixels[pos_i].b = (uint8_t)(total_b / divider);
+	}
 }
+
+/**
+* blur_portion - Blur a portion of an image using a Gaussian Blur
+*
+* @portion: Pointer to the blur portion t structure that describes the portion
+* to be blurred
+*/
+void blur_portion(blur_portion_t const *portion)
+{
+	size_t dest_row, dest_col;
+	float sum_red, sum_green, sum_blue;
+
+	for (dest_row = 0; dest_row < portion->h; dest_row++)
+	{
+		for (dest_col = 0; dest_col < portion->w; dest_col++)
+		{
+			accumulate_color(portion, dest_row, dest_col, &sum_red, &sum_green,
+							&sum_blue);
+
+			/* Make sure the indices are within the boundaries of the image */
+			if (dest_col < portion->img_blur->w && dest_row < portion->img_blur->h)
+			{
+				portion->img_blur->pixels[(portion->y + dest_row) * portion->
+				img_blur->w + (portion->x + dest_col)].r = (uint8_t)sum_red;
+				portion->img_blur->pixels[(portion->y + dest_row) * portion->
+				img_blur->w + (portion->x + dest_col)].g = (uint8_t)sum_green;
+				portion->img_blur->pixels[(portion->y + dest_row) * portion->
+				img_blur->w + (portion->x + dest_col)].b = (uint8_t)sum_blue;
+			}
+		}
+	}
+}
+
+/*
+* kernel_0.knl
+* kernel de convolución es una matriz que se utiliza para realizar operaciones
+* como desenfoque, nitidez, detección de bordes, entre otras.
+*/
