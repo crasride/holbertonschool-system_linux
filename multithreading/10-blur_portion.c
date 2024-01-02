@@ -46,23 +46,27 @@ void apply_convolution(const img_t *img, img_t *blur_img,
 {
 	float divider = 0, total_r = 0, total_g = 0, total_b = 0;
 	size_t img_blur_index = 0, half_kernel_size = 0, i = 0, j;
-	ssize_t current_col = 0, current_row = 0;
+	/* positions being iterated over during the convolution process */
+	ssize_t current_column = 0, current_row = 0;
 
 	/* Half size of the convolution kernel */
 	half_kernel_size = kernel->size / 2;
-	for (current_row = (ssize_t)y - half_kernel_size; i < kernel->size; i++, current_row++)
-		for (current_col = (ssize_t)x - half_kernel_size; j < kernel->size; j++, current_col++)
+	/* Iterate over rows the ker */
+	for (current_row = (ssize_t)y - half_kernel_size; i < kernel->size; i++,
+		current_row++)
+		/* Iterate over columns the kernel */
+		for (j = 0, current_column = (ssize_t)x - half_kernel_size; j < kernel->size;
+			j++, current_column++)
 		{
-			if (current_col >= 0 && (size_t)current_col < img->w &&
+			if (current_column >= 0 && (size_t)current_column < img->w &&
 				current_row >= 0 && (size_t)current_row < img->h)
 			{
-				float kernel_value = kernel->matrix[i][j];
-				divider += kernel_value;
-
-				img_blur_index = (size_t)(current_row * img->w) + (size_t)current_col;
-				total_r += img->pixels[img_blur_index].r * kernel_value;
-				total_g += img->pixels[img_blur_index].g * kernel_value;
-				total_b += img->pixels[img_blur_index].b * kernel_value;
+				/* value the divider */
+				divider += kernel->matrix[i][j];
+				img_blur_index = (current_row * img->w) + current_column;
+				total_r += img->pixels[img_blur_index].r * kernel->matrix[i][j];
+				total_g += img->pixels[img_blur_index].g * kernel->matrix[i][j];
+				total_b += img->pixels[img_blur_index].b * kernel->matrix[i][j];
 			}
 		}
 
@@ -73,4 +77,3 @@ void apply_convolution(const img_t *img, img_t *blur_img,
 	blur_img->pixels[img_blur_index].g = (uint8_t)(total_g / divider);
 	blur_img->pixels[img_blur_index].b = (uint8_t)(total_b / divider);
 }
-
