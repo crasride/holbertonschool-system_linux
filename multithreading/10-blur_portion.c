@@ -6,20 +6,20 @@
 * @portion: Puntero a la estructura blur_portion_t
 * @dest_row: Índice de fila en la imagen de destino
 * @dest_col: Índice de columna en la imagen de destino
-* @sum_red: Suma acumulativa de los componentes de color rojo
-* @sum_green: Suma acumulativa de los componentes de color verde
-* @sum_blue: Suma acumulativa de los componentes de color azul
+* @sum_r: Suma acumulativa de los componentes de color rojo
+* @sum_g: Suma acumulativa de los componentes de color verde
+* @sum_b: Suma acumulativa de los componentes de color azul
 */
 static void accumulate_color(blur_portion_t const *portion, size_t dest_row,
-							size_t dest_col, float *sum_red, float *sum_green,
-							float *sum_blue)
+							size_t dest_col, float *sum_r, float *sum_g,
+							float *sum_b)
 {
 	size_t kernel_half_size = portion->kernel->size / 2;
 	size_t kernel_row, kernel_col, img_row, img_col;
 
-	*sum_red = 0.0;
-	*sum_green = 0.0;
-	*sum_blue = 0.0;
+	*sum_r = 0.0;
+	*sum_g = 0.0;
+	*sum_b = 0.0;
 
 	for (kernel_row = 0; kernel_row < portion->kernel->size; kernel_row++)
 	{
@@ -32,11 +32,11 @@ static void accumulate_color(blur_portion_t const *portion, size_t dest_row,
 			if (img_col < portion->img->w && img_row < portion->img->h)
 			{
 				float kernel_value = portion->kernel->matrix[kernel_row][kernel_col];
-				*sum_red += kernel_value * portion->img->pixels[img_row *
+				*sum_r += kernel_value * portion->img->pixels[img_row *
 				portion->img->w + img_col].r;
-				*sum_green += kernel_value * portion->img->pixels[img_row *
+				*sum_g += kernel_value * portion->img->pixels[img_row *
 				portion->img->w + img_col].g;
-				*sum_blue += kernel_value * portion->img->pixels[img_row *
+				*sum_b += kernel_value * portion->img->pixels[img_row *
 				portion->img->w + img_col].b;
 			}
 		}
@@ -52,24 +52,24 @@ static void accumulate_color(blur_portion_t const *portion, size_t dest_row,
 void blur_portion(blur_portion_t const *portion)
 {
 	size_t dest_row, dest_col;
-	float sum_red, sum_green, sum_blue;
+	float sum_r, sum_g, sum_b;
 
 	for (dest_row = 0; dest_row < portion->h; dest_row++)
 	{
 		for (dest_col = 0; dest_col < portion->w; dest_col++)
 		{
-			accumulate_color(portion, dest_row, dest_col, &sum_red, &sum_green,
-							&sum_blue);
+			accumulate_color(portion, dest_row, dest_col, &sum_r, &sum_g,
+							&sum_b);
 
 			/* Make sure the indices are within the boundaries of the image */
 			if (dest_col < portion->img_blur->w && dest_row < portion->img_blur->h)
 			{
 				portion->img_blur->pixels[(portion->y + dest_row) * portion->
-				img_blur->w + (portion->x + dest_col)].r = (uint8_t)sum_red;
+				img_blur->w + (portion->x + dest_col)].r = (uint8_t)sum_r;
 				portion->img_blur->pixels[(portion->y + dest_row) * portion->
-				img_blur->w + (portion->x + dest_col)].g = (uint8_t)sum_green;
+				img_blur->w + (portion->x + dest_col)].g = (uint8_t)sum_g;
 				portion->img_blur->pixels[(portion->y + dest_row) * portion->
-				img_blur->w + (portion->x + dest_col)].b = (uint8_t)sum_blue;
+				img_blur->w + (portion->x + dest_col)].b = (uint8_t)sum_b;
 			}
 		}
 	}
@@ -80,3 +80,4 @@ void blur_portion(blur_portion_t const *portion)
 * kernel de convolución es una matriz que se utiliza para realizar operaciones
 * como desenfoque, nitidez, detección de bordes, entre otras.
 */
+
