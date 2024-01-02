@@ -1,82 +1,129 @@
 #include "multithreading.h"
 
 /**
-* accumulate_color - Acumula los componentes de color ponderados
-*
-* @portion: Puntero a la estructura blur_portion_t
-* @dest_row: Índice de fila en la imagen de destino
-* @dest_col: Índice de columna en la imagen de destino
-* @sum_red: Suma acumulativa de los componentes de color rojo
-* @sum_green: Suma acumulativa de los componentes de color verde
-* @sum_blue: Suma acumulativa de los componentes de color azul
-*/
-static void accumulate_color(blur_portion_t const *portion, size_t dest_row,
-							size_t dest_col, float *sum_red, float *sum_green,
-							float *sum_blue)
+ * get_sums - initialise sums for rgb and kernel
+ * @r_sum:	pointer to sum of red values
+ * @g_sum:	pointer to sum of green values
+ * @b_sum:	pointer to sum of blue values
+ * @k_sum:	pointer to sum of kernel values
+ * @portion:	pointer to structure with information needed to blur
+ * @pixels:	double array of pixels
+ * @x:		x position for pixels array of pixel to blur
+ * @y:		y position for pixels array of pixel to blur
+ */
+void get_sums(float *r_sum, float *g_sum, float *b_sum, float *k_sum,
+		const blur_portion_t *portion, const pixel_t **pixels,
+		const size_t x, const size_t y)
 {
-	size_t kernel_half_size = portion->kernel->size / 2;
-	size_t kernel_row, kernel_col, img_row, img_col;
+	ssize_t grid_x, grid_y, grid_stop_x, grid_stop_y;
+	size_t half_kernel, k_x, k_y;
 
-	*sum_red = 0.0;
-	*sum_green = 0.0;
-	*sum_blue = 0.0;
-
-	for (kernel_row = 0; kernel_row < portion->kernel->size; kernel_row++)
+	half_kernel = portion->kernel->size / 2;
+	grid_x = x - half_kernel, grid_y = y - half_kernel;
+	grid_stop_y = grid_y + portion->kernel->size;
+	grid_stop_x = grid_x + portion->kernel->size;
+	for (grid_y = y - half_kernel, k_y = *r_sum = *g_sum = *b_sum = *k_sum = 0;
+			grid_y < grid_stop_y; ++grid_y, ++k_y)
 	{
-		for (kernel_col = 0; kernel_col < portion->kernel->size; kernel_col++)
+		for (grid_x = x - half_kernel, k_x = 0; grid_x < grid_stop_x;
+				++grid_x, ++k_x)
 		{
-			img_row = portion->y + dest_row - kernel_half_size + kernel_row;
-			img_col = portion->x + dest_col - kernel_half_size + kernel_col;
-
-			/* Make sure the ratios are within limits. */
-			if (img_col < portion->img->w && img_row < portion->img->h)
+			if (grid_x > -1 && grid_y > -1 &&
+					grid_x < (ssize_t) portion->img->w &&
+					grid_y < (ssize_t) portion->img->h)
 			{
-				float kernel_value = portion->kernel->matrix[kernel_row][kernel_col];
-				*sum_red += kernel_value * portion->img->pixels[img_row *
-				portion->img->w + img_col].r;
-				*sum_green += kernel_value * portion->img->pixels[img_row *
-				portion->img->w + img_col].g;
-				*sum_blue += kernel_value * portion->img->pixels[img_row *
-				portion->img->w + img_col].b;
+				*r_sum += portion->kernel->matrix[k_y][k_x] *
+					pixels[grid_y][grid_x].r;
+				*g_sum += portion->kernel->matrix[k_y][k_x] *
+					pixels[grid_y][grid_x].g;
+				*b_sum += portion->kernel->matrix[k_y][k_x] *
+					pixels[grid_y][grid_x].b;
+				*k_sum += portion->kernel->matrix[k_y][k_x];
 			}
 		}
 	}
 }
 
 /**
-* blur_portion - Blur a portion of an image using a Gaussian Blur
-*
-* @portion: Pointer to the blur portion t structure that describes the portion
-* to be blurred
-*/
-void blur_portion(blur_portion_t const *portion)
+ * blur_pixel - blur individual pixel
+ * @portion:	pointer to structure with information needed to blur
+ * @pixels:	double array of pixels
+ * @x:		x position for pixels array of pixel to blur
+ * @y:		y position for pixels array of pixel to blur
+ * @px:		index of pixel to blur for output array
+ *
+ * Using pixels double array for simplified 1 to 1 traversal of image with
+ * kernel
+ */
+void blur_pixel(const blur_portion_t *portion, const pixel_t **pixels,
+		const size_t x, const size_t y, const size_t px)
 {
-	size_t dest_row, dest_col;
-	float sum_red, sum_green, sum_blue;
+	float r_avg, g_avg, b_avg, k_sum;
 
-	for (dest_row = 0; dest_row < portion->h; dest_row++)
-	{
-		for (dest_col = 0; dest_col < portion->w; dest_col++)
-		{
-			accumulate_color(portion, dest_row, dest_col, &sum_red, &sum_green,
-							&sum_blue);
-
-			/* Make sure the indices are within the boundaries of the image */
-			if (dest_col < portion->img_blur->w && dest_row < portion->img_blur->h)
-			{
-				portion->img_blur->pixels[(portion->y + dest_row) * portion->
-				img_blur->w + (portion->x + dest_col)].r = (uint8_t)sum_red;
-				portion->img_blur->pixels[(portion->y + dest_row) * portion->
-				img_blur->w + (portion->x + dest_col)].g = (uint8_t)sum_green;
-				portion->img_blur->pixels[(portion->y + dest_row) * portion->
-				img_blur->w + (portion->x + dest_col)].b = (uint8_t)sum_blue;
-			}
-		}
-	}
+	get_sums(&r_avg, &g_avg, &b_avg, &k_sum, portion, pixels, x, y);
+	r_avg /= k_sum, g_avg /= k_sum, b_avg /= k_sum;
+	portion->img_blur->pixels[px].r = r_avg;
+	portion->img_blur->pixels[px].g = g_avg;
+	portion->img_blur->pixels[px].b = b_avg;
 }
 
-/*
-* kernel_0.knl
-* kernel de convolución es una matriz que se utiliza para realizar operaciones
-* como desenfoque, nitidez, detección de bordes, entre otras.
-*/
+/**
+ * convert_array - create 2-D pixel_t array from 1-D array
+ * @img: pointer to img struct containing 1-D pixel_t array
+ *
+ * Return: created array or NULL on malloc fail
+ */
+pixel_t **convert_array(const img_t *img)
+{
+	pixel_t **pixels;
+	size_t i, j, k;
+
+	if (!img || img->w == 0 || img->h == 0)
+		return (NULL);
+	pixels = malloc(img->h * sizeof(*pixels));
+	if (!pixels)
+		return (NULL);
+	for (i = k = 0; i < img->h; ++i)
+	{
+		pixels[i] = malloc(img->w * sizeof(**pixels));
+		if (!pixels[i])
+			return (NULL);
+		for (j = 0; j < img->w; ++j, ++k)
+			pixels[i][j] = img->pixels[k];
+	}
+	return (pixels);
+}
+
+/**
+ * blur_portion - blur portion of an image using Gaussian blur
+ * @portion: pointer to structure with information needed to blur
+ */
+void blur_portion(blur_portion_t const *portion)
+{
+	size_t i, j, px, start, stop_x, stop_y;
+	pixel_t **pixels;
+
+	if (!portion)
+		return;
+	pixels = convert_array(portion->img);
+	if (!pixels)
+		return;
+	start = px = portion->x + portion->y * portion->img->w;
+	stop_x = start + portion->w;
+	stop_y = stop_x + portion->img->w * (portion->h - 1);
+	for (i = portion->x; i < portion->w + portion->x; ++i)
+		for (j = portion->y; j < portion->h + portion->y; ++j)
+		{
+			blur_pixel(portion, (const pixel_t **)pixels, i, j, px);
+			px += portion->img->w;
+			if (px >= stop_y)
+			{
+				px = start += 1;
+				if (px >= stop_x)
+					break;
+			}
+		}
+	for (i = 0; i < portion->img->h; ++i)
+		free(pixels[i]);
+	free(pixels);
+}
