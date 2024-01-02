@@ -1,63 +1,47 @@
 #include "multithreading.h"
-#include <sys/types.h>
 
-static void accumulate_color(blur_portion_t const *portion, size_t dest_row,
-							size_t dest_col, float *sum_r, float *sum_g,
-							float *sum_b)
+
+void perform_bluring(const img_t *img, img_t *new_img, const kernel_t *kernel,
+					size_t x, size_t y)
 {
-	size_t kernel_half_size = portion->kernel->size / 2;
-	size_t kernel_row, kernel_col;
+	float divider = 0, total_r = 0, total_g = 0, total_b = 0;
+	size_t new_img_index = 0, half_kernel_size = 0;
 
-	*sum_r = 0.0;
-	*sum_g = 0.0;
-	*sum_b = 0.0;
+	half_kernel_size = kernel->size / 2;
 
-	for (kernel_row = 0; kernel_row < portion->kernel->size; kernel_row++)
+	for (size_t i = y > half_kernel_size ? y - half_kernel_size : 0; i < (y + half_kernel_size < img->h ? y + half_kernel_size : img->h); i++)
 	{
-		for (kernel_col = 0; kernel_col < portion->kernel->size; kernel_col++)
+		for (size_t j = x > half_kernel_size ? x - half_kernel_size : 0; j < (x + half_kernel_size < img->w ? x + half_kernel_size : img->w); j++)
 		{
-			int img_row = (int)(dest_row - kernel_half_size + kernel_row);
-			int img_col = (int)(dest_col - kernel_half_size + kernel_col);
+			size_t img_row = i;
+			size_t img_col = j;
 
-			if (img_col >= 0 && img_col < (int)portion->img->w &&
-				img_row >= 0 && img_row < (int)portion->img->h)
-			{
-				float kernel_value = portion->kernel->matrix[kernel_row][kernel_col];
-				*sum_r += kernel_value * portion->img->pixels[img_row * portion->img->w + img_col].r;
-				*sum_g += kernel_value * portion->img->pixels[img_row * portion->img->w + img_col].g;
-				*sum_b += kernel_value * portion->img->pixels[img_row * portion->img->w + img_col].b;
-			}
+			float kernel_value = kernel->matrix[i - (y - half_kernel_size)][j - (x - half_kernel_size)];
+
+			divider += kernel_value;
+			new_img_index = (img_row * img->w) + img_col;
+			total_r += img->pixels[new_img_index].r * kernel_value;
+			total_g += img->pixels[new_img_index].g * kernel_value;
+			total_b += img->pixels[new_img_index].b * kernel_value;
 		}
 	}
+
+	new_img_index = (y * new_img->w) + x;
+	new_img->pixels[new_img_index].r = (uint8_t)(total_r / divider);
+	new_img->pixels[new_img_index].g = (uint8_t)(total_g / divider);
+	new_img->pixels[new_img_index].b = (uint8_t)(total_b / divider);
 }
 
 void blur_portion(blur_portion_t const *portion)
 {
-	size_t dest_row, dest_col;
-	float sum_r, sum_g, sum_b;
-	size_t img_blur_index = 0;
+	if (!portion || !portion->img || !portion->img_blur || !portion->kernel)
+		return;
 
-	for (dest_row = 0; dest_row < portion->h; dest_row++)
+	for (size_t y = portion->y; y < portion->y + portion->h; y++)
 	{
-		for (dest_col = 0; dest_col < portion->w; dest_col++)
+		for (size_t x = portion->x; x < portion->x + portion->w; x++)
 		{
-			accumulate_color(portion, dest_row, dest_col, &sum_r, &sum_g, &sum_b);
-
-			img_blur_index = (portion->y + dest_row) * portion->img_blur->w + (portion->x + dest_col);
-
-			if (dest_col < portion->img_blur->w && dest_row < portion->img_blur->h)
-			{
-				portion->img_blur->pixels[img_blur_index].r = (uint8_t)sum_r;
-				portion->img_blur->pixels[img_blur_index].g = (uint8_t)sum_g;
-				portion->img_blur->pixels[img_blur_index].b = (uint8_t)sum_b;
-			}
+			perform_bluring(portion->img, portion->img_blur, portion->kernel, x, y);
 		}
 	}
 }
-
-
-
-
-
-
-
