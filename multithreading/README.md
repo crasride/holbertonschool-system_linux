@@ -389,7 +389,7 @@ Here is the image used in the example, before and after execution:
 ---
 
 ### [3. Blur entire image](./11-blur_image.c)
-Write a method that blurs the entirety of an image using a Gaussian blur.
+Write a method that blurs the entirety of an image using a [Gaussian blur](https://www.youtube.com/watch?v=C_zFhWdM4ic).
 
 * Prototype: `void blur_image(img_t *img_blur, img_t const *img, kernel_t const *kernel);`, where:
 	* `img_blur` holds the address at which the blured image is stored,
@@ -562,7 +562,7 @@ Here is the image used in the example, before and after execution:
 ### [4. Thread logger v2](./20-tprintf.c)
 Write a function that uses the `printf` family to print out a given formatted string.
 
-This time, you will also have to use a `mutex` to avoid race conditions. As you know, a mutex needs to be initialized, and destroyed, but we don’t want to have to do that ourselves in our `main.c` program. Please read about [Constructors and Destructors](https://intranet.hbtn.io/rltoken/NIY4q_RrLXWTzaHN2wVcqg) with GCC and it should all make sense :).
+This time, you will also have to use a `mutex` to avoid race conditions. As you know, a mutex needs to be initialized, and destroyed, but we don’t want to have to do that ourselves in our `main.c` program. Please read about [Constructors and Destructors](https://phoxis.org/2011/04/27/c-language-constructors-and-destructors-with-gcc/) with GCC and it should all make sense :).
 
 * Prototype: `int tprintf(char const *format, ...);`
 * The output must be preceded by the calling thread ID, as the following output shows.
