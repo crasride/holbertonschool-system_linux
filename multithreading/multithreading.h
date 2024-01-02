@@ -8,6 +8,8 @@
 #include <pthread.h>
 /* task 1 va_list*/
 #include <stdarg.h>
+/* task 2 */
+#include <sys/types.h>
 
 /**
 * struct pixel_s - RGB pixel
