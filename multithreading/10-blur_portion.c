@@ -1,26 +1,6 @@
 #include "multithreading.h"
 #include <sys/types.h>
 
-/**
- * blur_portion - blurs a portion of an image using a GAUSSIAN BLUR
- *
- * @portion: pointer to data struct blur_portion_t
- */
-
-void blur_portion(blur_portion_t const *portion)
-{
-	size_t x = 0, y = 0;
-
-	/* sanity checks */
-	if (!portion || !portion->img || !portion->img_blur || !portion->kernel)
-		return;
-
-	/* let's loop over all the pixels in given portion */
-
-	for (y = portion->y; y < portion->y + portion->h; y++)
-		for (x = portion->x; x < portion->x + portion->w; x++)
-			perform_bluring(portion->img, portion->img_blur, portion->kernel, x, y);
-}
 
 void perform_bluring(const img_t *img, img_t *new_img, const kernel_t *kernel,
 					 size_t x, size_t y)
@@ -59,3 +39,26 @@ void perform_bluring(const img_t *img, img_t *new_img, const kernel_t *kernel,
 	new_img->pixels[pos_i].g = (uint8_t)(total_g / divider);
 	new_img->pixels[pos_i].b = (uint8_t)(total_b / divider);
 }
+
+
+/**
+ * blur_portion - blurs a portion of an image using a GAUSSIAN BLUR
+ *
+ * @portion: pointer to data struct blur_portion_t
+ */
+
+void blur_portion(blur_portion_t const *portion)
+{
+	size_t x = 0, y = 0;
+
+	/* sanity checks */
+	if (!portion || !portion->img || !portion->img_blur || !portion->kernel)
+		return;
+
+	/* let's loop over all the pixels in given portion */
+
+	for (y = portion->y; y < portion->y + portion->h; y++)
+		for (x = portion->x; x < portion->x + portion->w; x++)
+			perform_bluring(portion->img, portion->img_blur, portion->kernel, x, y);
+}
+
