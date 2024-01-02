@@ -1,51 +1,55 @@
 #include "multithreading.h"
+#include <sys/types.h>
 
-
-void perform_bluring(const img_t *img, img_t *new_img, const kernel_t *kernel,
-					size_t x, size_t y)
-{
-	size_t i = 0, j = 0;
-	size_t new_img_index = 0, half_kernel_size = 0;
-	float divider = 0, total_r = 0, total_g = 0, total_b = 0;
-
-
-	half_kernel_size = kernel->size / 2;
-
-	for (i = y > half_kernel_size ? y - half_kernel_size : 0; i < (y + half_kernel_size < img->h ? y + half_kernel_size : img->h); i++)
-	{
-		for (j = x > half_kernel_size ? x - half_kernel_size : 0; j < (x + half_kernel_size < img->w ? x + half_kernel_size : img->w); j++)
-		{
-			size_t img_row = i;
-			size_t img_col = j;
-
-			float kernel_value = kernel->matrix[i - (y - half_kernel_size)][j - (x - half_kernel_size)];
-
-			divider += kernel_value;
-			new_img_index = (img_row * img->w) + img_col;
-			total_r += img->pixels[new_img_index].r * kernel_value;
-			total_g += img->pixels[new_img_index].g * kernel_value;
-			total_b += img->pixels[new_img_index].b * kernel_value;
-		}
-	}
-
-	new_img_index = (y * new_img->w) + x;
-	new_img->pixels[new_img_index].r = (uint8_t)(total_r / divider);
-	new_img->pixels[new_img_index].g = (uint8_t)(total_g / divider);
-	new_img->pixels[new_img_index].b = (uint8_t)(total_b / divider);
-}
+/**
+ * blur_portion - blurs a portion of an image using a GAUSSIAN BLUR
+ *
+ * @portion: pointer to data struct blur_portion_t
+ */
 
 void blur_portion(blur_portion_t const *portion)
 {
 	size_t x = 0, y = 0;
 
+	/* sanity checks */
 	if (!portion || !portion->img || !portion->img_blur || !portion->kernel)
 		return;
 
+	/* let's loop over all the pixels in given portion */
+
 	for (y = portion->y; y < portion->y + portion->h; y++)
-	{
 		for (x = portion->x; x < portion->x + portion->w; x++)
-		{
 			perform_bluring(portion->img, portion->img_blur, portion->kernel, x, y);
+}
+
+void perform_bluring(const img_t *img, img_t *new_img, const kernel_t *kernel,
+					 size_t x, size_t y)
+{
+	float divider = 0, total_r = 0, total_g = 0, total_b = 0;
+	size_t pos_i = 0, radius = 0, i = 0, j;
+	ssize_t pos_x = 0, pos_y = 0;
+
+
+	radius = kernel->size / 2;
+	/* loop over the kernel */
+	for (pos_y = (ssize_t)y - radius; i < kernel->size; i++, pos_y++)
+		for (j = 0, pos_x = (ssize_t)x - radius; j < kernel->size; j++, pos_x++)
+		{
+			if (pos_x >= 0 && (size_t)pos_x < img->w &&
+				pos_y >= 0 && (size_t)pos_y < img->h)
+			{
+				/* Add current pixel to the average */
+				divider += kernel->matrix[i][j];
+				pos_i = (pos_y * img->w) + pos_x;
+				total_r += img->pixels[pos_i].r * kernel->matrix[i][j];
+				total_g += img->pixels[pos_i].g * kernel->matrix[i][j];
+				total_b += img->pixels[pos_i].b * kernel->matrix[i][j];
+			}
 		}
-	}
+
+	/* set the new value of rgb levers in the new_img*/
+	pos_i = (y * new_img->w) + x;
+	new_img->pixels[pos_i].r = (uint8_t)(total_r / divider);
+	new_img->pixels[pos_i].g = (uint8_t)(total_g / divider);
+	new_img->pixels[pos_i].b = (uint8_t)(total_b / divider);
 }
