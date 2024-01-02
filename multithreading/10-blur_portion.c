@@ -1,52 +1,53 @@
+
 #include "multithreading.h"
-#include <sys/types.h>
 
-void m_bluring(const img_t *img, img_t *img_blur, const kernel_t *kernel,
-					size_t x, size_t y)
+
+void apply_convolution(blur_portion_t const *portion, size_t i, size_t j)
 {
-	size_t i = 0, j = 0;
-	size_t img_blur_index = 0, half_kernel_size = 0;
-	float divider = 0, total_r = 0, total_g = 0, total_b = 0;
+	size_t kernel_size = portion->kernel->size;
+	size_t img_width = portion->img->w;
+	size_t img_height = portion->img->h;
+	size_t x, y;
+	size_t result_index = i * img_width + j;
+	size_t k = 0, l = 0;
 
+	float sum_r = 0.0, sum_g = 0.0, sum_b = 0.0;
 
-	half_kernel_size = kernel->size / 2;
-
-	for (i = y > half_kernel_size ? y - half_kernel_size : 0; i < (y + half_kernel_size < img->h ? y + half_kernel_size : img->h); i++)
+	for (k = 0; k < kernel_size; k++)
 	{
-		for (j = x > half_kernel_size ? x - half_kernel_size : 0; j < (x + half_kernel_size < img->w ? x + half_kernel_size : img->w); j++)
+		for (l = 0; l < kernel_size; l++)
 		{
-			size_t img_row = i;
-			size_t img_col = j;
+			x = i + k - (kernel_size / 2);
+			y = j + l - (kernel_size / 2);
 
-			float kernel_value = kernel->matrix[i - (y - half_kernel_size)][j - (x - half_kernel_size)];
+			if (x < img_width && y < img_height)
+			{
+				size_t pixel_index = x * img_width + y;
+				float kernel_value = portion->kernel->matrix[k][l];
 
-			divider += kernel_value;
-			img_blur_index = (img_row * img->w) + img_col;
-			total_r += img->pixels[img_blur_index].r * kernel_value;
-			total_g += img->pixels[img_blur_index].g * kernel_value;
-			total_b += img->pixels[img_blur_index].b * kernel_value;
+				sum_r += kernel_value * portion->img->pixels[pixel_index].r;
+				sum_g += kernel_value * portion->img->pixels[pixel_index].g;
+				sum_b += kernel_value * portion->img->pixels[pixel_index].b;
+			}
 		}
 	}
 
-	img_blur_index = (y * img_blur->w) + x;
-	img_blur->pixels[img_blur_index].r = (uint8_t)(total_r / divider);
-	img_blur->pixels[img_blur_index].g = (uint8_t)(total_g / divider);
-	img_blur->pixels[img_blur_index].b = (uint8_t)(total_b / divider);
+	result_index = i * img_width + j;
+	portion->img_blur->pixels[result_index].r = (uint8_t)sum_r;
+	portion->img_blur->pixels[result_index].g = (uint8_t)sum_g;
+	portion->img_blur->pixels[result_index].b = (uint8_t)sum_b;
 }
+
 
 void blur_portion(blur_portion_t const *portion)
 {
-	size_t x = 0, y = 0;
+	size_t i, j;
 
-	/* Check if the portion is valid */
-	if (!portion || !portion->img || !portion->img_blur || !portion->kernel)
-		return;
-
-	for (y = portion->y; y < portion->y + portion->h; y++)
+	for (i = portion->x; i < portion->x + portion->w; i++)
 	{
-		for (x = portion->x; x < portion->x + portion->w; x++)
+		for (j = portion->y; j < portion->y + portion->h; j++)
 		{
-			m_bluring(portion->img, portion->img_blur, portion->kernel, x, y);
+			apply_convolution(portion, i, j);
 		}
 	}
 }
