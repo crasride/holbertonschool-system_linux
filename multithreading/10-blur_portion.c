@@ -1,5 +1,5 @@
 #include "multithreading.h"
-
+#include <sys/types.h>
 
 void m_bluring(const img_t *img, img_t *img_blur, const kernel_t *kernel,
 					size_t x, size_t y)
