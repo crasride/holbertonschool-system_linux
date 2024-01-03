@@ -84,4 +84,14 @@ void blur_portion(blur_portion_t const *portion);
 void apply_convolution(const img_t *img, img_t *blur_img,
 						const kernel_t *kernel, size_t x, size_t y);
 
+/*Functions task 3 */
+void blur_image(img_t *img_blur, img_t const *img, kernel_t const *kernel);
+
+/*Functions task 4 */
+int tprintf(char const *format, ...);
+
+/*Functions task 5 */
+
+/*Functions task 6 */
+
 #endif /* MULTITHREADING_H */
