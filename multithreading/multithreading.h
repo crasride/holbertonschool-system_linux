@@ -10,6 +10,7 @@
 #include <stdarg.h>
 /* task 2 */
 #include <sys/types.h>
+#include "list.h"
 
 /**
 * struct pixel_s - RGB pixel
