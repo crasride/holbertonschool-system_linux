@@ -25,15 +25,46 @@ int is_prime(unsigned long n)
 }
 
 /**
-* prime_factors - Factorize a number into a list of prime factors
+* add_factor - Add a factor to the list
 *
-* @s: String representation of the number
+* @factors: List of prime factors
+* @num: Number to prime factor
+*/
+static void add_factor(list_t *factors, unsigned long num)
+{
+	unsigned long *factor = malloc(sizeof(unsigned long));
+
+	if (factor)
+	{
+		*factor = num;
+		list_add(factors, factor);
+	}
+}
+
+/**
+* handle_repeated_factors -Handles repeated prime factors (e.g. 2)
 *
-* Return: List of prime factors
+* @factors: List of prime factors
+* @num: Number to factor
+*/
+static void handle_repeated_factors(list_t *factors, unsigned long *num)
+{
+	while (*num % 2 == 0)
+	{
+		add_factor(factors, 2);
+		*num /= 2;
+	}
+}
+
+/**
+* prime_factors - Factoriza un número en una lista de factores primos
+*
+* @s: String representation of number
+*
+* Return: List to prime factor
 */
 list_t *prime_factors(char const *s)
 {
-
 	unsigned long num = strtoul(s, NULL, 10);
 	unsigned long i;
 	list_t *factors = list_init(malloc(sizeof(list_t)));
@@ -41,55 +72,19 @@ list_t *prime_factors(char const *s)
 	if (!factors)
 		return (NULL);
 
-	while (num % 2 == 0)
-	{
-		unsigned long *factor = malloc(sizeof(unsigned long));
-
-		if (!factor)
-		{
-			list_destroy(factors, free);
-			free(factors);
-			return (NULL);
-		}
-
-		*factor = 2;
-		list_add(factors, factor);
-		num /= 2;
-	}
+	handle_repeated_factors(factors, &num);
 
 	for (i = 3; i * i <= num; i += 2)
 	{
 		while (num % i == 0 && is_prime(i))
 		{
-			unsigned long *factor = malloc(sizeof(unsigned long));
-
-			if (!factor)
-			{
-				list_destroy(factors, free);
-				free(factors);
-				return (NULL);
-			}
-
-			*factor = i;
-			list_add(factors, factor);
+			add_factor(factors, i);
 			num /= i;
 		}
 	}
 
 	if (num > 2)
-	{
-		unsigned long *factor = malloc(sizeof(unsigned long));
-
-		if (!factor)
-		{
-			list_destroy(factors, free);
-			free(factors);
-			return (NULL);
-		}
-
-		*factor = num;
-		list_add(factors, factor);
-	}
+		add_factor(factors, num);
 
 	return (factors);
 }
