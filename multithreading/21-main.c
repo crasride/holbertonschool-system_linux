@@ -1,6 +1,7 @@
 #include <stdlib.h>
 #include <stdio.h>
 #include "multithreading.h"
+#include "list.h"
 
 /**
 * print_factors - Print a nmber and its prime factorization
