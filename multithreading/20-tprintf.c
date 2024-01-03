@@ -36,9 +36,15 @@ int tprintf(char const *format, ...)
 	/* Store the number of printed characters */
 	int result;
 
-	/* Print the thread ID and formatted string */
+	/* Lock the mutex before entering the critical section */
 	if (pthread_mutex_lock(&mutex) != 0)
 		perror(NULL);
+
+	/**
+	* code that needs exclusive access to shared data
+	* is already blocked by another thread, the current
+	* thread will wait until the mutex is available
+	*/
 
 	/* Get the current thread ID */
 	va_start(args, format);
@@ -52,7 +58,7 @@ int tprintf(char const *format, ...)
 	/* Get the current thread ID */
 	va_end(args);
 
-	/* Print the thread ID and formatted string */
+	/* Unlock mutex after exiting critical section */
 	if (pthread_mutex_unlock(&mutex) != 0)
 		perror(NULL);
 
