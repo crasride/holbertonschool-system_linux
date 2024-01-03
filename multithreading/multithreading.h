@@ -92,6 +92,7 @@ void blur_image(img_t *img_blur, img_t const *img, kernel_t const *kernel);
 int tprintf(char const *format, ...);
 
 /*Functions task 5 */
+list_t *prime_factors(char const *s);
 
 /*Functions task 6 */
 
