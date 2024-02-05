@@ -56,6 +56,8 @@ void accept_Connection(int server_socket)
 		struct sockaddr_in client_addr;
 		socklen_t client_addr_len = sizeof(client_addr);
 		int client_socket;
+		/* Buffer to store the client's IP address */
+		char client_ip[INET6_ADDRSTRLEN];
 
 		/* Accept incoming connection */
 		client_socket = accept(server_socket, (struct sockaddr *)&client_addr,
@@ -65,9 +67,6 @@ void accept_Connection(int server_socket)
 			perror("Fallo en la aceptación");
 			exit(EXIT_FAILURE);
 		}
-
-		/* Buffer to store the client's IP address */
-		char client_ip[INET6_ADDRSTRLEN];
 
 		/* Convert client IP address to display format */
 		if (inet_ntop(AF_INET, &client_addr.sin_addr, client_ip,
