@@ -1,7 +1,7 @@
 #include "socket.h"
 
-/* Assuming IPv4 o IPv6 addresses */
-#define BUFFER_SIZE 46
+/* store data received from the client. */
+#define BUFFER_SIZE 64
 
 /**
 * initialize_Server - Initialize the server
