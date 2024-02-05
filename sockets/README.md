@@ -3,6 +3,7 @@
 ### Resources
 ### Read or watch:
 
+
 * [Sockets - GNU](https://www.gnu.org/software/libc/manual/html_node/Sockets.html)
 * [Sockets Programming in C (From slide 1 to slide 53)](https://www.csd.uoc.gr/~hy556/material/tutorials/cs556-3rd-tutorial.pdf)
 * [List of HTTP status codes](https://en.wikipedia.org/wiki/List_of_HTTP_status_codes)
