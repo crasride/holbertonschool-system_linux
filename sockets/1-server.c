@@ -58,6 +58,7 @@ void accept_Connection(int server_socket)
 		int client_socket;
 		char client_ip[INET6_ADDRSTRLEN];
 		char buffer[BUFFER_SIZE];
+		ssize_t bytesRead = 0;
 
 		/* Accept incoming connection */
 		client_socket = accept(server_socket, (struct sockaddr *)&client_addr,
@@ -78,7 +79,7 @@ void accept_Connection(int server_socket)
 		/* Print the client's IP address */
 		printf("Client connected: %s\n", client_ip);
 		/* Receive data from the client */
-		ssize_t bytesRead = recv(client_socket, buffer, BUFFER_SIZE, 0);
+		bytesRead = recv(client_socket, buffer, BUFFER_SIZE, 0);
 
 		if (bytesRead < 0)
 		{
