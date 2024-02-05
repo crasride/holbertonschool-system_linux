@@ -12,7 +12,6 @@ int main(void)
 
 	/* Initialize server_addr structure */
 	memset(&server_addr, 0, sizeof(server_addr));
-
 	/* Create socket */
 	server_socket = socket(AF_INET, SOCK_STREAM, 0);
 	if (server_socket == -1)
@@ -20,12 +19,10 @@ int main(void)
 		perror("Socket creation failed");
 		exit(EXIT_FAILURE);
 	}
-
 	/*Set up server address structure */
 	server_addr.sin_family = AF_INET;
 	server_addr.sin_addr.s_addr = htonl(INADDR_ANY);
 	server_addr.sin_port = htons(12345);
-
 	/* Bind the socket to the address and port */
 	if (bind(server_socket, (struct sockaddr *)&server_addr,
 							sizeof(server_addr)) < 0)
