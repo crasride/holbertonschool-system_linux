@@ -17,7 +17,7 @@ void initialize_Server(struct sockaddr_in *server_addr, int *server_socket)
 	*server_socket = socket(AF_INET, SOCK_STREAM, 0);
 	if (*server_socket == -1)
 	{
-		perror("Fallo en la creación del socket");
+		perror("Socket creation failed");
 		exit(EXIT_FAILURE);
 	}
 
@@ -30,19 +30,19 @@ void initialize_Server(struct sockaddr_in *server_addr, int *server_socket)
 	if (bind(*server_socket, (struct sockaddr *)server_addr,
 		sizeof(*server_addr)) < 0)
 	{
-		perror("Fallo en la vinculación");
+		perror("Linking failure");
 		exit(EXIT_FAILURE);
 	}
 
 	/* Listen for incoming connections */
 	if (listen(*server_socket, 1) < 0)
 	{
-		perror("Fallo en la escucha");
+		perror("Listening failure");
 		exit(EXIT_FAILURE);
 	}
 
 	/* Print server information */
-	printf("Servidor escuchando en el puerto 12345\n");
+	printf("Server listening on port 12345\n");
 }
 
 /**
@@ -56,28 +56,35 @@ void accept_Connection(int server_socket)
 		struct sockaddr_in client_addr;
 		socklen_t client_addr_len = sizeof(client_addr);
 		int client_socket;
-		/* Buffer to store the client's IP address */
 		char client_ip[INET6_ADDRSTRLEN];
+		char buffer[BUFFER_SIZE];
 
 		/* Accept incoming connection */
 		client_socket = accept(server_socket, (struct sockaddr *)&client_addr,
-								&client_addr_len);
+							&client_addr_len);
 		if (client_socket < 0)
 		{
-			perror("Fallo en la aceptación");
+			perror("Failure to accept");
 			exit(EXIT_FAILURE);
 		}
 
 		/* Convert client IP address to display format */
 		if (inet_ntop(AF_INET, &client_addr.sin_addr, client_ip,
-						INET6_ADDRSTRLEN) == NULL)
+					INET6_ADDRSTRLEN) == NULL)
 		{
 			perror("Inet_ntop falló");
 			exit(EXIT_FAILURE);
 		}
-
 		/* Print the client's IP address */
-		printf("Cliente conectado: %s\n", client_ip);
+		printf("Client connected: %s\n", client_ip);
+		/* Receive data from the client */
+		ssize_t bytesRead = recv(client_socket, buffer, BUFFER_SIZE, 0);
+
+		if (bytesRead < 0)
+		{
+			perror("Error receiving data");
+			exit(EXIT_FAILURE);
+		}
 
 		/* Close the connection */
 		close(client_socket);
