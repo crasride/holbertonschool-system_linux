@@ -9,6 +9,7 @@
 void handle_connection(int client_socket)
 {
 	char buffer[BUFFER_SIZE];
+	char client_ip[INET_ADDRSTRLEN];
 	ssize_t bytes_received;
 
 	/* Print client IP address */
@@ -16,7 +17,6 @@ void handle_connection(int client_socket)
 	socklen_t client_addr_len = sizeof(client_addr);
 
 	getpeername(client_socket, (struct sockaddr *)&client_addr, &client_addr_len);
-	char client_ip[INET_ADDRSTRLEN];
 
 	inet_ntop(AF_INET, &client_addr.sin_addr, client_ip, INET_ADDRSTRLEN);
 	printf("Client connected: %s\n", client_ip);
