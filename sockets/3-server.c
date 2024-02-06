@@ -16,8 +16,10 @@ void handle_connection(int client_socket)
 	struct sockaddr_in client_addr;
 	socklen_t client_addr_len = sizeof(client_addr);
 
+	/* Get the client IP address */
 	getpeername(client_socket, (struct sockaddr *)&client_addr, &client_addr_len);
 
+	/* Convert client IP address to a string */
 	inet_ntop(AF_INET, &client_addr.sin_addr, client_ip, INET_ADDRSTRLEN);
 	printf("Client connected: %s\n", client_ip);
 
@@ -29,6 +31,7 @@ void handle_connection(int client_socket)
 		exit(EXIT_FAILURE);
 	}
 
+	/* Add null-terminator to the received message */
 	buffer[bytes_received] = '\0';
 
 	/* Print the received message */
@@ -49,6 +52,7 @@ int setup_server_socket(void)
 	struct sockaddr_in server_addr;
 
 	memset(&server_addr, 0, sizeof(server_addr));
+	/* Create socket */
 	server_socket = socket(AF_INET, SOCK_STREAM, 0);
 	if (server_socket == -1)
 	{
@@ -56,10 +60,12 @@ int setup_server_socket(void)
 		exit(EXIT_FAILURE);
 	}
 
+	/* Configure server address */
 	server_addr.sin_family = AF_INET;
 	server_addr.sin_addr.s_addr = htonl(INADDR_ANY);
 	server_addr.sin_port = htons(12345);
 
+	/* Bind the socket to the address and port */
 	if (bind(server_socket, (struct sockaddr *)&server_addr,
 								sizeof(server_addr)) < 0)
 	{
@@ -67,6 +73,7 @@ int setup_server_socket(void)
 		exit(EXIT_FAILURE);
 	}
 
+	/* Listen for incoming connections */
 	if (listen(server_socket, 1) < 0)
 	{
 		perror("Listen failed");
@@ -88,9 +95,11 @@ int setup_server_socket(void)
 int accept_client_connection(int server_socket, struct sockaddr_in *client_addr
 							, socklen_t *client_addr_len)
 {
+	/* Accept a connection with a client */
 	int client_socket = accept(server_socket, (struct sockaddr *)client_addr,
 								client_addr_len);
 
+	/* Check for connection error */
 	if (client_socket < 0)
 	{
 		perror("Accept failed");
@@ -110,13 +119,18 @@ int main(void)
 	struct sockaddr_in client_addr;
 	socklen_t client_addr_len;
 
+	/* Create and set up the server socket */
 	server_socket = setup_server_socket();
 
+	/* Accept a connection with a client */
 	client_addr_len = sizeof(client_addr);
 	client_socket = accept_client_connection(server_socket, &client_addr,
 					&client_addr_len);
 
+	/* Handle the connection with the client */
 	handle_connection(client_socket);
+
+	/* Close the server socket */
 	close(server_socket);
 
 	return (0);
