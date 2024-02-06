@@ -9,5 +9,7 @@
 #include <string.h>
 /* Include for inet_ntoa */
 #include <arpa/inet.h>
+#include <sys/types.h>
+#include <netdb.h>
 
 #endif /* _SOCKET_*/
