@@ -41,14 +41,16 @@ void handle_http_request(int client_socket)
 	/* Print the raw received HTTP request */
 	printf("Raw request: \"%s\"\n", buffer);
 
-	if (sscanf(buffer, "%s %s %s ", method, path, version) != 3)
+	sscanf(buffer, "%s %s %s", method, path, version);
+/* 	if (sscanf(buffer, "%16s %256s %16s ", method, path, version) != 3)
 	{
 		fprintf(stderr, "Invalid HTTP request\n");
 		exit(EXIT_FAILURE);
-	}
+	} */
 	printf("Method: %s\n", method);
 	printf("Path: %s\n", path);
 	printf("Version: %s\n", version);
+	fflush(stdout);
 	send(client_socket, response, strlen(response), 0);
 
 	/* Close the connection with the client */
@@ -95,6 +97,7 @@ int setup_server_socket(void)
 	}
 
 	printf("Server listening on port 8080\n");
+	fflush(stdout);
 
 	return (server_socket);
 }
