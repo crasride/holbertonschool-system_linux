@@ -37,6 +37,8 @@ void handle_http_request(int client_socket)
 	ssize_t bytes_received;
 	struct sockaddr_in client_addr;
 	socklen_t client_addr_len = sizeof(client_addr);
+	const char *response = "HTTP/1.1 200 OK\r\n\r\n";
+	char *header = NULL;
 
 	getpeername(client_socket, (struct sockaddr *)&client_addr, &client_addr_len);
 	inet_ntop(AF_INET, &client_addr.sin_addr, client_ip, INET_ADDRSTRLEN);
@@ -52,7 +54,7 @@ void handle_http_request(int client_socket)
 	}
 	buffer[bytes_received] = '\0';
 	printf("Raw request: \"%s\"\n", buffer);
-	char *header = strtok(buffer, "\r\n");
+	header = strtok(buffer, "\r\n");
 
 	header = strtok(NULL, "\r\n");
 
@@ -66,7 +68,6 @@ void handle_http_request(int client_socket)
 					remove_whitespace(value));
 		header = strtok(NULL, "\r\n");
 	}
-	const char *response = "HTTP/1.1 200 OK\r\n\r\n";
 
 	fflush(stdout);
 	send(client_socket, response, strlen(response), 0);
