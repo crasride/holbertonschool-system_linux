@@ -9,43 +9,52 @@
 void handle_http_request(int client_socket)
 {
 	char buffer[BUFFER_SIZE];
-	ssize_t bytes_received;
+	char client_ip[INET_ADDRSTRLEN];
 	/* Parse and print the breakdown of the first line of the HTTP request */
-	char *path, *query, *key, *value, *next, *rest;
+	char method[16], path[256], version[16];
 	/* Send back a simple HTTP 200 OK response */
 	const char *response = "HTTP/1.1 200 OK\r\n\r\n";
+	ssize_t bytes_received;
 
-	/* Receive the HTTP request from the client */
-	bytes_received = recv(client_socket, buffer, BUFFER_SIZE - 1, 0);
-	if (bytes_received < 0)
+	/* Print client IP address */
+	struct sockaddr_in client_addr;
+	socklen_t client_addr_len = sizeof(client_addr);
+
+	/* Get the client IP address */
+	getpeername(client_socket, (struct sockaddr *)&client_addr, &client_addr_len);
+
+	/* Convert client IP address to a string */
+	inet_ntop(AF_INET, &client_addr.sin_addr, client_ip, INET_ADDRSTRLEN);
+	printf("Client connected: %s\n", client_ip);
+	fflush(stdout);
+
+	/* Wait for incoming message from the client (HTTP request) */
+	bytes_received = recv(client_socket, buffer, sizeof(buffer) - 1, 0);
+	if (bytes_received == -1)
 	{
-		perror("Error reading from socket");
-		close(client_socket);
-		return;
+		perror("Error receiving HTTP request");
+		exit(EXIT_FAILURE);
 	}
+
+	/* Add null-terminator to the received message */
 	buffer[bytes_received] = '\0';
 
 	/* Print the raw received HTTP request */
 	printf("Raw request: \"%s\"\n", buffer);
 
-	/* Extract the path from the buffer*/
-	strtok(buffer, " ");
-	path = strtok(NULL, " ");
-	path = strtok_r(path, "?", &next);
-	printf("Path: %s\n", path);
-
-	/* Extract the query from the buffer and print query parameters */
-	query = strtok_r(NULL, "&", &next);
-	while (query)
+	sscanf(buffer, "%s %s %s", method, path, version);
+/* 	if (sscanf(buffer, "%16s %256s %16s ", method, path, version) != 3)
 	{
-		key = strtok_r(query, "=", &rest);
-		value = strtok_r(NULL, "=", &rest);
-		printf("Query: \"%s\" -> \"%s\"\n", key, value);
-		query = strtok_r(NULL, "&", &next);
-	}
-	/* Send the HTTP response */
+		fprintf(stderr, "Invalid HTTP request\n");
+		exit(EXIT_FAILURE);
+	} */
+	printf("Method: %s\n", method);
+	printf("Path: %s\n", path);
+	printf("Version: %s\n", version);
 	fflush(stdout);
 	send(client_socket, response, strlen(response), 0);
+
+	/* Close the connection with the client */
 	close(client_socket);
 }
 
@@ -148,3 +157,4 @@ int main(void)
 
 	return (0);
 }
+
