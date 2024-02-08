@@ -6,7 +6,7 @@ CFLAGS = -Wall -Werror -Wextra -pedantic -g
 TASKS_4 = request.c
 TASKS_5 = queries.c
 TASKS_6 = headers.c
-TASKS_7 = parameters.c
+TASKS_7 = server.c parameters.c remove_whitespace.c
 TASKS_8 =
 TASKS_9 =
 
