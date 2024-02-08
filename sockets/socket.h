@@ -15,4 +15,9 @@
 
 #include <ctype.h>
 
+int setup_server_socket(void);
+int accept_cli_connection(int server_socket, struct sockaddr_in *client_addr,
+							socklen_t *client_addr_len);
+char *remove_whitespace(char *str);
+
 #endif /* _SOCKET_*/
