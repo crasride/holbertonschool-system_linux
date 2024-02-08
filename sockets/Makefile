@@ -6,7 +6,7 @@ CFLAGS = -Wall -Werror -Wextra -pedantic -g
 TASKS_4 = request.c
 TASKS_5 = queries.c
 TASKS_6 = headers.c
-TASKS_7 =
+TASKS_7 = parameters.c
 TASKS_8 =
 TASKS_9 =
 
@@ -14,7 +14,7 @@ TASKS_9 =
 LDFLAGS =
 
 # Default Target: Build the executable
-all: todo_api_0 todo_api_1 todo_api_2
+all: todo_api_0 todo_api_1 todo_api_2 todo_api_3
 
 # Rule to build the executable
 todo_api_0: request.c
@@ -26,9 +26,12 @@ todo_api_1: queries.c
 todo_api_2: headers.c
 	$(CC) $(CFLAGS) $(LDFLAGS) $(TASKS_6) -o todo_api_2
 
+todo_api_3: parameters.c
+	$(CC) $(CFLAGS) $(LDFLAGS) $(TASKS_7) -o todo_api_3
+
 # Target to clean generated files
 clean:
-	rm -f todo_api_0 todo_api_1 todo_api_2
+	rm -f todo_api_0 todo_api_1 todo_api_2 todo_api_3
 
 # Declaration of phony targets
 .PHONY: all clean
