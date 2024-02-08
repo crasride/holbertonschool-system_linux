@@ -57,6 +57,8 @@ int setup_server_socket(void)
 int accept_cli_connection(int server_socket, struct sockaddr_in *client_addr,
 							socklen_t *client_addr_len)
 {
+	/* Get the client's IP address */
+	char client_ip[INET_ADDRSTRLEN];
 	/* Accept a connection with a client */
 	int client_socket = accept(server_socket, (struct sockaddr *)client_addr,
 							client_addr_len);
@@ -67,9 +69,6 @@ int accept_cli_connection(int server_socket, struct sockaddr_in *client_addr,
 		perror("Accept failed");
 		exit(EXIT_FAILURE);
 	}
-
-	/* Get the client's IP address */
-	char client_ip[INET_ADDRSTRLEN];
 
 	inet_ntop(AF_INET, &client_addr->sin_addr, client_ip, INET_ADDRSTRLEN);
 
