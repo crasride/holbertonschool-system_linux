@@ -8,7 +8,7 @@ TASKS_5 = queries.c
 TASKS_6 = headers.c
 TASKS_7 = server.c remove_whitespace.c parameters.c
 TASKS_8 = root.c status.c remove_whitespace.c create_todo.c
-TASKS_9 = retrieve_all_todo.c
+TASKS_9 = root.c status_9.c remove_whitespace.c retrieve_all_todo.c
 
 # Linker Flags (empty in this case)
 LDFLAGS =
