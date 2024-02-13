@@ -8,7 +8,7 @@
 <h1 align="center">Holberton School
 
 Spe - System programming & Low Level :</h1>
-This repository contains files written in C & Python.
+This repository contains files written in C & Python and ASM.
 
 The list of projects contained follows :
 
@@ -19,6 +19,8 @@ The list of projects contained follows :
 * [C - Signals](./signals)
 * [C - CPython](./0x08_CPython)
 * [C - Strace](./strace)
+* [C - Sockets](./sockets/)
+* [Multithreading](./multithreading)
 * [Python - /proc filesystem](./proc_filesystem/)
 * [ASM - /x86 Assembly - libASM](./libasm/)
 
